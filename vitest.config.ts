@@ -24,6 +24,7 @@ export default defineConfig({
         'src/**/*.spec.tsx',
         'src/components/ui/index.ts',
         'src/infrastructure/db/prisma.ts',
+        'src/infrastructure/auth/auth.ts',
         'tests/**',
       ],
       thresholds: {

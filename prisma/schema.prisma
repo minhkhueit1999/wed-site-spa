@@ -6,3 +6,227 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  passwordHash String
+  name         String
+  role         String           @default("CUSTOMER") // CUSTOMER | THERAPIST | ADMIN
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  profile      CustomerProfile?
+  auditLogs    AuditLog[]
+  appointments Appointment[]    @relation("TherapistAppointments")
+  sessionLogs  SessionLog[]     @relation("TherapistSessionLogs")
+}
+
+model CustomerProfile {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  safetyFlags String    @default("[]") // JSON mảng cờ an toàn: ["pregnant", "allergy-nut-oil"]
+  consentAt   DateTime? // Thời điểm người dùng đồng ý xử lý dữ liệu sức khỏe
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  assessments    Assessment[]
+  treatmentPlans TreatmentPlan[]
+  careBundles    CareBundle[]
+}
+
+model Concern {
+  slug           String   @id // mat-ngu, cang-thang, moi-vai-gay, da-kich-ung, da-kho, da-xin-mau
+  name           String
+  category       String   // sleep-stress | muscle | skin
+  description    String
+  searchKeywords String   // Chuỗi từ khóa cách nhau bởi dấu phẩy
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  rules          Rule[]
+}
+
+model Service {
+  slug                String           @id // thu-gian-sau, giai-toa-vai-gay, phuc-hoi-da-nhay-cam, cap-am-sang-da
+  name                String
+  description         String
+  durationMin         Int              @default(60)
+  sessionsRecommended Int              @default(6)
+  priceVnd            Int              @default(0) // Giá nguyên VND
+  active              Boolean          @default(true)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  serviceProducts     ServiceProduct[]
+  rules               Rule[]
+  treatmentPlans      TreatmentPlan[]
+}
+
+model Product {
+  slug           String                 @id // tinh-dau-thu-gian, tra-thao-moc-toi, etc.
+  name           String
+  description    String
+  usageGuide     String
+  priceVnd       Int                    @default(0)
+  active         Boolean                @default(true)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  serviceProducts ServiceProduct[]
+  prescriptions  HomeCarePrescription[]
+}
+
+model ServiceProduct {
+  id          String   @id @default(cuid())
+  serviceSlug String
+  productSlug String
+  service     Service  @relation(fields: [serviceSlug], references: [slug], onDelete: Cascade)
+  product     Product  @relation(fields: [productSlug], references: [slug], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([serviceSlug, productSlug])
+}
+
+model Rule {
+  id           String   @id // R-001, R-002...
+  concernSlug  String
+  minSeverity  Int      @default(2) // 1-5
+  serviceSlug  String
+  productSlugs String   // JSON mảng string: '["tinh-dau-thu-gian", "tra-thao-moc-toi"]'
+  priority     Int      @default(1) // Số càng lớn càng ưu tiên
+  rationale    String   // Lời giải thích hiển thị cho khách
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  concern Concern @relation(fields: [concernSlug], references: [slug], onDelete: Cascade)
+  service Service @relation(fields: [serviceSlug], references: [slug], onDelete: Cascade)
+}
+
+model Contraindication {
+  id                  String   @id @default(cuid())
+  flag                String   @unique // pregnant, allergy-essential-oil, open-wound-skin-infection, fever-acute-illness, recent-surgery
+  blocksServiceSlugs  String   @default("[]") // JSON mảng string
+  blocksProductSlugs  String   @default("[]") // JSON mảng string
+  requiresStaffReview Boolean  @default(true)
+  message             String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Assessment {
+  id            String          @id @default(cuid())
+  customerId    String
+  customer      CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  type          String          // skin | stress-sleep | shoulder-neck | full
+  answers       String          // JSON câu trả lời
+  concernScores String          // JSON [{ concernSlug: string, severity: number }]
+  createdAt     DateTime        @default(now())
+}
+
+model TreatmentPlan {
+  id            String          @id @default(cuid())
+  customerId    String
+  customer      CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  serviceSlug   String
+  service       Service         @relation(fields: [serviceSlug], references: [slug])
+  totalSessions Int             @default(6)
+  state         String          @default("ASSESSED") // ASSESSED, RECOMMENDED, BUNDLE_CONFIRMED, IN_TREATMENT, HOME_CARE, REASSESSMENT, COMPLETED, CANCELLED, LAPSED
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  stateHistory  PlanStateHistory[]
+  appointments  Appointment[]
+  prescriptions HomeCarePrescription[]
+  careBundles   CareBundle[]
+}
+
+model PlanStateHistory {
+  id       String        @id @default(cuid())
+  planId   String
+  plan     TreatmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  from     String
+  event    String
+  to       String
+  actorId  String
+  at       DateTime      @default(now())
+  reason   String?
+}
+
+model Appointment {
+  id          String        @id @default(cuid())
+  planId      String
+  plan        TreatmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  therapistId String
+  therapist   User          @relation("TherapistAppointments", fields: [therapistId], references: [id])
+  startAt     DateTime
+  endAt       DateTime
+  status      String        @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED, NO_SHOW
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  sessionLog SessionLog?
+}
+
+model SessionLog {
+  id                String      @id @default(cuid())
+  appointmentId     String      @unique
+  appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  therapistId       String
+  therapist         User        @relation("TherapistSessionLogs", fields: [therapistId], references: [id])
+  notes             String
+  progressScores    String      // JSON { skin?: number, stress?: number, muscle?: number }
+  adjustments       String?     // Điều chỉnh thao tác hoặc lực
+  nextSessionAdvice String?     // Lời khuyên cho buổi sau
+  createdAt         DateTime    @default(now())
+}
+
+model HomeCarePrescription {
+  id           String        @id @default(cuid())
+  planId       String
+  plan         TreatmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  productSlug  String
+  product      Product       @relation(fields: [productSlug], references: [slug])
+  instructions String        // Hướng dẫn sử dụng
+  frequency    String        // Tần suất: 2 lần/ngày, mỗi tối trước khi ngủ...
+  startDate    DateTime      @default(now())
+  endDate      DateTime?
+  prescribedBy String        // ID của therapist
+  createdAt    DateTime      @default(now())
+}
+
+model CareBundle {
+  id          String          @id @default(cuid())
+  customerId  String
+  customer    CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  planId      String
+  plan        TreatmentPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  status      String          @default("CONFIRMED") // PENDING_REVIEW, CONFIRMED, CANCELLED
+  items       String          // JSON: { appointments: [...], homeCareProducts: [...] }
+  totalVnd    Int             @default(0) // Giá mô phỏng
+  createdAt   DateTime        @default(now())
+}
+
+model KnowledgeChunk {
+  id          String   @id @default(cuid())
+  slug        String
+  title       String
+  type        String   // service, product, concern, faq, policy
+  headingPath String   // Đường dẫn tiêu đề ví dụ: "Thu giãn sâu > Hướng dẫn"
+  text        String   // Nội dung đoạn text
+  embedding   String   // JSON mảng vector: [0.12, -0.05, ...]
+  reviewedBy  String   // CHƯA DUYỆT hoặc tên chuyên gia
+  updatedAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  action     String   // LOGIN, LOGOUT, VIEW_PROFILE, UPDATE_SESSION_LOG, DELETE_DATA, CHANGE_ROLE
+  targetType String   // USER, TREATMENT_PLAN, SESSION_LOG, RULE
+  targetId   String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   String?  // JSON thông tin bổ sung không chứa PII
+  at         DateTime @default(now())
+}
