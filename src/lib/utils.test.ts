@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { cn, formatCurrencyVND, formatDateVN, formatDateOnlyVN } from './utils';
+import {
+  cn,
+  formatCurrencyVND,
+  formatDateVN,
+  formatDateOnlyVN,
+  removeVietnameseTones,
+} from './utils';
 
 describe('src/lib/utils', () => {
   it('cn gộp các class css chính xác', () => {
@@ -24,5 +30,10 @@ describe('src/lib/utils', () => {
     const result = formatDateVN(date);
     expect(result).toContain('10/11/2026');
     expect(result).toContain('12:30');
+  });
+
+  it('removeVietnameseTones loại bỏ dấu tiếng Việt chính xác', () => {
+    expect(removeVietnameseTones('Mất Ngủ & Mỏi Vai Gáy')).toBe('mat ngu & moi vai gay');
+    expect(removeVietnameseTones('Đang mang thai')).toBe('dang mang thai');
   });
 });
