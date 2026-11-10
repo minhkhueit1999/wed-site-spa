@@ -8,19 +8,19 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 
 ## Bảng tổng hợp 11 giai đoạn
 
-| Giai đoạn        | Nội dung                                                                             | Trạng thái    | Nhánh / Commit                | Việc tồn | Ghi chú & Tự quyết định                                                  |
-| ---------------- | ------------------------------------------------------------------------------------ | ------------- | ----------------------------- | -------- | ------------------------------------------------------------------------ |
-| **Giai đoạn 0**  | Nền tảng & công cụ (Next.js, TS strict, Tailwind, Prisma, Vitest, CI, Design System) | Đã hoàn thành | `main`                        | Không    | Hoàn thành typecheck, lint, format, test, build, Gitleaks.               |
-| **Giai đoạn 1**  | Dữ liệu & xác thực (Prisma schema, seed, Auth.js credentials, RBAC, AuditLog)        | Đã hoàn thành | `feat/auth-data-rbac`         | Không    | Đạt 36/36 test, coverage 94.89%, seed idempotent                         |
-| **Giai đoạn 2**  | Lõi nghiệp vụ (Domain TDD: rule engine, state machine, quiz scoring)                 | Đã hoàn thành | `feat/domain-rules-lifecycle` | Không    | Coverage domain >= 93%, 101 test, chứng minh no-restricted-imports       |
-| **Giai đoạn 3**  | Trải nghiệm công khai (Trang chủ, /trieu-chung, /tu-van, /ket-qua, /dich-vu/[slug])  | Đã hoàn thành | `feat/public-experience`      | Không    | Mobile-first, không giỏ hàng, SSG chuẩn, 106 tests xanh                  |
-| **Giai đoạn 4**  | Túi liệu trình (Unified booking: chọn giờ + toa tại nhà trong 1 luồng)               | Đã hoàn thành | `feat/unified-booking`        | Không    | Transaction DB an toàn, chống trùng lịch, PENDING_REVIEW, 115 tests xanh |
-| **Giai đoạn 5**  | Tài khoản khách & Treatment Tracker (Timeline, biểu đồ, xuất/xóa dữ liệu)            | Đã hoàn thành | `feat/customer-tracker`       | Không    | Cô lập dữ liệu khách, xuất JSON & xóa tài khoản, 122 tests xanh          |
-| **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Đã hoàn thành | `feat/therapist-console`      | Không    | Chặn nghiêm ngặt sản phẩm chống chỉ định, SessionLog, 133 tests xanh     |
-| **Giai đoạn 7**  | Quản trị (/quan-tri/*: CRUD, preview luật, tri thức RAG, AuditLog)                   | Chưa bắt đầu  | `feat/admin-management`       | -        | Role ADMIN                                                               |
-| **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Chưa bắt đầu  | `feat/rag-assistant`          | -        | Recall@5 >= 0.8, 100% cờ đỏ chuẩn                                        |
-| **Giai đoạn 9**  | Chất lượng cuối & hoàn thiện (Playwright E2E 5 luồng, a11y, Lighthouse, README)      | Chưa bắt đầu  | `feat/e2e-quality-audit`      | -        | -                                                                        |
-| **Giai đoạn 10** | Đóng gói bảo vệ đồ án (DEMO.md, QA-REPORT.md, SLIDE-OUTLINE.md, tag v1.0.0)          | Chưa bắt đầu  | `main`                        | -        | Đẩy v1.0.0 lên GitHub                                                    |
+| Giai đoạn        | Nội dung                                                                             | Trạng thái    | Nhánh / Commit                | Việc tồn | Ghi chú & Tự quyết định                                                           |
+| ---------------- | ------------------------------------------------------------------------------------ | ------------- | ----------------------------- | -------- | --------------------------------------------------------------------------------- |
+| **Giai đoạn 0**  | Nền tảng & công cụ (Next.js, TS strict, Tailwind, Prisma, Vitest, CI, Design System) | Đã hoàn thành | `main`                        | Không    | Hoàn thành typecheck, lint, format, test, build, Gitleaks.                        |
+| **Giai đoạn 1**  | Dữ liệu & xác thực (Prisma schema, seed, Auth.js credentials, RBAC, AuditLog)        | Đã hoàn thành | `feat/auth-data-rbac`         | Không    | Đạt 36/36 test, coverage 94.89%, seed idempotent                                  |
+| **Giai đoạn 2**  | Lõi nghiệp vụ (Domain TDD: rule engine, state machine, quiz scoring)                 | Đã hoàn thành | `feat/domain-rules-lifecycle` | Không    | Coverage domain >= 93%, 101 test, chứng minh no-restricted-imports                |
+| **Giai đoạn 3**  | Trải nghiệm công khai (Trang chủ, /trieu-chung, /tu-van, /ket-qua, /dich-vu/[slug])  | Đã hoàn thành | `feat/public-experience`      | Không    | Mobile-first, không giỏ hàng, SSG chuẩn, 106 tests xanh                           |
+| **Giai đoạn 4**  | Túi liệu trình (Unified booking: chọn giờ + toa tại nhà trong 1 luồng)               | Đã hoàn thành | `feat/unified-booking`        | Không    | Transaction DB an toàn, chống trùng lịch, PENDING_REVIEW, 115 tests xanh          |
+| **Giai đoạn 5**  | Tài khoản khách & Treatment Tracker (Timeline, biểu đồ, xuất/xóa dữ liệu)            | Đã hoàn thành | `feat/customer-tracker`       | Không    | Cô lập dữ liệu khách, xuất JSON & xóa tài khoản, 122 tests xanh                   |
+| **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Đã hoàn thành | `feat/therapist-console`      | Không    | Chặn nghiêm ngặt sản phẩm chống chỉ định, SessionLog, 133 tests xanh              |
+| **Giai đoạn 7**  | Quản trị (/quan-tri/*: CRUD, preview luật, tri thức RAG, AuditLog)                   | Đã hoàn thành | `feat/admin-management`       | Không    | Bảng điều khiển admin, live preview rule simulation, CRUD phác đồ & toa, AuditLog |
+| **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Chưa bắt đầu  | `feat/rag-assistant`          | -        | Recall@5 >= 0.8, 100% cờ đỏ chuẩn                                                 |
+| **Giai đoạn 9**  | Chất lượng cuối & hoàn thiện (Playwright E2E 5 luồng, a11y, Lighthouse, README)      | Chưa bắt đầu  | `feat/e2e-quality-audit`      | -        | -                                                                                 |
+| **Giai đoạn 10** | Đóng gói bảo vệ đồ án (DEMO.md, QA-REPORT.md, SLIDE-OUTLINE.md, tag v1.0.0)          | Chưa bắt đầu  | `main`                        | -        | Đẩy v1.0.0 lên GitHub                                                             |
 
 ---
 
@@ -93,3 +93,17 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
   - Form Chỉ định toa dưỡng tại nhà (`prescribeProduct`): RÀNG BUỘC CHẶN NGHIÊM NGẶT - server và UI từ chối toàn bộ sản phẩm nằm trong danh mục chống chỉ định của khách hàng.
   - Use-case `finishSessions`: Chuyển phác đồ sang `HOME_CARE` khi hoàn thành đủ số buổi và có toa dưỡng hợp lệ.
 - Đạt 133 tests xanh (thêm 9 unit/integration tests + 2 component tests), toàn bộ typecheck, lint, build xanh.
+
+### Giai đoạn 7: Quản trị (Admin Management)
+
+- Phân quyền Quản trị viên (`ADMIN`), bảo vệ chặt chẽ trên server actions và giao diện.
+- Backend Admin Application Services:
+  - `getAdminStats`: Thống kê số lượng khách hàng, kỹ thuật viên, phác đồ, lịch hẹn, dịch vụ, sản phẩm, quy tắc, chống chỉ định; phân bố vòng đời phác đồ; trích xuất 20 nhật ký AuditLog gần nhất.
+  - `serviceCrud`: Tạo mới dịch vụ và chặn xóa dịch vụ khi đang được liên kết trong bất kỳ phác đồ điều trị hoạt động nào (`TreatmentPlan`).
+  - `productCrud`: Tạo mới sản phẩm dưỡng tại nhà và chặn xóa sản phẩm khi đang được chỉ định trong toa thuốc hoạt động (`Prescription`).
+  - `ruleCrud` & `contraindicationCrud`: Thêm và xóa quy tắc đề xuất, quản lý cờ chống chỉ định.
+  - `ruleSimulation`: Mô phỏng trực tiếp Rule Engine động (Live Preview) với thanh trượt mức độ triệu chứng và lựa chọn cờ an toàn, giải thích nguyên nhân (rationale).
+- UI Bảng điều khiển quản trị `/quan-tri`:
+  - 5 tabs chuyên sâu: Tổng quan & AuditLog, Quy tắc & Live Preview, Dịch vụ phác đồ, Toa sản phẩm tại nhà, Chống chỉ định & cảnh báo an toàn.
+  - Giao diện trực quan hóa mô phỏng Rule Engine theo thời gian thực.
+- Đạt 141 tests xanh (thêm 6 use-case tests + 2 component tests), typecheck, lint, build Next.js 19 pages hoàn toàn sạch lỗi.
