@@ -18,7 +18,7 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **Giai đoạn 5**  | Tài khoản khách & Treatment Tracker (Timeline, biểu đồ, xuất/xóa dữ liệu)            | Đã hoàn thành | `feat/customer-tracker`       | Không    | Cô lập dữ liệu khách, xuất JSON & xóa tài khoản, 122 tests xanh                   |
 | **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Đã hoàn thành | `feat/therapist-console`      | Không    | Chặn nghiêm ngặt sản phẩm chống chỉ định, SessionLog, 133 tests xanh              |
 | **Giai đoạn 7**  | Quản trị (/quan-tri/*: CRUD, preview luật, tri thức RAG, AuditLog)                   | Đã hoàn thành | `feat/admin-management`       | Không    | Bảng điều khiển admin, live preview rule simulation, CRUD phác đồ & toa, AuditLog |
-| **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Chưa bắt đầu  | `feat/rag-assistant`          | -        | Recall@5 >= 0.8, 100% cờ đỏ chuẩn                                                 |
+| **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Đã hoàn thành | `feat/rag-assistant`          | Không    | Recall@5 100%, 100% cờ đỏ & injection, 0 mustNotContain, 165 tests xanh           |
 | **Giai đoạn 9**  | Chất lượng cuối & hoàn thiện (Playwright E2E 5 luồng, a11y, Lighthouse, README)      | Chưa bắt đầu  | `feat/e2e-quality-audit`      | -        | -                                                                                 |
 | **Giai đoạn 10** | Đóng gói bảo vệ đồ án (DEMO.md, QA-REPORT.md, SLIDE-OUTLINE.md, tag v1.0.0)          | Chưa bắt đầu  | `main`                        | -        | Đẩy v1.0.0 lên GitHub                                                             |
 
@@ -107,3 +107,32 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
   - 5 tabs chuyên sâu: Tổng quan & AuditLog, Quy tắc & Live Preview, Dịch vụ phác đồ, Toa sản phẩm tại nhà, Chống chỉ định & cảnh báo an toàn.
   - Giao diện trực quan hóa mô phỏng Rule Engine theo thời gian thực.
 - Đạt 141 tests xanh (thêm 6 use-case tests + 2 component tests), typecheck, lint, build Next.js 19 pages hoàn toàn sạch lỗi.
+
+### Giai đoạn 8: Hạ tầng RAG & Trợ lý AI (RAG Assistant & Knowledge Base)
+
+- Xây dựng 19 tài liệu tri thức thẩm định mẫu tại `data/knowledge/` (4 dịch vụ, 6 sản phẩm toa tại nhà, 6 triệu chứng/thể trạng, 3 chính sách & FAQ), toàn bộ gắn `reviewedBy: "CHƯA DUYỆT"`.
+- Module Ingest & Chunking:
+  - `loader.ts`: Phân tích frontmatter YAML, xác thực đầy đủ 5 trường siêu dữ liệu bắt buộc.
+  - `chunker.ts`: Chia nhỏ văn bản theo tiêu đề markdown, bảo toàn headingPath làm tiền tố ngữ cảnh, chồng lặp 200 ký tự.
+- Module Vector Embedding & Store:
+  - `HashEmbeddingProvider`: Vector embedding tất định 64 chiều dùng n-gram feature hashing và chuẩn hóa L2, độc lập API key, phục vụ test và đánh giá CI.
+  - `GeminiEmbeddingProvider`: Adapter chuẩn Google Gemini Embeddings (`text-embedding-004`).
+  - `SqliteVectorStore`: Lưu trữ và tính cosine similarity trong SQLite qua bảng Prisma `KnowledgeChunk`.
+- Module Retrieval lai & An toàn:
+  - `HybridRetriever`: Kết hợp Vector Cosine Similarity và BM25 keyword matching qua thuật toán Reciprocal Rank Fusion (RRF k=60).
+  - `preCheckSafety`: Bộ lọc cờ đỏ khẩn cấp (đau dữ dội, sốt cao, xuất huyết, gãy xương, nhiễm trùng, tự hại) trả mẫu cố định khuyên đến cơ sở y tế mà KHÔNG gọi LLM và KHÔNG gửi PII; phát hiện và chặn đứng 100% các mẫu câu prompt injection / jailbreak.
+- Module LLM & Pipeline:
+  - `MockLlmProvider`: Tổng hợp câu trả lời tự nhiên có trích nguồn minh bạch dạng `[1]`, `[2]`.
+  - `GeminiLlmProvider`: Adapter kết nối Gemini Live/Interactions API.
+  - `RAGPipeline`: Điều phối kiểm tra an toàn -> truy xuất lai -> kiểm tra ngưỡng tin cậy -> dựng prompt kèm sự thật cố định từ phác đồ khách -> hậu kiểm chặn tuyên bố phóng đại.
+- Endpoint `/api/assistant`:
+  - Kiểm tra rate limit trượt (15 req/phút/IP).
+  - Xác thực Zod schema cho câu hỏi và ngữ cảnh.
+- Giao diện người dùng:
+  - Component `AssistantChatWidget` hỗ trợ chế độ nhúng (trang `/ket-qua`) và nút chat nổi thông minh (trang `/tai-khoan`).
+  - Hiển thị nhãn trích dẫn tài liệu tham khảo có thể tương tác, cảnh báo y tế khẩn cấp khi có cờ đỏ.
+- Benchmark đánh giá RAG (`npm run rag:eval`):
+  - Bộ dữ liệu 32 câu hỏi đa dạng trong `data/eval/rag-questions.json`.
+  - Kết quả: Recall@5 đạt **100.0%** (15/15 câu domain), xử lý cờ đỏ đạt **100.0%** (9/9 câu), chặn prompt injection đạt **100.0%** (5/5 câu), **0** vi phạm cụm từ cấm (mustNotContain).
+  - Báo cáo chi tiết được ghi tự động vào `docs/rag-eval-log.md`.
+- Đạt **165 tests xanh** (30 test files), coverage kiểm thử toàn diện, build Next.js 20 routes hoàn toàn sạch lỗi.

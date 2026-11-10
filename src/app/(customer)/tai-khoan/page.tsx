@@ -20,6 +20,7 @@ import {
   deleteCustomerAccountAction,
 } from '@/application/customer/actions';
 import { CustomerDashboardData } from '@/application/customer/getCustomerDashboard';
+import { AssistantChatWidget } from '@/components/features/AssistantChatWidget';
 
 export default function TaiKhoanPage() {
   const router = useRouter();
@@ -574,6 +575,14 @@ export default function TaiKhoanPage() {
           </Button>
         </div>
       </Dialog>
+
+      <AssistantChatWidget
+        embedded={false}
+        context={{
+          serviceSlug: activePlan ? activePlan.id : undefined,
+          currentStatus: activePlan?.state,
+        }}
+      />
 
       <PublicFooter />
     </div>

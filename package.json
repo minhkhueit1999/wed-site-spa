@@ -17,8 +17,8 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "rag:ingest": "node scripts/rag-ingest.mjs",
-    "rag:eval": "node scripts/rag-eval.mjs",
+    "rag:ingest": "tsx scripts/rag-ingest.ts",
+    "rag:eval": "tsx scripts/rag-eval.ts",
     "prepare": "husky"
   },
   "dependencies": {

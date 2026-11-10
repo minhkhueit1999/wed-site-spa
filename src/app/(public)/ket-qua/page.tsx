@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { AssistantChatWidget } from '@/components/features/AssistantChatWidget';
 import {
   Button,
   Card,
@@ -305,24 +306,16 @@ export default function KetQuaPage() {
               );
             })}
 
-            {/* Khung vị trí Trợ lý AI (RAG Assistant Placeholder - Phase 8) */}
-            <Card className="border border-[#405C4E]/30 bg-[#F3EDE3] p-6 shadow-sm">
-              <div className="flex items-start gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#405C4E] text-sm font-bold text-[#FAF7F2]">
-                  AI
-                </span>
-                <div className="space-y-1">
-                  <h4 className="font-serif text-lg font-semibold text-[#2B2622]">
-                    Trợ lý Tư vấn Liệu trình (RAG Assistant)
-                  </h4>
-                  <p className="text-xs leading-relaxed text-[#635B54]">
-                    Bạn có câu hỏi về thành phần, quy trình chăm sóc hoặc cần giải thích kỹ hơn về
-                    toa tại nhà? Trợ lý tư vấn dựa trên tri thức thẩm định của spa sẽ hỗ trợ bạn
-                    (tích hợp trích dẫn nguồn minh bạch ở Giai đoạn 8).
-                  </p>
-                </div>
-              </div>
-            </Card>
+            {/* Trợ lý tư vấn AI (RAG Assistant) có trích nguồn */}
+            <div className="mt-8">
+              <AssistantChatWidget
+                embedded={true}
+                context={{
+                  serviceSlug: recommendations[0]?.service.slug,
+                  productSlugs: recommendations[0]?.products.map((p) => p.slug),
+                }}
+              />
+            </div>
           </div>
         )}
       </main>
