@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { Be_Vietnam_Pro, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/layout/AppProviders';
@@ -28,10 +27,6 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  const cookieStore = await cookies();
-  const isUnlockedCookie =
-    cookieStore.get('mk_spa_unlocked')?.value === 'true' ||
-    cookieStore.get('sa_spa_unlocked')?.value === 'true';
 
   return (
     <html
@@ -40,9 +35,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <body className="flex min-h-full flex-col bg-[#FAF7F2] text-[#2B2622]">
         <AppProviders
-          isAuthenticated={!!session?.user || isUnlockedCookie}
-          userEmail={session?.user?.email}
-          userName={session?.user?.name}
+          isAuthenticated={!!session?.user}
+          userEmail={session?.user?.email || null}
+          userName={session?.user?.name || null}
+          userRole={(session?.user as { role?: string })?.role || null}
         >
           {children}
         </AppProviders>

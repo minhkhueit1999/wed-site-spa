@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useQualityTier } from './QualityTierContext';
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
   gsap.registerPlugin(ScrollTrigger);
 }
 

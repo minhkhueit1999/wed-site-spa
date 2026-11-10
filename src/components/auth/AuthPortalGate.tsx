@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useSyncExternalStore } from 'react';
+import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { signIn } from 'next-auth/react';
@@ -11,18 +11,36 @@ interface AuthPortalGateProps {
   isAuthenticated: boolean;
   userEmail?: string | null;
   userName?: string | null;
+  userRole?: string | null;
+  isForcedOpen?: boolean;
+  defaultTab?: 'login' | 'register';
+  onCloseGate?: () => void;
   children: React.ReactNode;
 }
 
 export type AuthRole = 'CUSTOMER' | 'THERAPIST' | 'ADMIN';
 
-export function AuthPortalGate({ isAuthenticated, children }: AuthPortalGateProps) {
+export function AuthPortalGate({
+  isAuthenticated,
+  isForcedOpen = false,
+  defaultTab = 'login',
+  onCloseGate,
+  children,
+}: AuthPortalGateProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   // Trạng thái cục bộ nếu vừa đăng nhập xong để chạy hiệu ứng Grand Portal Reveal
   const [hasUnlocked, setHasUnlocked] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+  const [userSelectedTab, setUserSelectedTab] = useState<'login' | 'register' | null>(null);
+  const [prevDefaultTab, setPrevDefaultTab] = useState(defaultTab);
+  if (defaultTab !== prevDefaultTab) {
+    setPrevDefaultTab(defaultTab);
+    setUserSelectedTab(null);
+  }
+  const activeTab = userSelectedTab ?? defaultTab;
+  const setActiveTab = (tab: 'login' | 'register') => setUserSelectedTab(tab);
+
   const [isRevealing, setIsRevealing] = useState(false);
 
   // Form states & phân quyền vai trò
@@ -38,32 +56,6 @@ export function AuthPortalGate({ isAuthenticated, children }: AuthPortalGateProp
   const [shakeError, setShakeError] = useState(false);
 
   const setFavoriteScentStore = useCartStore((state) => state.setFavoriteScent);
-
-  // Kiểm tra trạng thái đã mở khóa từ cookie hoặc localStorage qua External Store
-  const isStorageUnlocked = useSyncExternalStore(
-    (onStoreChange) => {
-      if (typeof window === 'undefined') return () => {};
-      window.addEventListener('storage', onStoreChange);
-      return () => window.removeEventListener('storage', onStoreChange);
-    },
-    () => {
-      if (typeof window === 'undefined') return false;
-      try {
-        const local =
-          typeof window.localStorage !== 'undefined' && window.localStorage !== null
-            ? window.localStorage.getItem('sa_spa_unlocked') === 'true'
-            : false;
-        const cookie =
-          typeof document !== 'undefined'
-            ? document.cookie.includes('sa_spa_unlocked=true')
-            : false;
-        return local || cookie;
-      } catch {
-        return false;
-      }
-    },
-    () => false,
-  );
 
   // Kích hoạt hiệu ứng "Grand Portal Reveal" (mở rèm lá, zoom vào MK SPA)
   const triggerGrandReveal = (targetPath?: string) => {
@@ -214,9 +206,9 @@ export function AuthPortalGate({ isAuthenticated, children }: AuthPortalGateProp
     setIsLoading(false);
   };
 
-  // Nếu người dùng đã xác thực, hoặc đã mở cổng, hoặc đang ở trang đăng nhập/đăng ký chuyên biệt
+  // Nếu người dùng đã xác thực, hoặc đã mở cổng trong phiên này, hoặc đang ở trang đăng nhập/đăng ký chuyên biệt
   const isDedicatedAuthPage = pathname === '/dang-nhap' || pathname === '/dang-ky';
-  if (isAuthenticated || hasUnlocked || isStorageUnlocked || isDedicatedAuthPage) {
+  if (!isForcedOpen && (isAuthenticated || hasUnlocked || isDedicatedAuthPage)) {
     return <>{children}</>;
   }
 
@@ -312,6 +304,18 @@ export function AuthPortalGate({ isAuthenticated, children }: AuthPortalGateProp
         <div className="pointer-events-none absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-[#D4AF37]/40 bg-[#141C17] px-4 py-1 text-[10px] tracking-widest text-[#D4AF37] uppercase">
           <span>🌿</span> Cổng Vào MK SPA <span>🌿</span>
         </div>
+
+        {/* Nút đóng nếu đang mở cưỡng bức từ Header */}
+        {onCloseGate && (
+          <button
+            type="button"
+            onClick={onCloseGate}
+            className="absolute top-4 right-4 z-20 rounded-full border border-[#D4AF37]/40 bg-white/10 p-2 text-xs text-[#FAF7F2] hover:bg-white/20"
+            title="Đóng cổng đăng nhập"
+          >
+            ✕
+          </button>
+        )}
 
         {/* Tiêu đề & Lời dẫn nhập */}
         <div className="mt-2 text-center">

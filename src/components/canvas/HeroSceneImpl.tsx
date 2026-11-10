@@ -29,7 +29,7 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
       0.1,
       100,
     );
-    camera.position.set(0, 0.2, 4.4);
+    camera.position.set(0, 0.4, 4.2);
 
     // 2. Renderer
     let renderer: THREE.WebGLRenderer;
@@ -46,115 +46,120 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
     renderer.setPixelRatio(dpr);
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.25;
     container.appendChild(renderer.domElement);
 
-    // 3. Lighting: Warm natural spa sanctuary ambience
-    const ambientLight = new THREE.AmbientLight(0xfff8f0, 1.4);
+    // 3. Lighting: Warm natural morning sunlight & ambient spa glow
+    const ambientLight = new THREE.AmbientLight(0xfff9f2, 1.8);
     scene.add(ambientLight);
 
-    const mainSun = new THREE.DirectionalLight(0xffedd5, 2.4);
-    mainSun.position.set(4, 5, 4);
+    const mainSun = new THREE.DirectionalLight(0xfff3db, 3.2);
+    mainSun.position.set(4, 6, 4);
     scene.add(mainSun);
 
-    const sageRimLight = new THREE.DirectionalLight(0x7da48d, 1.6);
-    sageRimLight.position.set(-4, -2, -2);
-    scene.add(sageRimLight);
+    const roseGlowLight = new THREE.PointLight(0xffb3c6, 2.5, 6);
+    roseGlowLight.position.set(0, 1.0, 1.2);
+    scene.add(roseGlowLight);
 
-    const warmUnderlight = new THREE.PointLight(0xd99b4b, 1.2, 5);
-    warmUnderlight.position.set(0, -1, 1);
-    scene.add(warmUnderlight);
+    const emeraldRimLight = new THREE.DirectionalLight(0x6fa889, 2.0);
+    emeraldRimLight.position.set(-4, -2, -3);
+    scene.add(emeraldRimLight);
 
-    // Master Group chứa toàn bộ tác phẩm Spa Wellness
-    const spaGroup = new THREE.Group();
-    scene.add(spaGroup);
+    // Master Group chứa Đóa Hoa Sen & Lá Thảo Mộc Spa
+    const lotusSceneGroup = new THREE.Group();
+    scene.add(lotusSceneGroup);
 
-    // 4. Tháp 3 Đá Nóng Bazan Thiền Định (Zen Basalt Hot Stones)
-    // Hàm tạo viên đá cuội bazan massage nhẵn bóng hữu cơ
-    const createBasaltStone = (scaleX: number, scaleY: number, scaleZ: number, color: number) => {
-      const geo = new THREE.SphereGeometry(1, tier === 3 ? 32 : 18, tier === 3 ? 24 : 14);
-      const pos = geo.getAttribute('position');
-      if (pos) {
-        const v = new THREE.Vector3();
-        for (let i = 0; i < pos.count; i++) {
-          v.fromBufferAttribute(pos, i);
-          // Biến dạng bất đối xứng tự nhiên của đá suối thiên nhiên
-          const noise =
-            Math.sin(v.x * 2.1) * 0.05 + Math.cos(v.z * 2.4) * 0.05 + Math.sin(v.y * 3.2) * 0.03;
-          v.multiplyScalar(1 + noise);
-          pos.setXYZ(i, v.x, v.y, v.z);
-        }
-        geo.computeVertexNormals();
+    // 4. TÁN LÁ SEN NGỌC BÍCH & NHÁNH LÁ SẢ THẢO MỘC (Herbal Leaves Base)
+    // Tán lá sen lớn nâng đỡ đóa hoa (Lotus Pad)
+    const leafGeo = new THREE.CircleGeometry(1.65, tier === 3 ? 36 : 22);
+    const leafPos = leafGeo.getAttribute('position');
+    if (leafPos) {
+      const v = new THREE.Vector3();
+      for (let i = 0; i < leafPos.count; i++) {
+        v.fromBufferAttribute(leafPos, i);
+        // Gợn sóng mép lá tự nhiên và võng nhẹ hình chiếc đĩa
+        const dist = Math.sqrt(v.x * v.x + v.y * v.y);
+        const wave = Math.sin(v.x * 4.0) * 0.04 + Math.cos(v.y * 4.0) * 0.04;
+        v.z = -Math.pow(dist / 1.65, 2) * 0.12 + wave;
+        leafPos.setXYZ(i, v.x, v.y, v.z);
       }
-      geo.scale(scaleX, scaleY, scaleZ);
+      leafGeo.computeVertexNormals();
+    }
 
-      const mat = new THREE.MeshPhysicalMaterial({
-        color,
-        roughness: 0.32,
-        metalness: 0.12,
-        clearcoat: 0.55,
-        clearcoatRoughness: 0.2,
+    const leafMat = new THREE.MeshPhysicalMaterial({
+      color: 0x3d7053,
+      roughness: 0.32,
+      metalness: 0.08,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.25,
+      side: THREE.DoubleSide,
+    });
+
+    const lotusLeafMesh = new THREE.Mesh(leafGeo, leafMat);
+    lotusLeafMesh.rotation.x = -Math.PI / 2.15;
+    lotusLeafMesh.position.set(0, -0.65, 0);
+    lotusSceneGroup.add(lotusLeafMesh);
+
+    // 2 Nhánh lá sả thảo mộc uốn cong xòe tự nhiên (Lemongrass leaves)
+    const createGrassLeaf = (scaleX: number, scaleY: number, angleZ: number, posX: number) => {
+      const gGeo = new THREE.CylinderGeometry(0.02, 0.08, 2.2, 10, 8, true);
+      const gPos = gGeo.getAttribute('position');
+      if (gPos) {
+        const v = new THREE.Vector3();
+        for (let i = 0; i < gPos.count; i++) {
+          v.fromBufferAttribute(gPos, i);
+          // Uốn cong hình chiếc lá cỏ sả
+          v.z += Math.pow((v.y + 1.1) / 2.2, 2) * 0.35;
+          v.x *= 1 - (v.y + 1.1) / 2.6; // Thuôn nhọn ở đầu lá
+          gPos.setXYZ(i, v.x, v.y, v.z);
+        }
+        gGeo.computeVertexNormals();
+      }
+      gGeo.scale(scaleX, scaleY, 0.2);
+
+      const gMat = new THREE.MeshStandardMaterial({
+        color: 0x4f8263,
+        roughness: 0.38,
+        metalness: 0.05,
+        side: THREE.DoubleSide,
       });
 
-      return new THREE.Mesh(geo, mat);
+      const gMesh = new THREE.Mesh(gGeo, gMat);
+      gMesh.position.set(posX, -0.62, 0.1);
+      gMesh.rotation.set(0.3, 0, angleZ);
+      return gMesh;
     };
 
-    // Viên đá 1 (Đá đáy lớn - Bazan than chì)
-    const baseStone = createBasaltStone(1.35, 0.42, 1.05, 0x222623);
-    baseStone.position.set(0, -0.65, 0);
-    baseStone.rotation.set(0.04, 0.2, -0.02);
-    spaGroup.add(baseStone);
+    const grass1 = createGrassLeaf(1.1, 0.95, -0.7, -0.8);
+    const grass2 = createGrassLeaf(1.0, 0.9, 0.65, 0.85);
+    lotusSceneGroup.add(grass1);
+    lotusSceneGroup.add(grass2);
 
-    // Viên đá 2 (Đá thân vừa - Cân bằng nghiêng nhẹ)
-    const midStone = createBasaltStone(1.02, 0.36, 0.82, 0x2e3530);
-    midStone.position.set(0.04, -0.22, 0.03);
-    midStone.rotation.set(-0.06, -0.35, 0.05);
-    spaGroup.add(midStone);
+    // 5. ĐÓA HOA SEN SPA NỞ RỘ RỰC RỠ (Radiant Blooming Lotus Flower)
+    const lotusFlowerGroup = new THREE.Group();
+    lotusFlowerGroup.position.set(0, -0.32, 0.05);
+    lotusSceneGroup.add(lotusFlowerGroup);
 
-    // Viên đá 3 (Đá đỉnh tròn mịn - Tĩnh tại)
-    const topStone = createBasaltStone(0.68, 0.32, 0.62, 0x3d4740);
-    topStone.position.set(-0.03, 0.15, -0.01);
-    topStone.rotation.set(0.05, 0.4, 0.02);
-    spaGroup.add(topStone);
-
-    // 5. Đóa Hoa Sen Thanh Khiết (Serene Lotus Flower)
-    const lotusGroup = new THREE.Group();
-    lotusGroup.position.set(0.85, -0.58, 0.45);
-    lotusGroup.scale.set(0.65, 0.65, 0.65);
-    lotusGroup.rotation.set(0.12, -0.4, 0.08);
-
-    // Vật liệu cánh sen phớt hồng thanh thoát
-    const petalMaterialOuter = new THREE.MeshPhysicalMaterial({
-      color: 0xf5e8eb,
-      roughness: 0.38,
-      metalness: 0.05,
-      transmission: 0.22,
-      thickness: 0.15,
-      clearcoat: 0.3,
-      side: THREE.DoubleSide,
-    });
-
-    const petalMaterialInner = new THREE.MeshPhysicalMaterial({
-      color: 0xecd1d8,
-      roughness: 0.42,
-      metalness: 0.05,
-      transmission: 0.18,
-      thickness: 0.12,
-      clearcoat: 0.2,
-      side: THREE.DoubleSide,
-    });
-
-    // Tạo hình cánh sen dạng mo cong
-    const createPetalMesh = (material: THREE.Material, scale = 1) => {
-      const geo = new THREE.SphereGeometry(0.35, 12, 10);
-      geo.scale(0.48 * scale, 1.1 * scale, 0.14 * scale);
+    // Hàm tạo cánh sen hình mo cong thanh tú
+    const createPetalMesh = (
+      width: number,
+      height: number,
+      depth: number,
+      material: THREE.Material,
+    ) => {
+      const geo = new THREE.SphereGeometry(1, 16, 14);
+      geo.scale(width, height, depth);
       const pos = geo.getAttribute('position');
       if (pos) {
         const v = new THREE.Vector3();
         for (let i = 0; i < pos.count; i++) {
           v.fromBufferAttribute(pos, i);
-          // Uốn cong cánh sen nhẹ về phía ngoài
-          v.z += (v.y + 0.3) * (v.y + 0.3) * 0.18;
+          // Uốn cong cánh sen ra ngoài và vuốt nhọn đỉnh
+          const t = (v.y + height) / (height * 2);
+          v.z += Math.pow(t, 2) * (depth * 2.5);
+          if (v.y > height * 0.2) {
+            v.x *= 1 - (v.y - height * 0.2) / (height * 1.2);
+          }
           pos.setXYZ(i, v.x, v.y, v.z);
         }
         geo.computeVertexNormals();
@@ -162,110 +167,175 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
       return new THREE.Mesh(geo, material);
     };
 
-    // Tầng cánh ngoài (8 cánh nở xòe)
-    const outerPetalsCount = 8;
-    for (let i = 0; i < outerPetalsCount; i++) {
-      const angle = (i / outerPetalsCount) * Math.PI * 2;
-      const petal = createPetalMesh(petalMaterialOuter, 1.05);
-      petal.position.set(Math.cos(angle) * 0.22, 0.06, Math.sin(angle) * 0.22);
-      petal.rotation.y = -angle + Math.PI / 2;
-      petal.rotation.x = 0.55; // Nở mở ra
-      lotusGroup.add(petal);
-    }
-
-    // Tầng cánh trong (6 cánh ôm e ấp)
-    const innerPetalsCount = 6;
-    for (let i = 0; i < innerPetalsCount; i++) {
-      const angle = (i / innerPetalsCount) * Math.PI * 2 + 0.35;
-      const petal = createPetalMesh(petalMaterialInner, 0.85);
-      petal.position.set(Math.cos(angle) * 0.12, 0.14, Math.sin(angle) * 0.12);
-      petal.rotation.y = -angle + Math.PI / 2;
-      petal.rotation.x = 0.28; // Ôm đứng hơn
-      lotusGroup.add(petal);
-    }
-
-    // Nhụy sen vàng hổ phách (Golden Amber Stamen Center)
-    const stamenGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.12, 16);
-    const stamenMat = new THREE.MeshStandardMaterial({
-      color: 0xd4af37,
-      roughness: 0.3,
-      metalness: 0.4,
-    });
-    const stamenMesh = new THREE.Mesh(stamenGeo, stamenMat);
-    stamenMesh.position.set(0, 0.14, 0);
-    lotusGroup.add(stamenMesh);
-
-    spaGroup.add(lotusGroup);
-
-    // 6. Đĩa Nước Thủy Liệu Pháp & Gợn Sóng (Reflective Water Ripples)
-    const waterBaseGeo = new THREE.CircleGeometry(1.9, tier === 3 ? 32 : 18);
-    const waterBaseMat = new THREE.MeshPhysicalMaterial({
-      color: 0x3d6756,
-      roughness: 0.1,
-      metalness: 0.1,
-      transmission: 0.75,
-      ior: 1.333,
-      transparent: true,
-      opacity: 0.7,
+    // Vật liệu cánh sen phớt hồng ngọc sáng trong (Translucent Lotus Petal)
+    const outerPetalMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xffd9e2,
+      emissive: 0x6e2c3c,
+      emissiveIntensity: 0.18,
+      roughness: 0.25,
+      metalness: 0.04,
+      transmission: 0.32,
+      thickness: 0.25,
+      clearcoat: 0.65,
+      clearcoatRoughness: 0.15,
       side: THREE.DoubleSide,
     });
-    const waterBase = new THREE.Mesh(waterBaseGeo, waterBaseMat);
-    waterBase.rotation.x = -Math.PI / 2;
-    waterBase.position.y = -0.88;
-    spaGroup.add(waterBase);
 
-    // Vòng sóng nước đồng tâm lan tỏa (Concentric Water Ripples)
-    const ripple1Geo = new THREE.RingGeometry(1.0, 1.03, 32);
-    const ripple1Mat = new THREE.MeshBasicMaterial({
-      color: 0xcfe6dc,
+    const midPetalMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xffecf0,
+      emissive: 0x8a384b,
+      emissiveIntensity: 0.15,
+      roughness: 0.22,
+      metalness: 0.04,
+      transmission: 0.38,
+      thickness: 0.2,
+      clearcoat: 0.7,
+      clearcoatRoughness: 0.12,
+      side: THREE.DoubleSide,
+    });
+
+    const innerPetalMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xfff5f7,
+      emissive: 0xa84257,
+      emissiveIntensity: 0.12,
+      roughness: 0.2,
+      metalness: 0.02,
+      transmission: 0.42,
+      thickness: 0.15,
+      clearcoat: 0.75,
+      clearcoatRoughness: 0.1,
+      side: THREE.DoubleSide,
+    });
+
+    // Mảng lưu trữ cánh sen để tạo hiệu ứng thở hé mở (breathing petals)
+    const animatedPetals: { mesh: THREE.Mesh; baseRotX: number; speedOffset: number }[] = [];
+
+    // Tầng cánh ngoài (10 cánh lớn nở xòe 48 độ)
+    const outerCount = 10;
+    for (let i = 0; i < outerCount; i++) {
+      const angle = (i / outerCount) * Math.PI * 2;
+      const petal = createPetalMesh(0.24, 0.58, 0.06, outerPetalMaterial);
+      petal.position.set(Math.cos(angle) * 0.42, -0.05, Math.sin(angle) * 0.42);
+      petal.rotation.y = -angle + Math.PI / 2;
+      petal.rotation.x = 0.85; // Cánh xòe rộng
+      lotusFlowerGroup.add(petal);
+      animatedPetals.push({ mesh: petal, baseRotX: 0.85, speedOffset: i * 0.2 });
+    }
+
+    // Tầng cánh giữa (8 cánh vừa nở 32 độ)
+    const midCount = 8;
+    for (let i = 0; i < midCount; i++) {
+      const angle = (i / midCount) * Math.PI * 2 + 0.35;
+      const petal = createPetalMesh(0.21, 0.52, 0.055, midPetalMaterial);
+      petal.position.set(Math.cos(angle) * 0.26, 0.08, Math.sin(angle) * 0.26);
+      petal.rotation.y = -angle + Math.PI / 2;
+      petal.rotation.x = 0.52; // Cánh nghiêng vừa
+      lotusFlowerGroup.add(petal);
+      animatedPetals.push({ mesh: petal, baseRotX: 0.52, speedOffset: i * 0.25 });
+    }
+
+    // Tầng cánh trong (6 cánh thanh tú ôm e ấp 18 độ)
+    const innerCount = 6;
+    for (let i = 0; i < innerCount; i++) {
+      const angle = (i / innerCount) * Math.PI * 2 + 0.65;
+      const petal = createPetalMesh(0.17, 0.45, 0.05, innerPetalMaterial);
+      petal.position.set(Math.cos(angle) * 0.14, 0.18, Math.sin(angle) * 0.14);
+      petal.rotation.y = -angle + Math.PI / 2;
+      petal.rotation.x = 0.28; // Cánh đứng hơn
+      lotusFlowerGroup.add(petal);
+      animatedPetals.push({ mesh: petal, baseRotX: 0.28, speedOffset: i * 0.3 });
+    }
+
+    // Gương sen & Nhụy vàng óng ánh hổ phách (Golden Amber Stamen Center)
+    const centerReceptacleGeo = new THREE.CylinderGeometry(0.18, 0.12, 0.22, 20);
+    const centerReceptacleMat = new THREE.MeshStandardMaterial({
+      color: 0xf5b838,
+      roughness: 0.25,
+      metalness: 0.25,
+    });
+    const centerReceptacle = new THREE.Mesh(centerReceptacleGeo, centerReceptacleMat);
+    centerReceptacle.position.set(0, 0.22, 0);
+    lotusFlowerGroup.add(centerReceptacle);
+
+    // Hạt sen vàng điểm trên gương sen
+    const seedGeo = new THREE.SphereGeometry(0.025, 8, 8);
+    const seedMat = new THREE.MeshBasicMaterial({ color: 0x6e4f16 });
+    for (let i = 0; i < 7; i++) {
+      const angle = (i / 7) * Math.PI * 2;
+      const seed = new THREE.Mesh(seedGeo, seedMat);
+      seed.position.set(Math.cos(angle) * 0.09, 0.34, Math.sin(angle) * 0.09);
+      lotusFlowerGroup.add(seed);
+    }
+
+    // 6. ĐĨA NƯỚC NGỌC BÍCH & GỢN SÓNG ĐỒNG TÂM (Rippling Jade Pond)
+    const waterDiskGeo = new THREE.CircleGeometry(2.1, tier === 3 ? 36 : 20);
+    const waterDiskMat = new THREE.MeshPhysicalMaterial({
+      color: 0x477864,
+      roughness: 0.08,
+      metalness: 0.1,
+      transmission: 0.82,
+      ior: 1.333,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.75,
+      side: THREE.DoubleSide,
+    });
+    const waterDisk = new THREE.Mesh(waterDiskGeo, waterDiskMat);
+    waterDisk.rotation.x = -Math.PI / 2;
+    waterDisk.position.y = -0.72;
+    lotusSceneGroup.add(waterDisk);
+
+    // Vòng sóng nước đồng tâm co giãn nhẹ
+    const ripple1Geo = new THREE.RingGeometry(1.2, 1.23, 36);
+    const ripple1Mat = new THREE.MeshBasicMaterial({
+      color: 0xd6ede1,
+      transparent: true,
+      opacity: 0.45,
       side: THREE.DoubleSide,
     });
     const ripple1 = new THREE.Mesh(ripple1Geo, ripple1Mat);
     ripple1.rotation.x = -Math.PI / 2;
-    ripple1.position.y = -0.87;
-    spaGroup.add(ripple1);
+    ripple1.position.y = -0.71;
+    lotusSceneGroup.add(ripple1);
 
-    const ripple2Geo = new THREE.RingGeometry(1.4, 1.425, 32);
+    const ripple2Geo = new THREE.RingGeometry(1.7, 1.725, 36);
     const ripple2Mat = new THREE.MeshBasicMaterial({
       color: 0xd99b4b,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.3,
       side: THREE.DoubleSide,
     });
     const ripple2 = new THREE.Mesh(ripple2Geo, ripple2Mat);
     ripple2.rotation.x = -Math.PI / 2;
-    ripple2.position.y = -0.87;
-    spaGroup.add(ripple2);
+    ripple2.position.y = -0.71;
+    lotusSceneGroup.add(ripple2);
 
-    // 7. Làn Sương Khói Tinh Dầu & Hạt Thảo Mộc (Herbal Aromatherapy Steam & Mist)
-    const mistCount = tier === 3 ? 55 : 25;
-    const mistPositions = new Float32Array(mistCount * 3);
-    const mistSpeeds = new Float32Array(mistCount);
-    const mistOffsets = new Float32Array(mistCount);
+    // 7. HẠT PHẤN SEN VÀNG & LÀN SƯƠNG TINH DẦU (Golden Pollen & Morning Mist)
+    const particleCount = tier === 3 ? 65 : 30;
+    const particlePos = new Float32Array(particleCount * 3);
+    const particleSpeeds = new Float32Array(particleCount);
+    const particleAngles = new Float32Array(particleCount);
 
-    for (let i = 0; i < mistCount; i++) {
-      mistPositions[i * 3] = (Math.random() - 0.5) * 0.9;
-      mistPositions[i * 3 + 1] = 0.2 + Math.random() * 1.5;
-      mistPositions[i * 3 + 2] = (Math.random() - 0.5) * 0.9;
-      mistSpeeds[i] = 0.15 + Math.random() * 0.25;
-      mistOffsets[i] = Math.random() * Math.PI * 2;
+    for (let i = 0; i < particleCount; i++) {
+      particlePos[i * 3] = (Math.random() - 0.5) * 1.2;
+      particlePos[i * 3 + 1] = 0.1 + Math.random() * 1.6;
+      particlePos[i * 3 + 2] = (Math.random() - 0.5) * 1.2;
+      particleSpeeds[i] = 0.18 + Math.random() * 0.25;
+      particleAngles[i] = Math.random() * Math.PI * 2;
     }
 
-    const mistGeo = new THREE.BufferGeometry();
-    mistGeo.setAttribute('position', new THREE.BufferAttribute(mistPositions, 3));
+    const particleGeo = new THREE.BufferGeometry();
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
 
-    const mistMat = new THREE.PointsMaterial({
-      color: 0xfff4e6,
-      size: 0.07,
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xffebaa,
+      size: 0.08,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending,
     });
 
-    const mistPoints = new THREE.Points(mistGeo, mistMat);
-    spaGroup.add(mistPoints);
+    const pollenPoints = new THREE.Points(particleGeo, particleMat);
+    lotusSceneGroup.add(pollenPoints);
 
     // 8. GSAP ScrollTrigger: Xoay toàn cảnh điện ảnh khi cuộn trang
     let scrollTriggerInstance: ScrollTrigger | null = null;
@@ -277,9 +347,9 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
         scrub: 1.2,
         onUpdate: (self) => {
           const progress = self.progress;
-          spaGroup.rotation.y = progress * Math.PI * 0.65;
-          spaGroup.position.y = -progress * 0.45;
-          camera.position.z = 4.4 + progress * 0.6;
+          lotusSceneGroup.rotation.y = progress * Math.PI * 0.75;
+          lotusSceneGroup.position.y = -progress * 0.45;
+          camera.position.z = 4.2 + progress * 0.5;
         },
       });
     }
@@ -294,7 +364,7 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = (e.clientY / window.innerHeight) * 2 - 1;
       targetTiltX = ny * 0.22;
-      targetTiltY = nx * 0.28;
+      targetTiltY = nx * 0.3;
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
@@ -318,7 +388,7 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
     };
     document.addEventListener('visibilitychange', handleVisibility);
 
-    // 10. Render Loop: Nhịp thở tĩnh lặng & làn khói tinh dầu bốc lên
+    // 10. Render Loop: Nhịp thở đóa sen & gợn sóng lan tỏa
     let animationFrameId: number;
     const clock = new THREE.Clock();
 
@@ -333,47 +403,50 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
       currentTiltX += (targetTiltX - currentTiltX) * 0.05;
       currentTiltY += (targetTiltY - currentTiltY) * 0.05;
 
-      spaGroup.rotation.x = currentTiltX * 0.6;
-      spaGroup.rotation.y += delta * 0.12 + (currentTiltY - spaGroup.rotation.y * 0.2) * 0.02;
+      lotusSceneGroup.rotation.x = currentTiltX * 0.55;
+      lotusSceneGroup.rotation.y +=
+        delta * 0.14 + (currentTiltY - lotusSceneGroup.rotation.y * 0.2) * 0.03;
 
-      // Nhịp thở tĩnh lặng nhẹ nhàng như nổi trên mặt nước (gentle zen breathing)
-      spaGroup.position.y = Math.sin(elapsed * 1.2) * 0.025;
+      // Nhịp thở bồng bềnh lơ lửng trên mặt nước (floating zen bobbing)
+      lotusSceneGroup.position.y = Math.sin(elapsed * 1.3) * 0.035;
 
-      // Gợn sóng nước gợn mở rộng
-      const r1Scale = 1 + Math.sin(elapsed * 1.5) * 0.05;
+      // Cánh sen thở khẽ hé mở nhịp nhàng
+      const breathVal = Math.sin(elapsed * 1.2) * 0.045;
+      for (const item of animatedPetals) {
+        item.mesh.rotation.x =
+          item.baseRotX + breathVal + Math.sin(elapsed * 1.5 + item.speedOffset) * 0.015;
+      }
+
+      // Gợn sóng nước lan tỏa
+      const r1Scale = 1 + Math.sin(elapsed * 1.6) * 0.06;
       ripple1.scale.set(r1Scale, r1Scale, 1);
-      ripple1Mat.opacity = 0.25 + Math.sin(elapsed * 1.5) * 0.15;
+      ripple1Mat.opacity = 0.3 + Math.sin(elapsed * 1.6) * 0.15;
 
-      const r2Scale = 1 + Math.sin(elapsed * 1.5 + 1.2) * 0.06;
+      const r2Scale = 1 + Math.sin(elapsed * 1.6 + 1.2) * 0.08;
       ripple2.scale.set(r2Scale, r2Scale, 1);
-      ripple2Mat.opacity = 0.18 + Math.sin(elapsed * 1.5 + 1.2) * 0.1;
+      ripple2Mat.opacity = 0.2 + Math.sin(elapsed * 1.6 + 1.2) * 0.1;
 
-      // Đóa hoa sen khẽ đung đưa êm dịu
-      lotusGroup.rotation.z = 0.08 + Math.sin(elapsed * 1.4) * 0.03;
-
-      // Làn sương khói tinh dầu thảo mộc bay là là bốc lên
-      const posAttr = mistGeo.getAttribute('position') as THREE.BufferAttribute | undefined;
+      // Hạt phấn sen vàng bốc lên lơ lửng
+      const posAttr = particleGeo.getAttribute('position') as THREE.BufferAttribute | undefined;
       if (posAttr && posAttr.array) {
         const positions = posAttr.array as Float32Array;
-        for (let i = 0; i < mistCount; i++) {
+        for (let i = 0; i < particleCount; i++) {
           const idx = i * 3;
           const currentY = positions[idx + 1];
           const currentX = positions[idx];
           const currentZ = positions[idx + 2];
-          const speed = mistSpeeds[i] ?? 0.2;
-          const offset = mistOffsets[i] ?? 0;
+          const speed = particleSpeeds[i] ?? 0.2;
+          const angle = particleAngles[i] ?? 0;
 
           if (currentY !== undefined && currentX !== undefined && currentZ !== undefined) {
-            // Tăng chiều cao Y
             let newY = currentY + delta * speed;
-            let newX = currentX + Math.sin(elapsed * 1.8 + offset) * 0.0015;
-            let newZ = currentZ + Math.cos(elapsed * 1.6 + offset) * 0.0015;
+            let newX = currentX + Math.sin(elapsed * 1.8 + angle) * 0.002;
+            let newZ = currentZ + Math.cos(elapsed * 1.6 + angle) * 0.002;
 
-            // Vòng lặp sương khi bay lên quá cao
             if (newY > 1.8) {
-              newY = 0.2;
-              newX = (Math.random() - 0.5) * 0.6;
-              newZ = (Math.random() - 0.5) * 0.6;
+              newY = 0.15;
+              newX = (Math.random() - 0.5) * 0.8;
+              newZ = (Math.random() - 0.5) * 0.8;
             }
 
             positions[idx] = newX;
@@ -397,28 +470,30 @@ export function HeroSceneImpl({ tier }: HeroSceneImplProps) {
       document.removeEventListener('visibilitychange', handleVisibility);
       if (scrollTriggerInstance) scrollTriggerInstance.kill();
 
-      // Dispose toàn bộ hình học và vật liệu
-      baseStone.geometry.dispose();
-      (baseStone.material as THREE.Material).dispose();
-      midStone.geometry.dispose();
-      (midStone.material as THREE.Material).dispose();
-      topStone.geometry.dispose();
-      (topStone.material as THREE.Material).dispose();
+      leafGeo.dispose();
+      leafMat.dispose();
+      grass1.geometry.dispose();
+      (grass1.material as THREE.Material).dispose();
+      grass2.geometry.dispose();
+      (grass2.material as THREE.Material).dispose();
 
-      petalMaterialOuter.dispose();
-      petalMaterialInner.dispose();
-      stamenGeo.dispose();
-      stamenMat.dispose();
+      outerPetalMaterial.dispose();
+      midPetalMaterial.dispose();
+      innerPetalMaterial.dispose();
+      centerReceptacleGeo.dispose();
+      centerReceptacleMat.dispose();
+      seedGeo.dispose();
+      seedMat.dispose();
 
-      waterBaseGeo.dispose();
-      waterBaseMat.dispose();
+      waterDiskGeo.dispose();
+      waterDiskMat.dispose();
       ripple1Geo.dispose();
       ripple1Mat.dispose();
       ripple2Geo.dispose();
       ripple2Mat.dispose();
 
-      mistGeo.dispose();
-      mistMat.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
 
       renderer.dispose();
 
