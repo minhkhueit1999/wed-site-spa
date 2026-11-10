@@ -102,6 +102,34 @@ Tài khoản demo sẵn sàng:
 
 ---
 
+### Bước 6 (Mở rộng) — Hệ Sinh Thái E-Commerce Thảo Mộc Sả Spa & Cổng Xác Thực Bắt Buộc
+
+1. **Trải nghiệm Cổng Xác Thực Bắt Buộc (AuthPortalGate)**:
+   - Mở cửa sổ ẩn danh mới vào `http://localhost:3000`:
+     - Cổng vào Sả Spa xuất hiện với phong cách Indochine Glassmorphism, bóng lá đung đưa, làn sương mờ và chuông xoay 432Hz.
+     - Thử chuyển đổi tab **"Đăng Ký Thành Viên"** với animation mượt mà, chọn nhanh nốt hương yêu thích (_Sả Chanh, Hoa Nhài, Gỗ Trầm, Bạc Hà_).
+     - Bấm nút **`👑 Vào Nhanh (Khách VIP Demo)`**: Cánh rèm lá tách đôi (Grand Portal Reveal) kèm camera zoom-through đưa thẳng vào không gian chính.
+2. **Khám phá Cửa hàng Thảo Mộc (`/shop`) & Living Product Cards**:
+   - Truy cập `/shop`:
+     - Thử gõ tìm kiếm tức thì `sả chanh` trong ô Sensory Search: danh mục lọc ngay lập tức.
+     - Rê chuột qua các thẻ sản phẩm: quan sát hiệu ứng **3D Tilt tách lớp Z-depth (`translateZ(45px)`)**, luồng sáng **Liquid Sheen** lướt qua thân chai, và nhấp **"🌸 Nốt hương"** để bung nở 3 tầng hương.
+     - Nhấp **"👁 Xem nhanh"**: Mở modal 3D, thử đổi chế độ ánh sáng **`🌙 Không Gian Spa Ấm`**, xem nghi thức 3 bước dưỡng tại nhà và chọn dung tích.
+     - Nhấp **"Thêm Vào Giỏ Hàng"**: Hạt thảo mộc bay theo quỹ đạo **Parabolic Fly-to-Cart** vào biểu tượng giỏ hàng trên Header.
+3. **Giỏ hàng trượt `CartDrawer`, Mã ưu đãi & Thanh toán VietQR**:
+   - Mở giỏ hàng trượt từ bên phải:
+     - Quan sát thanh tiến trình chất lỏng hiển thị điều kiện Miễn phí vận chuyển và Quà tặng túi thơm.
+     - Nhập mã ưu đãi **`SASPA15`** và bấm "Áp dụng" → Nhận ngay giảm giá 15% toàn đơn.
+   - Bấm **"Tiến Hành Đặt Hàng"** sang `/checkout`:
+     - Bước 1: Gõ thử lời chúc trên thiệp thư pháp giấy dó để xem live preview theo thời gian thực.
+     - Bước 2: Chọn phương thức vận chuyển (Hỏa tốc 2H hoặc Tiêu chuẩn).
+     - Bước 3: Chọn VietQR để xem mã QR động chuẩn xác theo tổng đơn hàng.
+     - Bấm **"Xác Nhận Đặt Hàng"**: Đón cơn mưa cánh hoa thảo mộc rơi ăn mừng (Order Confirmation Ritual) và nhận mã đơn hàng `SASPA-xxxx`.
+4. **Theo dõi hành trình 4 bước (`/orders`) & Mua lại (Re-order)**:
+   - Bấm xem lịch trình đơn hàng: Quan sát 4 bước trạng thái (_Tuyển chọn thảo mộc ➔ Đóng gói hộp tre ➔ Đang vận chuyển ➔ Trao tận tay_).
+   - Thử bấm **"Mua lại đơn này ↺"**: Toàn bộ sản phẩm được tự động nạp lại vào giỏ hàng và mở `CartDrawer` tức thì.
+
+---
+
 ## 🎯 Kết Luận Demo
 
-> _"Toàn bộ hệ sinh thái từ Trắc nghiệm → Rule Engine → Túi liệu trình → Kỹ thuật viên → Khách hàng → RAG Assistant hoạt động thông suốt, được kiểm chứng bằng 169 unit/component tests, 15/15 Playwright E2E tests, và bộ đánh giá RAG Benchmark đạt 100% độ chính xác."_
+> _"Toàn bộ hệ sinh thái Digital Wellness Platform & Sả Spa Botanical E-commerce hoạt động thông suốt từ Cổng xác thực Indochine, Trắc nghiệm thể trạng, Rule Engine tất định, Túi liệu trình, Bàn làm việc KTV đến Cửa hàng thảo mộc 16 sản phẩm sống động và thanh toán VietQR. Toàn bộ giải pháp được kiểm chứng bằng 190 unit/component tests, 27/27 Playwright E2E tests trên Desktop/Mobile/Tablet, 0 secret leak, và bộ đánh giá RAG Benchmark đạt 100% độ chính xác."_
