@@ -3,34 +3,44 @@
 [![Quality Gate](https://img.shields.io/badge/Quality%20Gate-PASSED-brightgreen.svg)](<>)
 [![Coverage: Domain](https://img.shields.io/badge/Coverage%20Domain-%3E95%25-brightgreen.svg)](<>)
 [![Coverage: Total](https://img.shields.io/badge/Coverage%20Total-78.2%25-brightgreen.svg)](<>)
-[![Playwright E2E](https://img.shields.io/badge/E2E%20Tests-24%2F24%20PASSED-success.svg)](<>)
-[![Vitest Unit/Component](https://img.shields.io/badge/Vitest-180%2F180%20PASSED-success.svg)](<>)
+[![Playwright E2E](https://img.shields.io/badge/E2E%20Tests-27%2F27%20PASSED-success.svg)](<>)
+[![Vitest Unit/Component](https://img.shields.io/badge/Vitest-190%2F190%20PASSED-success.svg)](<>)
 [![RAG Benchmark](https://img.shields.io/badge/RAG%20Recall%405-100%25-blue.svg)](<>)
 [![Creative WebGL](https://img.shields.io/badge/WebGL%203D-3--Tier%20Adaptive-8b5cf6.svg)](<>)
+[![Sả Spa E-Commerce](https://img.shields.io/badge/Sả%20Spa-Indochine%20Botanical-d4af37.svg)](<>)
 [![License: Academic](https://img.shields.io/badge/License-Academic%20Project-lightgrey.svg)](<>)
 
-> **Digital Wellness Platform** là nền tảng quản lý quy trình spa & chăm sóc cá nhân hóa chuyên sâu, giải quyết bài toán cốt lõi: **Liên kết dữ liệu giữa buổi trị liệu tại cơ sở spa (offline) và quy trình dưỡng phục hồi tại nhà (online) trong MỘT chu trình khép kín.**
+> **Digital Wellness Platform** là nền tảng quản lý quy trình spa & chăm sóc cá nhân hóa chuyên sâu, giải quyết bài toán cốt lõi: **Liên kết dữ liệu giữa buổi trị liệu tại cơ sở spa (offline) và quy trình dưỡng phục hồi tại nhà (online) trong MỘT chu trình khép kín**, tích hợp **Hệ sinh thái E-commerce thảo mộc Sả Spa** chuẩn Đông Dương xa xỉ.
 
 ---
 
 ## 🌿 Điểm Nhấn Nghiệp Vụ & Kỹ Thuật Khác Biệt
 
-1. **Khác biệt với E-commerce thông thường**:
-   - **Tuyệt đối KHÔNG có giỏ hàng, KHÔNG có danh mục bán lẻ đại trà**.
-   - Mọi sản phẩm dưỡng/thảo dược đóng vai trò **"Toa chăm sóc tại nhà"** đi kèm dịch vụ spa hoặc do chuyên viên chỉ định sau buổi trị liệu.
-2. **Khảo sát & Động cơ gợi ý tất định (Rule Engine)**:
+1. **Cổng Xác Thực Bắt Buộc (Mandatory Sả Spa Auth Gate)**:
+   - Toàn bộ khách truy cập được chào đón tại Cổng Indochine Glassmorphism với lá sả đung đưa, làn sương mờ và chuông xoay Tây Tạng 432Hz.
+   - Hỗ trợ nút **Vào Nhanh (Khách VIP Demo)** 1 chạm phục vụ giảng viên / ban giám khảo kiểm thử tức thì không cần nhập liệu.
+   - Hiệu ứng **Grand Portal Reveal**: 2 cánh rèm lá rẽ sang 2 bên kèm camera zoom-through đưa người dùng tiến vào không gian chính.
+2. **Hệ Sinh Thái Thương Mại Điện Tử Sả Spa (Sả Spa E-commerce)**:
+   - Danh mục 16 sản phẩm thảo mộc cao cấp phân bổ 4 nhóm: Tinh dầu chưng cất, Chăm sóc cơ thể, Nến thơm bấc gỗ, Trà thảo mộc dưỡng tâm.
+   - **Living Product Cards**: Hiệu ứng nâng hạ sin-wave vô tận, 3D Tilt tách lớp Z-depth (`translateZ(45px)`), luồng sáng lướt qua thân chai (Liquid Sheen), vòng tròn bung nở 3 tầng hương (Scent Orbit) và quỹ đạo bay parabol vào giỏ hàng (Fly-to-Cart).
+   - **Cửa hàng `/shop`**: Lọc đa chiều theo danh mục, nhu cầu, tông mùi và khoảng giá bằng `motion layout`; Ô tìm kiếm giác quan tức thì (Instant Sensory Search).
+   - **Quick View 3D Modal**: Chế độ xem ánh sáng phòng spa ấm (Dark Ambience), nghi thức dưỡng tại nhà 3 bước, chọn dung tích và mua combo đồng điệu.
+   - **Giỏ Hàng Trượt Thông Minh (`CartDrawer`)**: Rolling number counters, thanh tiến trình chất lỏng quà tặng/freeship, động cơ mã ưu đãi (`SASPA15`, `WELCOME10`).
+   - **Quy Trình Thanh Toán 3 Bước (`/checkout`)**: Hộp mây tre đan thủ công, xem trước thiệp thư pháp giấy dó theo thời gian thực, mã QR VietQR động.
+   - **Theo Dõi Đơn Hàng `/orders`**: Máy trạng thái 4 bước sinh động (_Tuyển chọn thảo mộc → Đóng gói hộp tre → Đang vận chuyển → Hoàn tất_) và nút "Mua lại đơn này" (Re-order) 1 chạm.
+3. **Khảo sát & Động cơ gợi ý tất định (Rule Engine)**:
    - Bài trắc nghiệm 3 nhánh (Da, Căng thẳng & Giấc ngủ, Cơ vai gáy) chuẩn hóa triệu chứng.
    - Thuật toán khớp luật tất định (`domain/recommendation`) tự động ghép dịch vụ và sản phẩm tương ứng, kèm giải trình lý do khoa học và tự động lọc chống chỉ định (mang thai, dị ứng tinh dầu, sốt cấp).
-3. **Túi Liệu Trình (Unified Booking)**:
+4. **Túi Liệu Trình (Unified Booking)**:
    - Khách hàng xác nhận lịch hẹn buổi đầu và nhận toàn bộ toa sản phẩm dưỡng tại nhà trong một luồng giao dịch duy nhất.
-4. **Máy trạng thái vòng đời khách hàng (State Machine)**:
+5. **Máy trạng thái vòng đời khách hàng (State Machine)**:
    - Quản lý trạng thái phác đồ qua State Machine thuần túy (`NEW` → `ASSESSED` → `RECOMMENDED` → `BUNDLE_CONFIRMED` → `IN_TREATMENT` → `HOME_CARE` → `REASSESSMENT` → `COMPLETED`), có guard kiểm tra và lưu vết lịch sử (`PlanStateHistory`).
-5. **Bàn làm việc Kỹ thuật viên (Therapist Console)**:
+6. **Bàn làm việc Kỹ thuật viên (Therapist Console)**:
    - Chuyên viên xem hồ sơ sức khỏe, ghi nhận nhật ký buổi trị liệu (`SessionLog`), theo dõi tiến triển và chỉ định sản phẩm dưỡng tiếp theo với cơ chế chặn sản phẩm chống chỉ định theo thời gian thực.
-6. **Trợ lý tư vấn AI RAG an toàn & Trích nguồn**:
+7. **Trợ lý tư vấn AI RAG an toàn & Trích nguồn**:
    - Tra cứu tài liệu spa bằng kỹ thuật Hybrid Retrieval (Cosine Similarity + BM25 Reciprocal Rank Fusion).
    - Tự động nhận diện cờ đỏ y tế khẩn cấp và Prompt Injection để xử lý an toàn ngay tại Pre-Check (Zero PII, không gọi LLM).
-7. **Không gian số Immersive 3D & WebGL Shaders (Chuẩn Awwwards / FWA)**:
+8. **Không gian số Immersive 3D & WebGL Shaders (Chuẩn Awwwards / FWA)**:
    - **3-Tier Adaptive Quality System**: Tự động nhận diện phần cứng GPU và điều chỉnh chất lượng hình ảnh (Tier 3 Desktop/dpr 2, Tier 2 Mobile/dpr 1, Tier 1 Static Fallback).
    - **Tác phẩm điêu khắc 3D Zen Pebble**: Khối đá cuội hữu cơ tương tác con trỏ vật lý và camera scrollytelling theo tiến trình cuộn trang.
    - **Mặt nước gợn sóng & Cực quang WebGL**: Shader Simplex Noise 2D/3D với khúc xạ quang học ánh sáng và phản hồi con trỏ chuột (`uMouse`, `uVelocity`).

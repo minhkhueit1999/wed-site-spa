@@ -172,3 +172,17 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **Signature Spa Moments & BreathingOrb3D** | Đã hoàn thành | Khối cầu 3D nhịp thở 4-7-8 trên `/tai-khoan`, Z-depth quiz transitions, ritual reveal trên `/ket-qua`, Magnetic button và Tilt card.           |
 | **Display Mode Switcher & Fallback**       | Đã hoàn thành | Nút chuyển chế độ Sống động / Tiêu chuẩn / Tĩnh trên Header, phục hồi mất ngữ cảnh WebGL, lưu trạng thái localStorage `spa_motion_mode`.       |
 | **Bộ kiểm thử tự động & E2E Matrix**       | Đã hoàn thành | 180/180 Vitest unit/component tests xanh; 24/24 Playwright E2E tests xanh trên 3 thiết bị (Desktop Chromium, Mobile Pixel 5, Tablet 768px).    |
+
+---
+
+## E-commerce & Sả Spa Experience (Indochine Botanical Luxury)
+
+| Hạng mục                                         | Trạng thái    | Ghi chú & Chi tiết kiến trúc                                                                                                                                            |
+| :----------------------------------------------- | :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Cổng Xác Thực Bắt Buộc (Mandatory Auth Gate)** | Đã hoàn thành | `AuthPortalGate` bảo vệ toàn site, phong cách Indochine Glassmorphism, chọn hương thảo mộc, nút 1 chạm VIP Demo, hiệu ứng Grand Portal Reveal mở rèm lá sang 2 bên.     |
+| **Không Gian Sả Spa Đa Giác Quan**               | Đã hoàn thành | Bóng nắng xuyên tán lá (Komorebi), bụi phấn hoa bay lơ lửng, mặt nước gợn sóng khi rê chuột, chuông xoay Tây Tạng 432Hz & tiếng suối tự tổng hợp qua Web Audio API.     |
+| **Hình Ảnh Sản Phẩm Sống Động (Living Cards)**   | Đã hoàn thành | 16 sản phẩm Sả Spa, Idle Levitation sin-wave, 3D Tilt Z-depth (translateZ 45px), Liquid Sheen lướt sáng, Scent Notes Orbit bung nở 3 tầng hương, Parabolic Fly-to-Cart. |
+| **Cửa Hàng & Bộ Lọc Đa Chiều (`/shop`)**         | Đã hoàn thành | Lọc Nhu cầu/Tông mùi/Giá qua `motion layout`, Tìm kiếm tức thì Sensory Search, Quick View 3D Modal với chế độ Dark Ambience & Nghi thức dưỡng tại nhà 3 bước.           |
+| **Giỏ Hàng & Danh Sách Yêu Thích**               | Đã hoàn thành | `CartDrawer` trượt phải, Rolling Counter, Thanh tiến trình Free Shipping & Túi thơm chất lỏng, Mã giảm giá tự động (`SASPA15`, `WELCOME10`), Wishlist cánh hoa.         |
+| **Thanh Toán Hộp Tre & Lịch Sử Đơn Hàng**        | Đã hoàn thành | Checkout 3 bước (`/checkout`), Hộp quà mây tre & Thiệp tay thư pháp xem trước trực tiếp, VietQR động, Mưa cánh hoa, Theo dõi tiến trình 4 bước đơn hàng tại `/orders`.  |
+| **Chất Lượng & Kiểm Thử Toàn Diện**              | Đã hoàn thành | **190/190 Vitest tests passed** (36 test files); **27/27 Playwright E2E tests passed** (7 journeys x Desktop/Mobile/Tablet); **0 secret leaks**; **40 Next.js routes**. |

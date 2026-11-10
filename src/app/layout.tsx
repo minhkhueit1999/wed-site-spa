@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { Be_Vietnam_Pro, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/layout/AppProviders';
+import { auth } from '@/infrastructure/auth/auth';
 
 const vietnamSans = Be_Vietnam_Pro({
   weight: ['400', '500', '600', '700'],
@@ -18,19 +20,30 @@ const playfairSerif = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Digital Wellness Platform — Chăm sóc Cá nhân hóa từ Spa đến Nhà',
+  title:
+    'Sả Spa Botanical | Digital Wellness Platform — Không Gian Thương Mại Điện Tử & Trị Liệu Đông Dương Cao Cấp',
   description:
-    'Hệ thống quản lý liệu trình và chăm sóc cá nhân hóa, kết hợp phác đồ tại spa cùng toa dưỡng tại nhà.',
+    'Hệ sinh thái sản phẩm spa thảo mộc cao cấp Sả Spa: tinh dầu chưng cất, nến thơm bấc gỗ, muối tắm cổ truyền và trà thảo mộc dưỡng tâm.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+  const cookieStore = await cookies();
+  const isUnlockedCookie = cookieStore.get('sa_spa_unlocked')?.value === 'true';
+
   return (
     <html
       lang="vi"
       className={`${vietnamSans.variable} ${playfairSerif.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-[#FAF7F2] text-[#2B2622]">
-        <AppProviders>{children}</AppProviders>
+        <AppProviders
+          isAuthenticated={!!session?.user || isUnlockedCookie}
+          userEmail={session?.user?.email}
+          userName={session?.user?.name}
+        >
+          {children}
+        </AppProviders>
       </body>
     </html>
   );

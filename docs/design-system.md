@@ -132,3 +132,27 @@ Hệ thống trải nghiệm xúc giác số (tactile digital space) lấy cảm
 1. **3D Diagnostic Quiz Transition**: Hiệu ứng chuyển thẻ trắc nghiệm có chiều sâu Z-axis kết hợp elevation spring.
 2. **Ritual Reveal (`/ket-qua`)**: Hiệu ứng mở phác đồ trị liệu kết hợp ánh sáng ấm lan tỏa (holographic/warm wash).
 3. **BreathingOrb3D**: Khối cầu năng lượng 3D dẫn nhịp thở 4-7-8 (Hít vào 4s -> Giữ hơi 7s -> Thở ra 8s) hỗ trợ tĩnh tâm cho khách hàng trên `/tai-khoan` và `/trieu-chung`. Có kèm ARIA live region và nút chuyển sang 2D canvas.
+
+---
+
+## 8. Sả Spa Indochine Botanical Luxury & Living E-commerce Visuals
+
+### 8.1. Bảng Màu Đông Dương & Thảo Mộc (Sả Spa Palette)
+
+- **Moss Green (Rêu trầm)**: `#1F2B24` / `#2A3B31` — Chiều sâu của khu vườn thảo mộc râm mát.
+- **Deep Forest (Đêm nhiệt đới)**: `#141C17` — Lớp nền cổng chào và tương phản không gian.
+- **Antique Gold (Hoàng thổ / Ánh đồng Đông Dương)**: `#D4AF37` / `#C68B59` — Viền kim loại mờ, điểm nhấn vương giả mộc mạc.
+- **Silk Cream (Lụa tơ tằm / Giấy dó)**: `#FAF7F2` / `#F4EFEA` — Bề mặt xúc giác ấm cúng.
+- **Cinnamon Terracotta (Quế nung / Gốm mộc)**: `#B85D38` — Nốt hương cay ấm và huy hiệu ưu đãi.
+
+### 8.2. Hệ Thống Hiệu Ứng Sống Động Sả Spa (Sensory Motion)
+
+1. **Dappled Sunlight (Komorebi)**: Bóng nắng xuyên qua tán lá tre, cọ, sả chuyển động nhẹ nhàng theo nhịp gió (`animation: sway-leaves 12s ease-in-out infinite`).
+2. **Ambient Botanical Mist**: Làn sương mỏng thảo mộc bốc lên từ chân trang và nền sản phẩm.
+3. **Soundscape 432Hz (Web Audio API)**: Chuông xoay Tây Tạng và tiếng suối thiền định tự tạo bằng mã thuần, không tải file âm thanh ngoài.
+4. **Living Product Visuals**:
+   - Idle breathing sin-wave levitation (`y: [-6, 6]`, `rotate: [-1, 1]`, 4s loop).
+   - 3D Parallax Tilt với độ sâu Z-separation (`translateZ(45px)` cho chai chính, thảo mộc bay tách lớp).
+   - Liquid Specular Sheen (vệt sáng vàng quét qua bề mặt thủy tinh).
+   - Scent Notes Orbit (3 nốt hương Bung nở theo quỹ đạo elip).
+   - Parabolic Fly-to-Cart (bóng sáng tinh chất bay vòng cung parabol vào icon giỏ hàng).

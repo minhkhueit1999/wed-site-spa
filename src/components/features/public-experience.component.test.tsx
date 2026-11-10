@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TrieuChungPage from '@/app/(public)/trieu-chung/page';
 
@@ -39,10 +39,11 @@ describe('Public Experience Components', () => {
       expect(screen.queryByText('Khó ngủ, ngủ chập chờn')).not.toBeInTheDocument();
     });
 
-    it('tuyệt đối KHÔNG chứa nút thêm vào giỏ hàng kiểu bán lẻ', () => {
+    it('tuyệt đối KHÔNG chứa nút thêm vào giỏ hàng kiểu bán lẻ trong danh sách gói giải pháp', () => {
       render(<TrieuChungPage />);
-      expect(screen.queryByText(/thêm vào giỏ/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/giỏ hàng/i)).not.toBeInTheDocument();
+      const mainSection = screen.getByRole('main');
+      expect(within(mainSection).queryByText(/thêm vào giỏ/i)).not.toBeInTheDocument();
+      expect(within(mainSection).queryByText(/giỏ hàng/i)).not.toBeInTheDocument();
     });
   });
 });

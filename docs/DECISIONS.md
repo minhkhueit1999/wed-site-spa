@@ -40,3 +40,29 @@ Toàn bộ 19 tài liệu tri thức trong `data/knowledge/` đều được g�
    - `faq-cham-soc-tai-nha.md`: Triết lý không bán lẻ sản phẩm đại trà & xử lý kích ứng tại nhà
 5. **Mẫu phản hồi y tế khẩn cấp**:
    - Mẫu phản hồi cố định `CANNED_RED_FLAG_RESPONSE` khuyên khách hàng đến ngay cơ sở y tế khi có dấu hiệu cờ đỏ, hoàn toàn không gọi LLM và không thu thập PII.
+
+---
+
+## Quyết định Kỹ thuật: Hệ sinh thái Sả Spa E-commerce & Mandatory Auth Gate
+
+### 1. Bối cảnh
+
+Người dùng yêu cầu nâng cấp nền tảng thành một hệ sinh thái thương mại điện tử sản phẩm spa cao cấp theo phong cách Sả Spa (Indochine Botanical Luxury). Đặc biệt, bắt buộc phải có Cổng Xác thực (Mandatory Auth Gate) chặn trước khi người dùng bước vào trang chủ và mua sắm, cùng hệ thống hình ảnh sản phẩm sống động (Living Visuals).
+
+### 2. Quyết định
+
+- **Mandatory Auth Gate**:
+  - Triển khai thành phần bảo vệ `AuthPortalGate` bọc quanh layout trải nghiệm người dùng, kết hợp trạng thái Auth session từ NextAuth/Auth.js và lưu trữ phiên.
+  - Người dùng chưa đăng nhập khi truy cập bất kỳ trang nào đều nhìn thấy Cổng chào đón Sả Spa toàn màn hình với hiệu ứng Indochine Glassmorphism, nền bóng lá sả/lá cọ đung đưa và làn sương thảo mộc.
+  - Đăng ký cho phép chọn nhanh nốt hương thảo mộc yêu thích để cá nhân hóa danh mục sản phẩm.
+  - Cung cấp nút VIP Demo để đăng nhập 1-click vào tài khoản khách VIP kiểm thử nhanh mà vẫn qua đúng luồng xác thực và kích hoạt hiệu ứng "Grand Portal Reveal" (hai tán lá tách sang hai bên, camera lướt vào không gian spa).
+- **Quản lý Giỏ hàng & Wishlist bằng Zustand (`src/infrastructure/store/useCartStore.ts`)**:
+  - Dùng Zustand với `persist` middleware lưu trạng thái vào `localStorage` (`saspa_cart_store`).
+  - Hỗ trợ giỏ hàng trượt `CartDrawer`, tăng giảm số lượng, nạp mã ưu đãi (`SASPA15`, `WELCOME10`), thanh tiến trình freeship/túi thơm dạng chất lỏng, và wishlist.
+- **Living Product Visuals**:
+  - 16 sản phẩm Sả Spa chia thành 4 danh mục chuẩn mực.
+  - 5 hiệu ứng bắt buộc: Idle Levitation, 3D Parallax Tilt Z-depth, Liquid Specular Sheen, Scent Notes Orbit, Parabolic Fly-to-Cart.
+- **Thanh âm không gian Web Audio API**:
+  - Tự tổng hợp âm thanh chuông xoay Tây Tạng 432Hz và tiếng suối chảy thiền định bằng Web Audio API thuần, không dùng file ngoài để đảm bảo tính độc lập và zero copyright.
+- **Luồng Thanh toán Hộp tre & Thiệp tay**:
+  - Hỗ trợ đóng gói quà mây tre đan thủ công, viết thiệp tay xem trước thư pháp thời gian thực, mã QR chuyển khoản động và hiệu ứng mưa cánh hoa thảo mộc.
