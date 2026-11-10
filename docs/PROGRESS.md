@@ -16,7 +16,7 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **Giai đoạn 3**  | Trải nghiệm công khai (Trang chủ, /trieu-chung, /tu-van, /ket-qua, /dich-vu/[slug])  | Đã hoàn thành | `feat/public-experience`      | Không    | Mobile-first, không giỏ hàng, SSG chuẩn, 106 tests xanh                  |
 | **Giai đoạn 4**  | Túi liệu trình (Unified booking: chọn giờ + toa tại nhà trong 1 luồng)               | Đã hoàn thành | `feat/unified-booking`        | Không    | Transaction DB an toàn, chống trùng lịch, PENDING_REVIEW, 115 tests xanh |
 | **Giai đoạn 5**  | Tài khoản khách & Treatment Tracker (Timeline, biểu đồ, xuất/xóa dữ liệu)            | Đã hoàn thành | `feat/customer-tracker`       | Không    | Cô lập dữ liệu khách, xuất JSON & xóa tài khoản, 122 tests xanh          |
-| **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Chưa bắt đầu  | `feat/therapist-console`      | -        | Chặn sản phẩm chống chỉ định                                             |
+| **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Đã hoàn thành | `feat/therapist-console`      | Không    | Chặn nghiêm ngặt sản phẩm chống chỉ định, SessionLog, 133 tests xanh     |
 | **Giai đoạn 7**  | Quản trị (/quan-tri/*: CRUD, preview luật, tri thức RAG, AuditLog)                   | Chưa bắt đầu  | `feat/admin-management`       | -        | Role ADMIN                                                               |
 | **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Chưa bắt đầu  | `feat/rag-assistant`          | -        | Recall@5 >= 0.8, 100% cờ đỏ chuẩn                                        |
 | **Giai đoạn 9**  | Chất lượng cuối & hoàn thiện (Playwright E2E 5 luồng, a11y, Lighthouse, README)      | Chưa bắt đầu  | `feat/e2e-quality-audit`      | -        | -                                                                        |
@@ -82,3 +82,14 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
   - 3 tabs: Lộ trình & Treatment Tracker, Lịch hẹn của tôi, Quyền riêng tư & Dữ liệu.
   - Modal xác nhận xóa tài khoản an toàn (`Dialog`).
 - Đạt 122 tests xanh (thêm 5 unit/integration tests + 2 component tests), coverage toàn bộ dự án đạt 88.48%.
+
+### Giai đoạn 6: Bảng điều khiển kỹ thuật viên (Therapist Console)
+
+- Phân quyền kỹ thuật viên (`THERAPIST` / `ADMIN`), bảo vệ bằng server guards và server actions.
+- `/ky-thuat-vien`: Xem lịch làm việc, thống kê số buổi cần ghi nhận và đã hoàn thành, lọc theo trạng thái.
+- `/ky-thuat-vien/khach/[id]`:
+  - Khối Cảnh báo chuyên môn: Làm nổi bật cảnh báo cờ an toàn (`safetyFlags`) và nội dung chống chỉ định nghiêm ngặt.
+  - Form Ghi nhận SessionLog (`submitSessionLog`): Điểm cải thiện thể trạng 1-5, quan sát trị liệu (tối thiểu 10 ký tự), điều chỉnh lực/thao tác, dặn dò buổi sau; tự động chuyển trạng thái `BUNDLE_CONFIRMED -> IN_TREATMENT`.
+  - Form Chỉ định toa dưỡng tại nhà (`prescribeProduct`): RÀNG BUỘC CHẶN NGHIÊM NGẶT - server và UI từ chối toàn bộ sản phẩm nằm trong danh mục chống chỉ định của khách hàng.
+  - Use-case `finishSessions`: Chuyển phác đồ sang `HOME_CARE` khi hoàn thành đủ số buổi và có toa dưỡng hợp lệ.
+- Đạt 133 tests xanh (thêm 9 unit/integration tests + 2 component tests), toàn bộ typecheck, lint, build xanh.
