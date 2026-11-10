@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+:root {
+  --color-bg-base: #faf7f2;
+  --color-bg-surface: #f3ede3;
+  --color-bg-subtle: #eae1d3;
+  --color-primary: #405c4e;
+  --color-primary-light: #5b7b6a;
+  --color-primary-dark: #2d4137;
+  --color-accent: #b8714f;
+  --color-accent-soft: #f4eae4;
+  --color-text-main: #2b2622;
+  --color-text-muted: #635b54;
+  --color-status-success: #2f6a4f;
+  --color-status-warning: #9e6700;
+  --color-status-error: #9e3838;
+  --color-border: #e2d9cc;
+}
+
+@theme {
+  --color-spa-bg: var(--color-bg-base);
+  --color-spa-surface: var(--color-bg-surface);
+  --color-spa-subtle: var(--color-bg-subtle);
+  --color-spa-primary: var(--color-primary);
+  --color-spa-primary-light: var(--color-primary-light);
+  --color-spa-primary-dark: var(--color-primary-dark);
+  --color-spa-accent: var(--color-accent);
+  --color-spa-accent-soft: var(--color-accent-soft);
+  --color-spa-text: var(--color-text-main);
+  --color-spa-muted: var(--color-text-muted);
+  --color-spa-border: var(--color-border);
+  --color-spa-success: var(--color-status-success);
+  --color-spa-warning: var(--color-status-warning);
+  --color-spa-error: var(--color-status-error);
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-sans:
+    var(--font-vietnam), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
