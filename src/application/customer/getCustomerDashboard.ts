@@ -77,8 +77,20 @@ export async function getCustomerDashboard(
     },
   });
 
-  if (!user || !user.profile) {
-    return err('Không tìm thấy tài khoản hoặc hồ sơ khách hàng.');
+  if (!user) {
+    return err('Không tìm thấy tài khoản người dùng.');
+  }
+
+  if (user.role === 'ADMIN') {
+    return err('ROLE_ADMIN');
+  }
+
+  if (user.role === 'THERAPIST') {
+    return err('ROLE_THERAPIST');
+  }
+
+  if (!user.profile) {
+    return err('Không tìm thấy hồ sơ khách hàng.');
   }
 
   // Lấy toàn bộ phác đồ của khách hàng, sắp xếp mới nhất lên đầu

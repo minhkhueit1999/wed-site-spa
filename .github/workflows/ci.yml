@@ -17,17 +17,23 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm ci
+      - run: npx prisma generate
+      - run: npx prisma db push
+        env:
+          DATABASE_URL: 'file:./ci.db'
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
       - run: npm run test:coverage
         env:
+          DATABASE_URL: 'file:./ci.db'
+          AUTH_SECRET: 'ci-only-secret-not-for-production-needs-to-be-32-chars!'
           LLM_PROVIDER: mock
           EMBEDDING_PROVIDER: hash
       - run: npm run build
         env:
           DATABASE_URL: 'file:./ci.db'
-          AUTH_SECRET: 'ci-only-secret-not-for-production'
+          AUTH_SECRET: 'ci-only-secret-not-for-production-needs-to-be-32-chars!'
           LLM_PROVIDER: mock
           EMBEDDING_PROVIDER: hash
       - run: npm audit --omit=dev --audit-level=high

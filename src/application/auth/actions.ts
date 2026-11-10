@@ -26,6 +26,7 @@ const registerSchema = z.object({
 export type ActionState = {
   success: boolean;
   message?: string;
+  role?: string;
   fieldErrors?: Record<string, string>;
 };
 
@@ -62,7 +63,8 @@ export async function loginAction(
       password: parsed.data.password,
       redirect: false,
     });
-    return { success: true };
+    const user = await userRepository.findByEmail(parsed.data.email);
+    return { success: true, role: user?.role };
   } catch (error) {
     if (error instanceof AuthError) {
       return { success: false, message: 'Email hoặc mật khẩu không chính xác.' };

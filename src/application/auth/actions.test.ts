@@ -29,6 +29,22 @@ describe('Auth Actions', () => {
       expect(res.fieldErrors?.email).toBeDefined();
       expect(res.fieldErrors?.password).toBeDefined();
     });
+
+    it('trả về role của người dùng khi đăng nhập thành công', async () => {
+      vi.spyOn(userRepository, 'findByEmail').mockResolvedValueOnce({
+        id: 'admin-id',
+        email: 'quantri@spawellness.vn',
+        role: 'ADMIN',
+      } as never);
+
+      const formData = new FormData();
+      formData.append('email', 'quantri@spawellness.vn');
+      formData.append('password', 'ValidPassword123');
+
+      const res = await loginAction({ success: false }, formData);
+      expect(res.success).toBe(true);
+      expect(res.role).toBe('ADMIN');
+    });
   });
 
   describe('registerAction', () => {

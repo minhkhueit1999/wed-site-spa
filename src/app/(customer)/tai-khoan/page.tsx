@@ -110,6 +110,62 @@ export default function TaiKhoanPage() {
 
   // 2. Trạng thái Lỗi / Chưa đăng nhập (Error Fallback)
   if (errorMsg || !data) {
+    if (errorMsg === 'ROLE_ADMIN') {
+      return (
+        <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
+          <PublicHeader />
+          <main className="mx-auto w-full max-w-lg flex-1 px-6 py-16 text-center">
+            <Card className="border-[#405C4E] p-8">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#E5EDE8] text-2xl">
+                ⚙️
+              </div>
+              <CardTitle className="font-serif text-2xl text-[#2B2622]">
+                Tài khoản Quản Trị Viên (Admin)
+              </CardTitle>
+              <CardDescription className="mt-2 text-sm text-[#635B54]">
+                Bạn đang đăng nhập với vai trò Quản trị viên. Khu vực này dành riêng cho hồ sơ khách
+                hàng.
+              </CardDescription>
+              <div className="mt-6 flex justify-center gap-3">
+                <Button variant="primary" onClick={() => router.push('/quan-tri')}>
+                  Chuyển tới Bảng Quản Trị →
+                </Button>
+              </div>
+            </Card>
+          </main>
+          <PublicFooter />
+        </div>
+      );
+    }
+
+    if (errorMsg === 'ROLE_THERAPIST') {
+      return (
+        <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
+          <PublicHeader />
+          <main className="mx-auto w-full max-w-lg flex-1 px-6 py-16 text-center">
+            <Card className="border-[#405C4E] p-8">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#E5EDE8] text-2xl">
+                🌿
+              </div>
+              <CardTitle className="font-serif text-2xl text-[#2B2622]">
+                Tài khoản Kỹ Thuật Viên (Therapist)
+              </CardTitle>
+              <CardDescription className="mt-2 text-sm text-[#635B54]">
+                Bạn đang đăng nhập với vai trò Kỹ thuật viên. Khu vực này dành riêng cho hồ sơ khách
+                hàng.
+              </CardDescription>
+              <div className="mt-6 flex justify-center gap-3">
+                <Button variant="primary" onClick={() => router.push('/ky-thuat-vien')}>
+                  Chuyển tới Bàn Làm Việc KTV →
+                </Button>
+              </div>
+            </Card>
+          </main>
+          <PublicFooter />
+        </div>
+      );
+    }
+
     return (
       <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
         <PublicHeader />
