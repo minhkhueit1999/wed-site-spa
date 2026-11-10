@@ -61,7 +61,7 @@ export const useOrderStore = create<OrderStore>()(
       orders: [
         // Đơn hàng mẫu ban đầu cho tài khoản demo
         {
-          orderId: 'SASPA-8921',
+          orderId: 'MKSPA-8921',
           createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
           items: [
             {
@@ -75,11 +75,13 @@ export const useOrderStore = create<OrderStore>()(
                 price: 360000,
                 rating: 5.0,
                 reviewCount: 148,
-                description: 'Linh hồn Sả Spa',
+                description: 'Linh hồn MK SPA',
                 scentFamily: 'cam-chanh',
                 scentFamilyLabel: 'Cam Chanh & Thảo Mộc',
                 concerns: ['cang-thang'],
                 concernLabels: ['Căng thẳng'],
+                imageUrl:
+                  'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=80',
                 scentNotes: {
                   top: 'Sả tươi',
                   heart: 'Hoa sả',
@@ -116,6 +118,8 @@ export const useOrderStore = create<OrderStore>()(
                 scentFamilyLabel: 'Thảo Mộc',
                 concerns: ['moi-vai-gay'],
                 concernLabels: ['Mỏi vai gáy'],
+                imageUrl:
+                  'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80',
                 scentNotes: { top: 'Gừng', heart: 'Quế', base: 'Muối', description: '' },
                 ritualSteps: [],
                 volumes: [{ size: '350g', price: 290000 }],

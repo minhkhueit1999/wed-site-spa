@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
 import { formatCurrencyVND } from '@/lib/utils';
@@ -64,7 +65,7 @@ export function CartDrawer() {
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🧺</span>
                   <h2 className="font-serif text-lg font-semibold text-[#1F2B24]">
-                    Túi Sản Phẩm Sả Spa
+                    Túi Sản Phẩm MK SPA
                   </h2>
                   <span className="rounded-full bg-[#D4AF37]/20 px-2 py-0.5 text-xs font-bold text-[#755428]">
                     {totals.totalItems}
@@ -111,7 +112,7 @@ export function CartDrawer() {
                   <span className="text-5xl">🌿</span>
                   <p className="mt-3 font-serif text-base text-[#1F2B24]">Giỏ hàng đang trống</p>
                   <p className="mt-1 text-xs text-[#8C827A]">
-                    Hãy khám phá các tuyệt tác hương thảo mộc của Sả Spa
+                    Hãy khám phá các tuyệt tác hương thảo mộc của MK SPA
                   </p>
                   <button
                     type="button"
@@ -127,15 +128,15 @@ export function CartDrawer() {
                     key={`${item.product.id}-${item.selectedVolume}`}
                     className="flex gap-3.5 rounded-2xl border border-[#E2D9CC] bg-[#FAF7F2] p-3.5 shadow-xs transition-shadow hover:shadow-md"
                   >
-                    {/* Ảnh thu nhỏ */}
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-[#E2D9CC] bg-[#F4EFEA] text-2xl">
-                      {item.product.category === 'tinh-dau'
-                        ? '🏺'
-                        : item.product.category === 'cham-soc-co-the'
-                          ? '🌿'
-                          : item.product.category === 'nen-thom'
-                            ? '🕯️'
-                            : '🫖'}
+                    {/* Ảnh thu nhỏ thật */}
+                    <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#D4AF37]/30 bg-[#F4EFEA]">
+                      <Image
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        width={64}
+                        height={64}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
 
                     {/* Chi tiết */}
@@ -211,7 +212,7 @@ export function CartDrawer() {
                     type="text"
                     value={inputCode}
                     onChange={(e) => setInputCode(e.target.value)}
-                    placeholder="Mã ưu đãi (SASPA15, WELCOME10)"
+                    placeholder="Mã ưu đãi (MKSPA15, MKSPA10)"
                     className="flex-1 rounded-xl border border-[#E2D9CC] bg-white px-3 py-1.5 text-xs text-[#2B2622] placeholder-[#8C827A] focus:border-[#D4AF37] focus:outline-none"
                   />
                   <button

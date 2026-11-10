@@ -20,7 +20,7 @@ export function SoundscapeToggle() {
         type="button"
         aria-label={
           isPlaying
-            ? 'Tắt âm thanh không gian Sả Spa 432Hz'
+            ? 'Tắt âm thanh không gian MK SPA 432Hz'
             : 'Bật âm thanh chuông xoay và tiếng suối 432Hz'
         }
         className={`group flex items-center gap-2.5 rounded-full px-4 py-2.5 text-xs font-medium shadow-lg backdrop-blur-md transition-all duration-300 ${

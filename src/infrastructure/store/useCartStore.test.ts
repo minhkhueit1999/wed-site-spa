@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { useCartStore } from './useCartStore';
 import { SA_SPA_PRODUCTS } from '@/data/saSpaProducts';
 
-describe('Zustand useCartStore (Sả Spa E-commerce)', () => {
+describe('Zustand useCartStore (MK SPA E-commerce)', () => {
   const p0 = SA_SPA_PRODUCTS[0]!;
   const p1 = SA_SPA_PRODUCTS[1]!;
   const p2 = SA_SPA_PRODUCTS[2]!;

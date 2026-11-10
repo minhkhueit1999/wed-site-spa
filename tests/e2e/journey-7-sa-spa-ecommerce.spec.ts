@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác Thực Bắt Buộc', () => {
-  test('Khách truy cập gặp Cổng Auth Gate Sả Spa, mở khóa VIP, khám phá cửa hàng, xem nhanh 3D, áp mã giảm giá, đặt hộp tre quà tặng VietQR và theo dõi hành trình đơn hàng', async ({
+test.describe('Hành trình 7: Hệ sinh thái E-commerce MK SPA & Cổng Xác Thực Bắt Buộc', () => {
+  test('Khách truy cập gặp Cổng Auth Gate MK SPA, mở khóa VIP, khám phá cửa hàng, xem nhanh 3D, áp mã giảm giá, đặt hộp tre quà tặng VietQR và theo dõi hành trình đơn hàng', async ({
     browser,
   }) => {
     // 1. CỔNG XÁC THỰC BẮT BUỘC (MANDATORY AUTH GATE)
@@ -11,9 +11,9 @@ test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác
 
     await page.goto('/');
 
-    // Kiểm tra Cổng Xác Thực Sả Spa hiển thị ngay lập tức
-    await expect(page.locator('text=🌿 Cổng Vào Sả Spa 🌿')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('h1:has-text("Sả Spa Botanical")')).toBeVisible();
+    // Kiểm tra Cổng Xác Thực MK SPA hiển thị ngay lập tức
+    await expect(page.locator('text=🌿 Cổng Vào MK SPA 🌿')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h1:has-text("MK SPA Botanical")')).toBeVisible();
     await expect(
       page.locator('text=Không gian hương thảo mộc & Sản phẩm trị liệu Đông Dương cao cấp'),
     ).toBeVisible();
@@ -33,20 +33,20 @@ test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác
     await expect(page.locator('label:has-text("Địa chỉ Email")')).toBeVisible();
 
     // Mở khóa nhanh bằng nút Khách VIP Demo dành cho ban giám khảo / giảng viên
-    await page.click('button:has-text("Vào Nhanh (Khách VIP Demo)")');
+    await page.click('button:has-text("Khách Hàng VIP")');
 
     // Kiểm tra Hiệu ứng Mở Cổng Hoàng Gia (Grand Portal Reveal)
     await expect(page.locator('text=Chào mừng bạn đến với')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('text=Sả Spa Botanical Sanctuary')).toBeVisible();
+    await expect(page.locator('text=MK SPA Botanical Sanctuary')).toBeVisible();
 
     // Chờ cổng mở hoàn tất và bước vào không gian chính của trang chủ
     await expect(page.locator('text=Chăm sóc trọn vẹn từ spa đến chính ngôi nhà bạn')).toBeVisible({
       timeout: 10000,
     });
 
-    // 2. TRẢI NGHIỆM CỬA HÀNG THẢO MỘC SẢ SPA (/shop)
+    // 2. TRẢI NGHIỆM CỬA HÀNG THẢO MỘC MK SPA (/shop)
     await page.goto('/shop');
-    await expect(page.getByRole('heading', { name: 'Cửa Hàng Sả Spa Sanctuary' })).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'Cửa Hàng MK SPA Sanctuary' })).toBeVisible({
       timeout: 10000,
     });
 
@@ -86,15 +86,15 @@ test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác
 
     // 4. GIỎ HÀNG TRƯỢT THÔNG MINH (CART DRAWER) & MÃ ƯU ĐÃI
     // Chờ CartDrawer tự động mở ra
-    await expect(page.locator('h2:has-text("Túi Sản Phẩm Sả Spa")')).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('h2:has-text("Túi Sản Phẩm MK SPA")')).toBeVisible({ timeout: 8000 });
 
-    // Áp dụng mã ưu đãi SASPA15 (-15%)
+    // Áp dụng mã ưu đãi MKSPA15 (-15%)
     const couponInput = page.locator('input[placeholder*="Mã ưu đãi"]');
-    await couponInput.fill('SASPA15');
+    await couponInput.fill('MKSPA15');
     await page.click('button:has-text("Áp dụng")');
 
     // Xác nhận phản hồi thành công và tỷ lệ giảm giá 15%
-    await expect(page.locator('text=Áp dụng mã SASPA15 thành công')).toBeVisible({
+    await expect(page.locator('text=Áp dụng mã MKSPA15 thành công')).toBeVisible({
       timeout: 5000,
     });
     await expect(page.locator('text=Giảm giá (15%):')).toBeVisible();
@@ -105,13 +105,13 @@ test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác
 
     // 5. THANH TOÁN 3 BƯỚC (/checkout) & GÓI HỘP TRE THIỆP TAY VIETQR
     await expect(
-      page.getByRole('heading', { name: 'Thanh Toán & Đóng Gói Hộp Tre Sả Spa' }),
+      page.getByRole('heading', { name: 'Thanh Toán & Đóng Gói Hộp Tre MK SPA' }),
     ).toBeVisible({ timeout: 10000 });
 
     // Bước 1: Xác nhận thông tin nhận hàng và tùy chỉnh Hộp Mây Tre Đan Thủ Công & Viết Thiệp Tay
     await expect(page.locator('h2:has-text("1. Thông Tin Nhận Hàng")')).toBeVisible();
     const messageInput = page.locator('textarea');
-    await messageInput.fill('Kính chúc bạn vạn an, thảnh thơi và có giấc ngủ an lành cùng Sả Spa.');
+    await messageInput.fill('Kính chúc bạn vạn an, thảnh thơi và có giấc ngủ an lành cùng MK SPA.');
 
     // Kiểm tra xem thiệp thư pháp hiển thị văn bản theo thời gian thực
     await expect(
@@ -135,9 +135,9 @@ test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác
     await submitOrderBtn.click();
 
     // Kiểm tra Màn hình Nghi Thức Hoàn Tất Đơn Hàng (Order Confirmation Ritual)
-    await expect(page.locator('text=Cảm Ơn Bạn Đã Chọn Sả Spa')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=Cảm Ơn Bạn Đã Chọn MK SPA')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('text=Đơn Hàng Đã Được Tiếp Nhận')).toBeVisible();
-    await expect(page.locator('text=SASPA-')).toBeVisible();
+    await expect(page.locator('text=MKSPA-')).toBeVisible();
 
     // 6. THEO DÕI HÀNH TRÌNH ĐƠN HÀNG (/orders) & MUA LẠI
     await page.click('a:has-text("Xem Lịch Trình & Theo Dõi Đơn Hàng →")');
@@ -157,7 +157,7 @@ test.describe('Hành trình 7: Hệ sinh thái E-commerce Sả Spa & Cổng Xác
     await reorderBtn.click();
 
     // Xác nhận CartDrawer mở lại chứa các sản phẩm được tái nạp
-    await expect(page.locator('h2:has-text("Túi Sản Phẩm Sả Spa")')).toBeVisible();
+    await expect(page.locator('h2:has-text("Túi Sản Phẩm MK SPA")')).toBeVisible();
 
     // Đóng browser context
     await freshContext.close();

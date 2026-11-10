@@ -21,15 +21,17 @@ const playfairSerif = Playfair_Display({
 
 export const metadata: Metadata = {
   title:
-    'Sả Spa Botanical | Digital Wellness Platform — Không Gian Thương Mại Điện Tử & Trị Liệu Đông Dương Cao Cấp',
+    'MK SPA Botanical | Digital Wellness Platform — Không Gian Thương Mại Điện Tử & Trị Liệu Đông Dương Cao Cấp',
   description:
-    'Hệ sinh thái sản phẩm spa thảo mộc cao cấp Sả Spa: tinh dầu chưng cất, nến thơm bấc gỗ, muối tắm cổ truyền và trà thảo mộc dưỡng tâm.',
+    'Hệ sinh thái sản phẩm spa thảo mộc cao cấp MK SPA: tinh dầu chưng cất, nến thơm bấc gỗ, muối tắm cổ truyền và trà thảo mộc dưỡng tâm.',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const cookieStore = await cookies();
-  const isUnlockedCookie = cookieStore.get('sa_spa_unlocked')?.value === 'true';
+  const isUnlockedCookie =
+    cookieStore.get('mk_spa_unlocked')?.value === 'true' ||
+    cookieStore.get('sa_spa_unlocked')?.value === 'true';
 
   return (
     <html

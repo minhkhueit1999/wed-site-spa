@@ -164,23 +164,23 @@ export const useCartStore = create<CartStore>()(
 
       applyDiscount: (rawCode) => {
         const code = rawCode.trim().toUpperCase();
-        if (code === 'SASPA15') {
+        if (code === 'MKSPA15' || code === 'SASPA15') {
           set({ discountCode: code, discountPercent: 15 });
           return {
             success: true,
-            message: 'Áp dụng mã SASPA15 thành công: Giảm 15% toàn bộ giỏ hàng!',
+            message: `Áp dụng mã ${code} thành công: Giảm 15% toàn bộ giỏ hàng!`,
           };
         }
-        if (code === 'WELCOME10') {
+        if (code === 'MKSPA10' || code === 'WELCOME10') {
           set({ discountCode: code, discountPercent: 10 });
           return {
             success: true,
-            message: 'Áp dụng mã WELCOME10 thành công: Giảm 10% cho khách hàng mới!',
+            message: `Áp dụng mã ${code} thành công: Giảm 10% cho khách hàng mới!`,
           };
         }
         return {
           success: false,
-          message: 'Mã ưu đãi không hợp lệ hoặc đã hết hạn. Hãy thử "SASPA15" hoặc "WELCOME10".',
+          message: 'Mã ưu đãi không hợp lệ hoặc đã hết hạn. Hãy thử "MKSPA15" hoặc "WELCOME10".',
         };
       },
 

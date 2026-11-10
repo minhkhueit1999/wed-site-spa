@@ -28,6 +28,7 @@ export interface SaSpaProduct {
   category: 'tinh-dau' | 'cham-soc-co-the' | 'nen-thom' | 'tra-thao-moc';
   categoryName: string;
   subtitle: string;
+  imageUrl: string;
   price: number;
   originalPrice?: number;
   rating: number;
@@ -57,6 +58,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   // --- NHÓM 1: TINH DẦU & KHUẾCH TÁN ---
   {
     id: 'sp-01',
+    imageUrl:
+      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80',
     slug: 'tinh-dau-sa-chanh-nguyen-chat',
     name: 'Tinh Dầu Sả Chanh Nguyên Chất',
     category: 'tinh-dau',
@@ -66,9 +69,9 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
     originalPrice: 420000,
     rating: 5.0,
     reviewCount: 148,
-    badge: 'Signature Sả Spa',
+    badge: 'Signature MK SPA',
     description:
-      'Linh hồn của Sả Spa — hương thơm tươi mát, giòn ngọt tự nhiên của những nhánh sả tươi kết hợp tinh dầu vỏ chanh rừng. Thanh lọc không khí, khử khuẩn và xua tan mọi mỏi mệt trong tích tắc.',
+      'Linh hồn của MK SPA — hương thơm tươi mát, giòn ngọt tự nhiên của những nhánh sả tươi kết hợp tinh dầu vỏ chanh rừng. Thanh lọc không khí, khử khuẩn và xua tan mọi mỏi mệt trong tích tắc.',
     scentFamily: 'cam-chanh',
     scentFamilyLabel: 'Cam Chanh & Thảo Mộc',
     concerns: ['cang-thang', 'thanh-loc-da'],
@@ -102,7 +105,7 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
       { size: '30ml', price: 360000 },
       { size: 'Hộp Quà Tre', price: 490000 },
     ],
-    spaBundleName: 'Liệu trình Thanh lọc & Cấp ẩm Sả Spa',
+    spaBundleName: 'Liệu trình Thanh lọc & Cấp ẩm MK SPA',
     spaBundleSlug: 'cap-am-sang-da',
     spaBundleDiscount: 'Tiết kiệm 15% khi đặt kèm liệu trình',
     themeColor: {
@@ -115,6 +118,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-02',
+    imageUrl:
+      'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=600&q=80',
     slug: 'tinh-dau-hoa-nhai-dem-trang-an',
     name: 'Tinh Dầu Hoa Nhài Đêm Tràng An',
     category: 'tinh-dau',
@@ -172,6 +177,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-03',
+    imageUrl:
+      'https://images.unsplash.com/photo-1547793548-710ec861bb6e?auto=format&fit=crop&w=600&q=80',
     slug: 'tinh-dau-go-tram-huong-tinh-tam',
     name: 'Tinh Dầu Gỗ Trầm Hương Tĩnh Tâm',
     category: 'tinh-dau',
@@ -231,6 +238,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-04',
+    imageUrl:
+      'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80',
     slug: 'da-khuech-tan-nham-thach-tram-nui',
     name: 'Đá Khuếch Tán Nham Thạch & Hộp Gỗ Sồi',
     category: 'tinh-dau',
@@ -262,7 +271,7 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
       {
         step: 2,
         title: 'Nhỏ tinh dầu',
-        instruction: 'Nhỏ 4–6 giọt tinh dầu Sả Spa yêu thích trực tiếp lên bề mặt đá nham thạch.',
+        instruction: 'Nhỏ 4–6 giọt tinh dầu MK SPA yêu thích trực tiếp lên bề mặt đá nham thạch.',
       },
       {
         step: 3,
@@ -286,6 +295,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   // --- NHÓM 2: CHĂM SÓC CƠ THỂ & TẮM TRỊ LIỆU ---
   {
     id: 'sp-05',
+    imageUrl:
+      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80',
     slug: 'muoi-tam-thao-duoc-tay-bac',
     name: 'Muối Tắm Thảo Dược Cổ Truyền Tây Bắc',
     category: 'cham-soc-co-the',
@@ -343,6 +354,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-06',
+    imageUrl:
+      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=600&q=80',
     slug: 'dau-massage-gung-nghe-am-toan-than',
     name: 'Dầu Massage Gừng Nghệ Ấm Toàn Thân',
     category: 'cham-soc-co-the',
@@ -354,7 +367,7 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
     reviewCount: 88,
     badge: 'Chuyên Nghiệp Spa',
     description:
-      'Dầu massage chuyên dụng tại Sả Spa. Độ trượt hoàn hảo không bết dính, thẩm thấu sâu làm ấm các nhóm cơ vai gáy, bắp chân và hỗ trợ phục hồi sau vận động nặng hoặc ngồi lâu.',
+      'Dầu massage chuyên dụng tại MK SPA. Độ trượt hoàn hảo không bết dính, thẩm thấu sâu làm ấm các nhóm cơ vai gáy, bắp chân và hỗ trợ phục hồi sau vận động nặng hoặc ngồi lâu.',
     scentFamily: 'thao-moc',
     scentFamilyLabel: 'Gừng Nghệ & Thảo Dược',
     concerns: ['moi-vai-gay'],
@@ -399,6 +412,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-07',
+    imageUrl:
+      'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80',
     slug: 'tay-da-chet-ca-phe-dak-lak-dua-ben-tre',
     name: 'Tẩy Da Chết Cà Phê Đắk Lắk & Dừa Bến Tre',
     category: 'cham-soc-co-the',
@@ -452,6 +467,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-08',
+    imageUrl:
+      'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80',
     slug: 'xa-bong-thao-moc-sa-chanh-mat-ong',
     name: 'Xà Bông Thảo Mộc Sả Chanh & Mật Ong Rừng',
     category: 'cham-soc-co-the',
@@ -507,6 +524,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   // --- NHÓM 3: NẾN THƠM & KHÔNG GIAN ---
   {
     id: 'sp-09',
+    imageUrl:
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80',
     slug: 'nen-thom-khoi-tra-xanh-hoa-buoi',
     name: 'Nến Thơm Khói Trà Xanh & Hoa Bưởi',
     category: 'nen-thom',
@@ -518,7 +537,7 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
     reviewCount: 79,
     badge: 'Mới Ra Mắt',
     description:
-      'Tái hiện không gian buổi sớm tại Sả Spa: khói trà xanh Thái Nguyên bảng lảng hòa cùng mùi hoa bưởi tháng Ba trắng muốt. Bấc gỗ kêu lách tách êm tai đưa tâm trí về trạng thái cân bằng tuyệt đối.',
+      'Tái hiện không gian buổi sớm tại MK SPA: khói trà xanh Thái Nguyên bảng lảng hòa cùng mùi hoa bưởi tháng Ba trắng muốt. Bấc gỗ kêu lách tách êm tai đưa tâm trí về trạng thái cân bằng tuyệt đối.',
     scentFamily: 'hoa-co',
     scentFamilyLabel: 'Trà Xanh & Hoa Trắng',
     concerns: ['cang-thang', 'mat-ngu'],
@@ -560,6 +579,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-10',
+    imageUrl:
+      'https://images.unsplash.com/photo-1602874801007-bd458bb1b8b8?auto=format&fit=crop&w=600&q=80',
     slug: 'nen-thom-bac-go-tuyet-tung-nhua-thong',
     name: 'Nến Thơm Bấc Gỗ Tuyết Tùng & Nhựa Thông',
     category: 'nen-thom',
@@ -613,6 +634,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-11',
+    imageUrl:
+      'https://images.unsplash.com/photo-1572726729437-373264639912?auto=format&fit=crop&w=600&q=80',
     slug: 'nen-thom-sa-diu-cam-ngot-hoang-cung',
     name: 'Nến Thơm Sả Dịu & Cam Ngọt Hoàng Cung',
     category: 'nen-thom',
@@ -666,6 +689,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-12',
+    imageUrl:
+      'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=600&q=80',
     slug: 'binh-xit-goi-ngu-thao-moc-an-mien',
     name: 'Bình Xịt Gối Ngủ Thảo Mộc An Miên',
     category: 'nen-thom',
@@ -721,6 +746,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   // --- NHÓM 4: TRÀ THẢO MỘC DƯỠNG TÂM ---
   {
     id: 'sp-13',
+    imageUrl:
+      'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80',
     slug: 'tra-tam-sen-ky-tu-hoang-gia',
     name: 'Trà Tâm Sen Kỷ Tử Hoàng Gia',
     category: 'tra-thao-moc',
@@ -774,6 +801,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-14',
+    imageUrl:
+      'https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?auto=format&fit=crop&w=600&q=80',
     slug: 'tra-sa-gung-mat-ong-rung-phuc-hoi',
     name: 'Trà Sả Gừng Mật Ong Rừng Phục Hồi',
     category: 'tra-thao-moc',
@@ -785,7 +814,7 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
     reviewCount: 138,
     badge: 'Ấm Bụng Trợ Khí',
     description:
-      'Ly trà chào đón thân quen khi bạn bước chân vào Sả Spa. Hương sả thơm ngào ngạt quyện gừng già cay tê làm ấm tỳ vị, đánh tan mỏi mệt và tăng cường sức đề kháng tức thì.',
+      'Ly trà chào đón thân quen khi bạn bước chân vào MK SPA. Hương sả thơm ngào ngạt quyện gừng già cay tê làm ấm tỳ vị, đánh tan mỏi mệt và tăng cường sức đề kháng tức thì.',
     scentFamily: 'cam-chanh',
     scentFamilyLabel: 'Sả Gừng & Mật Rừng',
     concerns: ['cang-thang', 'moi-vai-gay'],
@@ -827,6 +856,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-15',
+    imageUrl:
+      'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=600&q=80',
     slug: 'tra-hoa-cuc-tien-vua-tao-do',
     name: 'Trà Hoa Cúc Tiến Vua & Táo Đỏ',
     category: 'tra-thao-moc',
@@ -880,6 +911,8 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
   },
   {
     id: 'sp-16',
+    imageUrl:
+      'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=600&q=80',
     slug: 'tra-bac-ha-xa-huong-thanh-loc',
     name: 'Trà Bạc Hà Xạ Hương Thanh Lọc Khí Huyết',
     category: 'tra-thao-moc',
@@ -932,3 +965,6 @@ export const SA_SPA_PRODUCTS: SaSpaProduct[] = [
     botanicalElements: ['lá bạc hà xanh', 'nhánh cỏ xạ hương', 'giọt nước mát'],
   },
 ];
+
+export type MkSpaProduct = SaSpaProduct;
+export const MK_SPA_PRODUCTS = SA_SPA_PRODUCTS;

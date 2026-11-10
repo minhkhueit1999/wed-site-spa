@@ -186,3 +186,15 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **Giỏ Hàng & Danh Sách Yêu Thích**               | Đã hoàn thành | `CartDrawer` trượt phải, Rolling Counter, Thanh tiến trình Free Shipping & Túi thơm chất lỏng, Mã giảm giá tự động (`SASPA15`, `WELCOME10`), Wishlist cánh hoa.         |
 | **Thanh Toán Hộp Tre & Lịch Sử Đơn Hàng**        | Đã hoàn thành | Checkout 3 bước (`/checkout`), Hộp quà mây tre & Thiệp tay thư pháp xem trước trực tiếp, VietQR động, Mưa cánh hoa, Theo dõi tiến trình 4 bước đơn hàng tại `/orders`.  |
 | **Chất Lượng & Kiểm Thử Toàn Diện**              | Đã hoàn thành | **190/190 Vitest tests passed** (36 test files); **27/27 Playwright E2E tests passed** (7 journeys x Desktop/Mobile/Tablet); **0 secret leaks**; **40 Next.js routes**. |
+
+---
+
+## MK SPA Rebrand, Role-Based Mandatory Auth Gate & Zen Hot Stones Visuals
+
+| Hạng mục                                          | Trạng thái    | Ghi chú & Chi tiết kiến trúc                                                                                                                                             |
+| :------------------------------------------------ | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Đổi Tên Toàn Diện Thành MK SPA**                | Đã hoàn thành | Đổi 100% thương hiệu Sả Spa thành **MK SPA** trên toàn bộ UI, metadata, dữ liệu sản phẩm, coupon code (`MKSPA15`, `MKSPA10`), giỏ hàng, thanh toán và test.              |
+| **Cổng Xác Thực Bắt Buộc & Phân Quyền 3 Vai Trò** | Đã hoàn thành | Bắt buộc đăng nhập/đăng ký trước khi vào web. Tích hợp bộ chọn vai trò và 3 nút đăng nhập 1-chạm (Khách VIP → Trang chủ, KTV → `/ky-thuat-vien`, Admin → `/quan-tri`).   |
+| **Ảnh Sản Phẩm Thực Tế Tuyển Chọn**               | Đã hoàn thành | Tích hợp ảnh chụp thực tế chất lượng cao cho toàn bộ 16 sản phẩm (tinh dầu, muối khoáng, nến thơm, trà thảo mộc) trên thẻ sản phẩm, quick view, chi tiết và giỏ hàng.    |
+| **3D Tháp Đá Nóng Zen Bazan & Đóa Sen Tĩnh Tại**  | Đã hoàn thành | Thay thế hình khối cầu trước đó bằng kiệt tác 3D spa: Tháp 3 viên đá nóng bazan massage cân bằng, đóa hoa sen thanh tịnh, đĩa nước ngọc bích gợn sóng và làn khói sương. |
+| **Chất Lượng Kỹ Thuật & Quality Gate**            | Đã hoàn thành | `typecheck` 0 lỗi, `eslint` 0 lỗi 0 cảnh báo, `prettier` 100% chuẩn, `vitest` **190/190 passed**, `build` thành công 40 routes, Gitleaks sạch 100%.                      |

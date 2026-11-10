@@ -80,7 +80,7 @@ export default function ShopPage() {
     <>
       <PublicHeader />
       <main className="min-h-screen bg-[#FAF7F2] pb-24 text-[#2B2622]">
-        {/* Hero Banner Sả Spa E-commerce */}
+        {/* Hero Banner MK SPA E-commerce */}
         <section className="relative overflow-hidden border-b border-[#E2D9CC] bg-gradient-to-b from-[#1F2B24] to-[#141C17] px-6 py-16 text-center text-[#FAF7F2]">
           <div
             className="pointer-events-none absolute inset-0 opacity-20"
@@ -94,7 +94,7 @@ export default function ShopPage() {
               <span>🌿</span> Bộ Sưu Tập Thảo Mộc Đông Dương <span>🌿</span>
             </span>
             <h1 className="mt-4 font-serif text-3xl font-light tracking-wide text-[#FAF7F2] sm:text-5xl">
-              Cửa Hàng Sả Spa Sanctuary
+              Cửa Hàng MK SPA Sanctuary
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#FAF7F2]/80">
               Mỗi sản phẩm là một tuyệt tác thủ công lưu giữ sinh khí đất trời. Tinh dầu chưng cất
@@ -151,7 +151,7 @@ export default function ShopPage() {
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                   className="rounded-xl border border-[#E2D9CC] bg-white px-3 py-2 text-xs text-[#2B2622] focus:border-[#D4AF37] focus:outline-none"
                 >
-                  <option value="featured">Nổi bật nhất Sả Spa</option>
+                  <option value="featured">Nổi bật nhất MK SPA</option>
                   <option value="rating">Đánh giá cao nhất (★)</option>
                   <option value="price-asc">Giá: Thấp đến Cao</option>
                   <option value="price-desc">Giá: Cao đến Thấp</option>

@@ -9,14 +9,22 @@ vi.mock('next-auth/react', () => ({
   signOut: vi.fn(),
 }));
 
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+  usePathname: () => '/',
+}));
+
 // Mock actions
 vi.mock('@/application/auth/actions', () => ({
   loginAction: vi.fn().mockResolvedValue({ success: true }),
   registerAction: vi.fn().mockResolvedValue({ success: true }),
 }));
 
-describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc Sả Spa)', () => {
-  it('hiển thị Cổng chào Sả Spa khi chưa đăng nhập (isAuthenticated = false)', () => {
+describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc MK SPA & Phân Quyền)', () => {
+  it('hiển thị Cổng chào MK SPA khi chưa đăng nhập (isAuthenticated = false) và đủ 3 nút phân quyền', () => {
     render(
       <AuthPortalGate isAuthenticated={false}>
         <div data-testid="protected-content">Nội dung bên trong Spa</div>
@@ -26,9 +34,11 @@ describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc Sả Spa)', () => {
     // Không hiển thị nội dung bên trong
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
 
-    // Hiển thị tiêu đề và nút cổng Sả Spa
-    expect(screen.getByText('Sả Spa Botanical')).toBeInTheDocument();
-    expect(screen.getByText('Vào Nhanh (Khách VIP Demo)')).toBeInTheDocument();
+    // Hiển thị tiêu đề và nút cổng MK SPA
+    expect(screen.getByText('MK SPA Botanical')).toBeInTheDocument();
+    expect(screen.getByText('Khách Hàng VIP')).toBeInTheDocument();
+    expect(screen.getAllByText('Kỹ Thuật Viên').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Quản Trị Viên').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Đăng Nhập')).toBeInTheDocument();
     expect(screen.getByText('Đăng Ký Thành Viên')).toBeInTheDocument();
   });
@@ -58,6 +68,6 @@ describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc Sả Spa)', () => {
     );
 
     expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-    expect(screen.queryByText('Vào Nhanh (Khách VIP Demo)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Khách Hàng VIP')).not.toBeInTheDocument();
   });
 });

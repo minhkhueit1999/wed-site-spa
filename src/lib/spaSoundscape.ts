@@ -1,4 +1,4 @@
-// Bộ tổng hợp thanh âm không gian Sả Spa bằng Web Audio API thuần (432Hz & Tiếng nước thiền định)
+// Bộ tổng hợp thanh âm không gian MK SPA bằng Web Audio API thuần (432Hz & Tiếng nước thiền định)
 class SpaSoundscapeManager {
   private ctx: AudioContext | null = null;
   private isPlaying = false;

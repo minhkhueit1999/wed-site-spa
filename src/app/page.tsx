@@ -29,13 +29,13 @@ export default function Home() {
       {/* Thanh điều hướng tích hợp giỏ hàng và bộ chuyển đổi chế độ */}
       <PublicHeader />
 
-      {/* Hero Section: Không gian Sả Spa Indochine Luxury */}
+      {/* Hero Section: Không gian MK SPA Indochine Luxury */}
       <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-20">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
           {/* Cột văn bản thông điệp */}
           <div className="flex flex-col items-center space-y-6 text-center lg:col-span-7 lg:items-start lg:text-left">
             <Badge variant="terracotta" className="text-xs tracking-wider uppercase">
-              🌿 Sả Spa Indochine Botanical Sanctuary
+              🌿 MK SPA Indochine Botanical Sanctuary
             </Badge>
 
             <h1 className="font-serif text-4xl leading-tight font-light text-[#1F2B24] sm:text-5xl md:text-6xl">
@@ -43,7 +43,7 @@ export default function Home() {
             </h1>
 
             <p className="text-base leading-relaxed text-[#635B54] md:text-lg">
-              Đắm mình trong không gian tĩnh tại của Sả Spa — nơi tinh dầu sả chanh chưng cất thủ
+              Đắm mình trong không gian tĩnh tại của MK SPA — nơi tinh dầu sả chanh chưng cất thủ
               công, muối khoáng ngải cứu Tây Bắc và nến thơm bấc gỗ tuyết tùng hòa quyện cùng phác
               đồ trị liệu cá nhân hóa khép kín từ cơ sở đến ngôi nhà bạn.
             </p>
@@ -52,7 +52,7 @@ export default function Home() {
               <Link href="/shop" className="w-full sm:w-auto">
                 <MagneticButton className="w-full sm:w-auto">
                   <Button size="lg" variant="primary" className="w-full shadow-lg sm:w-auto">
-                    Khám Phá Cửa Hàng Sả Spa →
+                    Khám Phá Cửa Hàng MK SPA →
                   </Button>
                 </MagneticButton>
               </Link>
@@ -80,7 +80,7 @@ export default function Home() {
                 ✦ Tuyệt Tác Thảo Mộc ✦
               </span>
               <h2 className="mt-1 font-serif text-2xl font-light text-[#1F2B24] sm:text-3xl">
-                Bộ Sưu Tập Sả Spa Tuyển Chọn
+                Bộ Sưu Tập MK SPA Tuyển Chọn
               </h2>
               <p className="mt-1.5 text-xs text-[#8C827A]">
                 Mỗi sản phẩm tự nâng hạ theo nhịp thở hữu cơ, nghiêng 3D và bung nở nốt hương khi
@@ -109,7 +109,7 @@ export default function Home() {
               Chu Trình Trị Liệu &amp; Dưỡng Thân Toàn Diện
             </h2>
             <p className="mt-2 text-xs text-[#635B54]">
-              Liên kết chặt chẽ giữa buổi trị liệu tại Sả Spa và nghi thức dưỡng thân thảo mộc tại
+              Liên kết chặt chẽ giữa buổi trị liệu tại MK SPA và nghi thức dưỡng thân thảo mộc tại
               gia
             </p>
           </div>

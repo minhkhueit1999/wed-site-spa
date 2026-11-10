@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { SaSpaProduct } from '@/data/saSpaProducts';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
@@ -93,19 +94,22 @@ export function ProductQuickViewModal({ product, onClose }: ProductQuickViewModa
               />
 
               <div className="relative z-10 text-center">
-                <span className="text-6xl drop-shadow-md filter">
-                  {product.category === 'tinh-dau'
-                    ? '🏺'
-                    : product.category === 'cham-soc-co-the'
-                      ? '🌿'
-                      : product.category === 'nen-thom'
-                        ? '🕯️'
-                        : '🫖'}
-                </span>
-                <p className="mt-4 font-serif text-xs tracking-wider italic opacity-75">
+                <div className="relative mx-auto mb-3 h-60 w-48 overflow-hidden rounded-2xl border border-[#D4AF37]/40 bg-white/70 p-2 shadow-2xl backdrop-blur-xs">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    width={192}
+                    height={240}
+                    className="h-full w-full rounded-xl object-cover shadow-sm"
+                  />
+                  <div className="absolute top-3 right-3 rounded-full bg-[#1F2B24]/85 px-2 py-0.5 text-[9px] font-bold tracking-wider text-[#D4AF37]">
+                    MK SPA
+                  </div>
+                </div>
+                <p className="mt-3 font-serif text-xs tracking-wider italic opacity-75">
                   {isDarkMode
                     ? 'Không gian trị liệu tĩnh lặng ban đêm'
-                    : 'Ánh nắng ban mai xuyên qua tán lá Sả Spa'}
+                    : 'Ánh nắng ban mai xuyên qua tán lá MK SPA'}
                 </p>
                 <div className="mt-3 flex justify-center gap-2">
                   {product.botanicalElements.map((el) => (
@@ -267,7 +271,7 @@ export function ProductQuickViewModal({ product, onClose }: ProductQuickViewModa
                       : 'bg-gradient-to-r from-[#D4AF37] to-[#C68B59] text-[#141C17] shadow-lg hover:scale-[1.01] active:scale-[0.99]'
                   }`}
                 >
-                  {isAdded ? '✓ Đã Thêm Vào Giỏ Sả Spa' : 'Thêm Vào Giỏ Hàng & Tiếp Tục →'}
+                  {isAdded ? '✓ Đã Thêm Vào Giỏ MK SPA' : 'Thêm Vào Giỏ Hàng & Tiếp Tục →'}
                 </button>
               </div>
             </div>

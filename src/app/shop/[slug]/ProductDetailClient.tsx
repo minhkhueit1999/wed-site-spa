@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import { SaSpaProduct } from '@/data/saSpaProducts';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
@@ -59,7 +60,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
         </Link>
         <span>/</span>
         <Link href="/shop" className="hover:text-[#1F2B24]">
-          Cửa hàng Sả Spa
+          Cửa hàng MK SPA
         </Link>
         <span>/</span>
         <span className="font-medium text-[#1F2B24]">{product.name}</span>
@@ -97,24 +98,27 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               {isDarkMode ? '☀️ Ánh Sáng Tự Nhiên' : '🌙 Không Gian Spa Ấm'}
             </button>
 
-            {/* Visual Icon trung tâm */}
+            {/* Visual Ảnh Thực Tế MK SPA */}
             <motion.div
               animate={{
-                y: [-8, 8, -8],
-                rotate: [-1, 1, -1],
+                y: [-6, 6, -6],
+                rotate: [-0.5, 0.5, -0.5],
               }}
               transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
               className="relative z-10 flex flex-col items-center text-center"
             >
-              <span className="text-8xl drop-shadow-xl filter">
-                {product.category === 'tinh-dau'
-                  ? '🏺'
-                  : product.category === 'cham-soc-co-the'
-                    ? '🌿'
-                    : product.category === 'nen-thom'
-                      ? '🕯️'
-                      : '🫖'}
-              </span>
+              <div className="relative overflow-hidden rounded-3xl border border-[#D4AF37]/40 bg-white/70 p-3 shadow-2xl backdrop-blur-xs">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={240}
+                  height={288}
+                  className="h-64 w-52 rounded-2xl object-cover shadow-sm sm:h-72 sm:w-60"
+                />
+                <div className="absolute top-4 right-4 rounded-full bg-[#1F2B24]/85 px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#D4AF37]">
+                  MK SPA
+                </div>
+              </div>
               <div className="mt-4 flex gap-2">
                 {product.botanicalElements.map((el) => (
                   <span
@@ -134,7 +138,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           <div>
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold tracking-widest text-[#D4AF37] uppercase">
-                {product.categoryName} • {product.badge || 'Sả Spa Selection'}
+                {product.categoryName} • {product.badge || 'MK SPA Selection'}
               </span>
 
               {/* Nút Yêu Thích */}
@@ -274,7 +278,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-current">Chị Lê Hoàng Yến</span>
                         <span className="rounded-full bg-[#D4AF37]/20 px-2 py-0.5 text-[10px] font-medium text-[#D4AF37]">
-                          ✓ Đã mua tại Sả Spa
+                          ✓ Đã mua tại MK SPA
                         </span>
                       </div>
                       <p className="mt-1 text-current/80">
@@ -335,7 +339,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                     : 'bg-gradient-to-r from-[#D4AF37] to-[#C68B59] text-[#141C17] shadow-lg hover:scale-[1.01] active:scale-[0.99]'
                 }`}
               >
-                {isAdded ? '✓ Đã Thêm Vào Giỏ Sả Spa' : 'Thêm Vào Giỏ Hàng & Tiếp Tục →'}
+                {isAdded ? '✓ Đã Thêm Vào Giỏ MK SPA' : 'Thêm Vào Giỏ Hàng & Tiếp Tục →'}
               </button>
 
               {relatedProducts.length > 0 && (

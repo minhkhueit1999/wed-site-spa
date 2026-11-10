@@ -28,7 +28,7 @@ export default function CheckoutPage() {
   const [isGift, setIsGift] = useState(true);
   const [recipientName, setRecipientName] = useState('Minh An');
   const [greetingMessage, setGreetingMessage] = useState(
-    'Thương tặng bạn món quà thảo mộc Sả Spa. Chúc bạn luôn an yên và ngủ ngon!',
+    'Thương tặng bạn món quà thảo mộc MK SPA. Chúc bạn luôn an yên và ngủ ngon!',
   );
 
   // Giao hàng & Thanh toán
@@ -42,7 +42,7 @@ export default function CheckoutPage() {
 
   // Xử lý hoàn tất đơn hàng
   const handlePlaceOrder = () => {
-    const newOrderId = `SASPA-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newOrderId = `MKSPA-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const newOrder: SaSpaOrder = {
       orderId: newOrderId,
@@ -76,7 +76,7 @@ export default function CheckoutPage() {
               ✦ Nghi Thức Đặt Hàng ✦
             </span>
             <h1 className="mt-1 font-serif text-3xl font-light text-[#1F2B24]">
-              Thanh Toán & Đóng Gói Hộp Tre Sả Spa
+              Thanh Toán & Đóng Gói Hộp Tre MK SPA
             </h1>
           </div>
 
@@ -132,14 +132,14 @@ export default function CheckoutPage() {
                   Đơn Hàng Đã Được Tiếp Nhận
                 </span>
                 <h2 className="mt-2 font-serif text-3xl font-light text-[#FAF7F2] md:text-4xl">
-                  Cảm Ơn Bạn Đã Chọn Sả Spa
+                  Cảm Ơn Bạn Đã Chọn MK SPA
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-[#FAF7F2]/80">
                   Mã đơn hàng:{' '}
                   <strong className="font-mono text-base text-[#D4AF37]">{confirmedOrderId}</strong>
                 </p>
                 <p className="mt-1 text-xs leading-relaxed text-[#FAF7F2]/70">
-                  Các nghệ nhân Sả Spa đang tuyển chọn những nhánh thảo mộc tươi nhất, cẩn thận xếp
+                  Các nghệ nhân MK SPA đang tuyển chọn những nhánh thảo mộc tươi nhất, cẩn thận xếp
                   vào hộp mây tre đan thủ công và thắt nơ lụa trao tận tay bạn.
                 </p>
 
@@ -287,7 +287,7 @@ export default function CheckoutPage() {
                           {/* KHUNG XEM TRƯỚC TẤM THIỆP THƯ PHÁP (LIVE CALLIGRAPHY PREVIEW) */}
                           <div className="mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FAF7F2] p-4 text-center shadow-xs">
                             <span className="mb-1 block text-[10px] tracking-widest text-[#D4AF37] uppercase">
-                              ✦ Tấm Thiệp Giấy Dó Sả Spa ✦
+                              ✦ Tấm Thiệp Giấy Dó MK SPA ✦
                             </span>
                             <p className="font-serif text-sm text-[#4A3B32] italic">
                               &quot;{greetingMessage}&quot;
@@ -368,7 +368,7 @@ export default function CheckoutPage() {
                           />
                           <div>
                             <span className="block text-xs font-semibold text-[#1F2B24]">
-                              ⚡ Giao hỏa tốc 2H nội thành (Ưu tiên Sả Spa)
+                              ⚡ Giao hỏa tốc 2H nội thành (Ưu tiên MK SPA)
                             </span>
                             <span className="text-[11px] text-[#8C827A]">
                               Chuyên viên giao hoa tươi và thảo mộc trong 120 phút
@@ -463,7 +463,7 @@ export default function CheckoutPage() {
                                   Số tài khoản: <strong>9999 8888 6868</strong>
                                 </p>
                                 <p>
-                                  Chủ TK: <strong>SA SPA BOTANICAL SANCTUARY</strong>
+                                  Chủ TK: <strong>MK SPA BOTANICAL SANCTUARY</strong>
                                 </p>
                                 <p>
                                   Số tiền:{' '}
@@ -591,7 +591,7 @@ export default function CheckoutPage() {
 
                 <div className="rounded-2xl border border-[#D4AF37]/30 bg-[#F4EFEA] p-4 text-[11px] leading-relaxed text-[#755428]">
                   <p>
-                    🌿 <strong>Cam kết Sả Spa:</strong> 100% nguyên liệu bản địa organic, chưng cất
+                    🌿 <strong>Cam kết MK SPA:</strong> 100% nguyên liệu bản địa organic, chưng cất
                     thủ công không hóa chất bảo quản. Đổi trả miễn phí trong 7 ngày nếu không hài
                     lòng về độ tinh khiết của mùi hương.
                   </p>

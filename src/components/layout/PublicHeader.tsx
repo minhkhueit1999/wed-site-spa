@@ -22,7 +22,7 @@ export function PublicHeader() {
           className="flex items-center gap-2 font-serif text-xl font-bold tracking-tight text-[#1F2B24] sm:text-2xl"
         >
           <span className="text-xl">🌿</span>
-          <span>Sả Spa Botanical</span>
+          <span>MK SPA Botanical</span>
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-4">

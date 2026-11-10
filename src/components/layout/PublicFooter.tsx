@@ -6,7 +6,7 @@ export function PublicFooter() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 text-sm text-[#635B54] md:flex-row">
         <div className="flex flex-col items-center gap-1 md:items-start">
           <p className="font-serif text-base font-semibold text-[#1F2B24]">
-            🌿 Sả Spa Indochine Sanctuary
+            🌿 MK SPA Indochine Sanctuary
           </p>
           <p className="text-xs">
             Hương thảo mộc bản địa chưng cất thủ công &amp; Trị liệu phục hồi chuyên sâu
@@ -14,7 +14,7 @@ export function PublicFooter() {
         </div>
         <div className="flex flex-wrap justify-center gap-6 text-xs sm:text-sm">
           <Link href="/shop" className="font-medium text-[#1F2B24] hover:text-[#D4AF37]">
-            Cửa Hàng Sả Spa
+            Cửa Hàng MK SPA
           </Link>
           <Link href="/orders" className="hover:text-[#405C4E]">
             Đơn Hàng

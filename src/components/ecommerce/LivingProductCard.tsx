@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react';
 import { SaSpaProduct } from '@/data/saSpaProducts';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
@@ -185,7 +186,7 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
           </span>
         </motion.div>
 
-        {/* THÂN VẬT THỂ SẢN PHẨM CHÍNH (3D Levitation + translateZ(45px) + Liquid Specular Sheen) */}
+        {/* THÂN VẬT THỂ SẢN PHẨM CHÍNH (Ảnh thật MK SPA + 3D Levitation + translateZ(45px) + Liquid Specular Sheen) */}
         <motion.div
           animate={
             isReducedMotion
@@ -207,116 +208,33 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
           className="relative z-10 flex cursor-pointer flex-col items-center justify-center"
           onClick={() => onQuickView && onQuickView(product)}
         >
-          {/* Chai / Hũ / Hộp thảo mộc minh họa cao cấp */}
-          <div className="relative flex items-center justify-center">
-            {/* SVG Chai Thủy Tinh Đông Dương / Hũ Gốm Mộc / Nến Thơm */}
-            <svg
-              width="110"
-              height="150"
-              viewBox="0 0 110 150"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="drop-shadow-lg filter"
-            >
-              <defs>
-                {/* Gradient thân chai theo màu sắc sản phẩm */}
-                <linearGradient id={`bottle-${product.id}`} x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor={product.themeColor.primary} />
-                  <stop offset="60%" stopColor={product.themeColor.secondary} />
-                  <stop offset="100%" stopColor={product.themeColor.accent} />
-                </linearGradient>
-                {/* Lớp bóng kính thủy tinh */}
-                <linearGradient id={`sheen-${product.id}`} x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
-                  <stop offset="30%" stopColor="rgba(255,255,255,0.8)" />
-                  <stop offset="70%" stopColor="rgba(255,255,255,0.1)" />
-                  <stop offset="100%" stopColor="transparent" />
-                </linearGradient>
-              </defs>
-
-              {/* Nắp chai gỗ sồi / đồng vàng */}
-              <rect
-                x="40"
-                y="10"
-                width="30"
-                height="18"
-                rx="4"
-                fill="#C68B59"
-                stroke="#D4AF37"
-                strokeWidth="1.5"
+          {/* Khung ảnh thực tế sản phẩm MK SPA sang trọng */}
+          <div className="relative flex items-center justify-center p-2">
+            <div className="group/img relative overflow-hidden rounded-2xl border border-[#D4AF37]/30 bg-white/70 p-2 shadow-lg backdrop-blur-xs transition-all duration-300">
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                width={144}
+                height={176}
+                className="h-44 w-36 rounded-xl object-cover shadow-sm transition-transform duration-500 group-hover/img:scale-105"
               />
-              <rect x="48" y="2" width="14" height="8" rx="2" fill="#FAF7F2" opacity="0.8" />
-
-              {/* Thân chai / Hũ */}
-              <rect
-                x="20"
-                y="28"
-                width="70"
-                height="110"
-                rx="14"
-                fill={`url(#bottle-${product.id})`}
-                stroke="#D4AF37"
-                strokeWidth="1.5"
-              />
-
-              {/* Nhãn nhung Sả Spa ép kim */}
-              <rect
-                x="28"
-                y="48"
-                width="54"
-                height="70"
-                rx="6"
-                fill="#FAF7F2"
-                stroke="#D4AF37"
-                strokeWidth="0.8"
-              />
-              <text
-                x="55"
-                y="66"
-                textAnchor="middle"
-                fill="#1F2B24"
-                fontSize="9"
-                fontWeight="bold"
-                letterSpacing="1"
-              >
-                SẢ SPA
-              </text>
-              <line
-                x1="35"
-                y1="72"
-                x2="75"
-                y2="72"
-                stroke="#D4AF37"
-                strokeWidth="0.8"
-                strokeDasharray="2 2"
-              />
-              <text x="55" y="86" textAnchor="middle" fill="#6B4226" fontSize="7" fontWeight="500">
-                {product.categoryName.toUpperCase()}
-              </text>
-              <text x="55" y="102" textAnchor="middle" fill="#D4AF37" fontSize="11">
-                ✦
-              </text>
-
-              {/* Liquid Specular Sheen (Vệt sáng vàng nắng quét qua bề mặt chai) */}
-              <motion.rect
+              {/* Lớp phủ vệt sáng lướt qua (Specular Sheen) */}
+              <motion.div
                 animate={
                   isHovered && !isReducedMotion
                     ? {
-                        x: [-70, 110],
-                        opacity: [0, 0.7, 0],
+                        x: ['-100%', '200%'],
                       }
-                    : { x: -70, opacity: 0 }
+                    : { x: '-100%' }
                 }
                 transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 1 }}
-                x="-70"
-                y="28"
-                width="40"
-                height="110"
-                fill={`url(#sheen-${product.id})`}
-                transform="skewX(-20)"
-                clipPath="url(#bottle-clip)"
+                className="pointer-events-none absolute inset-0 skew-x-12 bg-gradient-to-r from-transparent via-white/50 to-transparent"
               />
-            </svg>
+              {/* Huy hiệu MK SPA Gold Foil */}
+              <div className="absolute top-2 right-2 rounded-full bg-[#1F2B24]/85 px-2 py-0.5 text-[9px] font-bold tracking-wider text-[#D4AF37] shadow backdrop-blur-xs">
+                MK SPA
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -332,7 +250,7 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
             >
               <div className="space-y-2">
                 <span className="text-[10px] tracking-widest text-[#D4AF37] uppercase">
-                  Tầng Hương Sả Spa
+                  Tầng Hương MK SPA
                 </span>
                 <div className="space-y-1.5 text-left text-xs">
                   <div className="rounded-lg bg-[#FAF7F2]/10 p-1.5">

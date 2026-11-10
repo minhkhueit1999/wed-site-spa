@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { useOrderStore, OrderStatus } from '@/infrastructure/store/useOrderStore';
@@ -42,7 +43,7 @@ export default function OrdersPage() {
         <div className="mx-auto max-w-4xl px-4 pt-10 sm:px-6">
           <div className="mb-10 text-center">
             <span className="text-xs font-semibold tracking-widest text-[#D4AF37] uppercase">
-              ✦ Sả Spa Sanctuary ✦
+              ✦ MK SPA Sanctuary ✦
             </span>
             <h1 className="mt-1 font-serif text-3xl font-light text-[#1F2B24]">
               Lịch Sử & Hành Trình Đơn Hàng Thảo Mộc
@@ -59,14 +60,14 @@ export default function OrdersPage() {
                 Chưa có đơn hàng nào
               </h3>
               <p className="mt-1 text-xs text-[#8C827A]">
-                Bạn chưa đặt đơn hàng nào tại Sả Spa. Hãy ghé thăm cửa hàng để thưởng lãm các sản
+                Bạn chưa đặt đơn hàng nào tại MK SPA. Hãy ghé thăm cửa hàng để thưởng lãm các sản
                 phẩm.
               </p>
               <Link
                 href="/shop"
                 className="mt-6 inline-block rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C68B59] px-6 py-2.5 text-xs font-semibold text-[#141C17] shadow-md hover:scale-105"
               >
-                Khám Phá Cửa Hàng Sả Spa →
+                Khám Phá Cửa Hàng MK SPA →
               </Link>
             </div>
           ) : (
@@ -145,15 +146,15 @@ export default function OrdersPage() {
                           className="flex items-center justify-between text-xs"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-xl">
-                              {item.product.category === 'tinh-dau'
-                                ? '🏺'
-                                : item.product.category === 'cham-soc-co-the'
-                                  ? '🌿'
-                                  : item.product.category === 'nen-thom'
-                                    ? '🕯️'
-                                    : '🫖'}
-                            </span>
+                            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#D4AF37]/30 bg-[#F4EFEA]">
+                              <Image
+                                src={item.product.imageUrl}
+                                alt={item.product.name}
+                                width={40}
+                                height={40}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
                             <div>
                               <p className="font-semibold text-[#1F2B24]">{item.product.name}</p>
                               <span className="text-[11px] text-[#8C827A]">

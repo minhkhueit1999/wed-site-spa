@@ -27,7 +27,7 @@ export function AppProviders({
       <SmoothScrollProvider>
         <AuthPortalGate isAuthenticated={isAuthenticated} userEmail={userEmail} userName={userName}>
           {children}
-          {/* Lớp phủ đa giác quan Sả Spa & Thanh âm 432Hz */}
+          {/* Lớp phủ đa giác quan MK SPA & Thanh âm 432Hz */}
           <SaSpaBotanicalOverlay />
           <SoundscapeToggle />
           {/* Giỏ hàng trượt thông minh & Hiệu ứng bay vào giỏ */}
