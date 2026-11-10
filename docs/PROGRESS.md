@@ -15,7 +15,7 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **Giai đoạn 2**  | Lõi nghiệp vụ (Domain TDD: rule engine, state machine, quiz scoring)                 | Đã hoàn thành | `feat/domain-rules-lifecycle` | Không    | Coverage domain >= 93%, 101 test, chứng minh no-restricted-imports       |
 | **Giai đoạn 3**  | Trải nghiệm công khai (Trang chủ, /trieu-chung, /tu-van, /ket-qua, /dich-vu/[slug])  | Đã hoàn thành | `feat/public-experience`      | Không    | Mobile-first, không giỏ hàng, SSG chuẩn, 106 tests xanh                  |
 | **Giai đoạn 4**  | Túi liệu trình (Unified booking: chọn giờ + toa tại nhà trong 1 luồng)               | Đã hoàn thành | `feat/unified-booking`        | Không    | Transaction DB an toàn, chống trùng lịch, PENDING_REVIEW, 115 tests xanh |
-| **Giai đoạn 5**  | Tài khoản khách & Treatment Tracker (Timeline, biểu đồ, xuất/xóa dữ liệu)            | Chưa bắt đầu  | `feat/customer-tracker`       | -        | Quyền riêng tư khách                                                     |
+| **Giai đoạn 5**  | Tài khoản khách & Treatment Tracker (Timeline, biểu đồ, xuất/xóa dữ liệu)            | Đã hoàn thành | `feat/customer-tracker`       | Không    | Cô lập dữ liệu khách, xuất JSON & xóa tài khoản, 122 tests xanh          |
 | **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Chưa bắt đầu  | `feat/therapist-console`      | -        | Chặn sản phẩm chống chỉ định                                             |
 | **Giai đoạn 7**  | Quản trị (/quan-tri/*: CRUD, preview luật, tri thức RAG, AuditLog)                   | Chưa bắt đầu  | `feat/admin-management`       | -        | Role ADMIN                                                               |
 | **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Chưa bắt đầu  | `feat/rag-assistant`          | -        | Recall@5 >= 0.8, 100% cờ đỏ chuẩn                                        |
@@ -67,3 +67,18 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 - UI `/tui-lieu-trinh`:
   - 4 trạng thái: Loading skeleton, Empty/Error fallback, Success screen (mã phác đồ, thời gian, toa đính kèm, hướng dẫn trước khi đến), Form tương tác (ngày, giờ, kỹ thuật viên, cờ sức khỏe, đồng ý bảo mật).
 - Đạt 115 tests xanh (toàn bộ 7 unit/integration tests cho booking + 2 component tests), typecheck và build hoàn hảo.
+
+### Giai đoạn 5: Tài khoản khách & Treatment Tracker
+
+- Use-case `getCustomerDashboard`:
+  - Trích xuất dữ liệu phác đồ hiện tại, tính toán tiến trình số buổi đã hoàn thành / tổng số buổi.
+  - Tổng hợp chỉ số tiến triển sau mỗi buổi trị liệu (thang điểm 1-5 / 1-10 cho da, căng thẳng, giấc ngủ, cơ vai gáy) từ `SessionLog`.
+  - Hiển thị toa chăm sóc tại nhà hiện tại (`HomeCarePrescription`) do chuyên viên trực tiếp chỉ định.
+  - Timeline lịch sử chuyển trạng thái chuẩn (`PlanStateHistory`) và gợi ý hành động tiếp theo (`nextAction`).
+- Quyền riêng tư & Bảo mật dữ liệu cá nhân (GDPR-like):
+  - Use-case `exportCustomerData`: Xuất toàn bộ dữ liệu cá nhân định dạng JSON và ghi AuditLog.
+  - Use-case `deleteCustomerAccount`: Khách hàng tự xóa vĩnh viễn tài khoản và toàn bộ dữ liệu sức khỏe (cascade delete trong DB), chặn hành vi xóa tài khoản người khác, ghi AuditLog.
+- UI `/tai-khoan`:
+  - 3 tabs: Lộ trình & Treatment Tracker, Lịch hẹn của tôi, Quyền riêng tư & Dữ liệu.
+  - Modal xác nhận xóa tài khoản an toàn (`Dialog`).
+- Đạt 122 tests xanh (thêm 5 unit/integration tests + 2 component tests), coverage toàn bộ dự án đạt 88.48%.
