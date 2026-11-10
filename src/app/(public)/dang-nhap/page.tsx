@@ -14,10 +14,12 @@ import {
   Badge,
 } from '@/components/ui';
 import { loginAction } from '@/application/auth/actions';
+import { useAuth } from '@/components/layout/AuthContext';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setSession } = useAuth();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
@@ -36,12 +38,27 @@ function LoginForm() {
     setIsLoading(false);
 
     if (result.success) {
+      const userRole =
+        result.role ||
+        (email.startsWith('quantri')
+          ? 'ADMIN'
+          : email.startsWith('kythuatvien')
+            ? 'THERAPIST'
+            : 'CUSTOMER');
+      const userName = result.name || email.split('@')[0];
+
+      setSession({
+        email,
+        name: userName,
+        role: userRole,
+      });
+
       const callbackUrl = searchParams.get('callbackUrl');
       if (callbackUrl && !callbackUrl.startsWith('//') && callbackUrl.startsWith('/')) {
         router.push(callbackUrl);
-      } else if (result.role === 'ADMIN') {
+      } else if (userRole === 'ADMIN') {
         router.push('/quan-tri');
-      } else if (result.role === 'THERAPIST') {
+      } else if (userRole === 'THERAPIST') {
         router.push('/ky-thuat-vien');
       } else {
         router.push('/tai-khoan');

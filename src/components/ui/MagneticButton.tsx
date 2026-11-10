@@ -1,22 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useMotionValue, useSpring } from 'motion/react';
+import { motion, useMotionValue, useSpring, type HTMLMotionProps } from 'motion/react';
 import { useQualityTier } from '@/infrastructure/motion/QualityTierContext';
 import { SPRING_PRESETS } from '@/lib/motion';
 
-interface MagneticButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface MagneticButtonProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode;
   strength?: number;
-  className?: string;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export function MagneticButton({
   children,
   strength = 0.35,
   className = '',
-  onClick,
   ...props
 }: MagneticButtonProps) {
   const { tier, mode } = useQualityTier();
@@ -48,11 +45,7 @@ export function MagneticButton({
   };
 
   if (isReduced) {
-    return (
-      <button {...props} onClick={onClick} className={className}>
-        {children}
-      </button>
-    );
+    return <div className={className}>{children}</div>;
   }
 
   return (
@@ -61,11 +54,10 @@ export function MagneticButton({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ x: springX, y: springY }}
-      className="inline-block"
+      className={`inline-block ${className}`}
+      {...props}
     >
-      <button {...props} onClick={onClick} className={className}>
-        {children}
-      </button>
+      {children}
     </motion.div>
   );
 }

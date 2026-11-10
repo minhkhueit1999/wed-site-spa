@@ -15,6 +15,9 @@ interface AuthPortalGateProps {
   isForcedOpen?: boolean;
   defaultTab?: 'login' | 'register';
   onCloseGate?: () => void;
+  onSetSession?: (
+    session: { email: string; name?: string | null; role?: string | null } | null,
+  ) => void;
   children: React.ReactNode;
 }
 
@@ -25,6 +28,7 @@ export function AuthPortalGate({
   isForcedOpen = false,
   defaultTab = 'login',
   onCloseGate,
+  onSetSession,
   children,
 }: AuthPortalGateProps) {
   const router = useRouter();
@@ -63,9 +67,11 @@ export function AuthPortalGate({
     if (typeof window !== 'undefined') {
       try {
         if (typeof window.localStorage !== 'undefined' && window.localStorage !== null) {
+          window.localStorage.setItem('mk_spa_unlocked', 'true');
           window.localStorage.setItem('sa_spa_unlocked', 'true');
         }
         if (typeof document !== 'undefined') {
+          document.cookie = 'mk_spa_unlocked=true; path=/; max-age=2592000; SameSite=Lax';
           document.cookie = 'sa_spa_unlocked=true; path=/; max-age=2592000; SameSite=Lax';
         }
       } catch {
@@ -78,6 +84,7 @@ export function AuthPortalGate({
       if (targetPath) {
         router.push(targetPath);
       }
+      router.refresh();
     }, 1200);
   };
 
@@ -87,13 +94,16 @@ export function AuthPortalGate({
     setErrorMsg(null);
 
     let email = 'khachhang@spawellness.vn';
+    let name = 'Khách Hàng VIP';
     let targetPath: string | undefined = undefined;
 
     if (role === 'THERAPIST') {
       email = 'kythuatvien@spawellness.vn';
+      name = 'KTV Mai Phương';
       targetPath = '/ky-thuat-vien';
     } else if (role === 'ADMIN') {
       email = 'quantri@spawellness.vn';
+      name = 'Quản Trị Viên';
       targetPath = '/quan-tri';
     }
 
@@ -106,6 +116,7 @@ export function AuthPortalGate({
 
       if (res?.ok) {
         setFavoriteScentStore('sa-chanh');
+        onSetSession?.({ email, name, role });
         triggerGrandReveal(targetPath);
       } else {
         setErrorMsg(`Không thể đăng nhập tài khoản ${role}. Vui lòng thử lại.`);
@@ -159,11 +170,22 @@ export function AuthPortalGate({
       redirect: false,
     });
 
+    const role =
+      (res.role as AuthRole) ||
+      (loginEmail.startsWith('quantri')
+        ? 'ADMIN'
+        : loginEmail.startsWith('kythuatvien')
+          ? 'THERAPIST'
+          : 'CUSTOMER');
+    const name = res.name || loginEmail.split('@')[0];
+
+    onSetSession?.({ email: loginEmail, name, role });
+
     // Phân luồng trang đích theo vai trò
     let redirectPath: string | undefined;
-    if (loginEmail === 'kythuatvien@spawellness.vn') {
+    if (role === 'THERAPIST' || loginEmail === 'kythuatvien@spawellness.vn') {
       redirectPath = '/ky-thuat-vien';
-    } else if (loginEmail === 'quantri@spawellness.vn') {
+    } else if (role === 'ADMIN' || loginEmail === 'quantri@spawellness.vn') {
       redirectPath = '/quan-tri';
     }
 
@@ -202,6 +224,7 @@ export function AuthPortalGate({
       redirect: false,
     });
 
+    onSetSession?.({ email: registerEmail, name: registerName, role: 'CUSTOMER' });
     triggerGrandReveal();
     setIsLoading(false);
   };

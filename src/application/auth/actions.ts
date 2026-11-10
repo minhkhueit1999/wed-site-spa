@@ -27,6 +27,8 @@ export type ActionState = {
   success: boolean;
   message?: string;
   role?: string;
+  name?: string;
+  email?: string;
   fieldErrors?: Record<string, string>;
 };
 
@@ -65,7 +67,12 @@ export async function loginAction(
       redirect: false,
     });
     const user = await userRepository.findByEmail(parsed.data.email);
-    return { success: true, role: user?.role };
+    return {
+      success: true,
+      role: user?.role,
+      name: user?.name,
+      email: user?.email,
+    };
   } catch (error) {
     if (error instanceof AuthError) {
       return { success: false, message: 'Email hoặc mật khẩu không chính xác.' };

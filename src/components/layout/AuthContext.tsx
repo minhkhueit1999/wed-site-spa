@@ -2,6 +2,12 @@
 
 import * as React from 'react';
 
+export interface UserSession {
+  email: string;
+  name?: string | null;
+  role?: string | null;
+}
+
 export interface AuthContextType {
   isAuthenticated: boolean;
   userEmail: string | null;
@@ -9,6 +15,8 @@ export interface AuthContextType {
   userRole: string | null;
   logout: () => Promise<void>;
   openGate: (tab?: 'login' | 'register') => void;
+  setSession: (session: UserSession | null) => void;
+  syncSession: () => Promise<void>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>({
@@ -18,6 +26,8 @@ export const AuthContext = React.createContext<AuthContextType>({
   userRole: null,
   logout: async () => {},
   openGate: () => {},
+  setSession: () => {},
+  syncSession: async () => {},
 });
 
 export function useAuth() {
