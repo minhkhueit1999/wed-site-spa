@@ -51,9 +51,21 @@ function StaticHeroFallback() {
   );
 }
 
+const emptySubscribe = () => () => {};
+function useIsMounted() {
+  return React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 export function HeroScene({ className = '' }: { className?: string }) {
   const { tier, mode, isWebGLSupported, isContextLost } = useQualityTier();
-  const isStatic = tier === 1 || mode === 'reduced' || !isWebGLSupported || isContextLost;
+  const isMounted = useIsMounted();
+
+  const isStatic =
+    !isMounted || tier === 1 || mode === 'reduced' || !isWebGLSupported || isContextLost;
 
   return (
     <div

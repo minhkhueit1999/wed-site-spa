@@ -11,7 +11,6 @@ import {
   CardDescription,
   CardContent,
   Input,
-  Badge,
 } from '@/components/ui';
 import { loginAction } from '@/application/auth/actions';
 import { useAuth } from '@/components/layout/AuthContext';
@@ -69,11 +68,6 @@ function LoginForm() {
     }
   };
 
-  const fillDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('SpaDemo2026!');
-  };
-
   return (
     <Card className="border-[#E2D9CC] shadow-md">
       <CardHeader>
@@ -118,52 +112,9 @@ function LoginForm() {
           />
 
           <Button type="submit" variant="primary" className="mt-2 w-full" isLoading={isLoading}>
-            Đăng nhập
+            Đăng nhập khách hàng
           </Button>
         </form>
-
-        {/* Tài khoản Demo hỗ trợ giảng viên đánh giá */}
-        <div className="mt-6 border-t border-[#E2D9CC] pt-4">
-          <p className="mb-2 text-center text-xs font-semibold tracking-wide text-[#635B54] uppercase">
-            Tài khoản kiểm thử nhanh (Demo)
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => fillDemo('khachhang@spawellness.vn')}
-              className="rounded-lg border border-[#E2D9CC] bg-[#FAF7F2] px-2.5 py-1 text-xs text-[#2B2622] transition-colors hover:bg-[#EAE1D3]"
-            >
-              <Badge variant="secondary" className="mr-1">
-                Khách
-              </Badge>{' '}
-              An
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo('kythuatvien@spawellness.vn')}
-              className="rounded-lg border border-[#E2D9CC] bg-[#FAF7F2] px-2.5 py-1 text-xs text-[#2B2622] transition-colors hover:bg-[#EAE1D3]"
-            >
-              <Badge variant="primary" className="mr-1">
-                KTV
-              </Badge>{' '}
-              Yến
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo('quantri@spawellness.vn')}
-              className="rounded-lg border border-[#E2D9CC] bg-[#FAF7F2] px-2.5 py-1 text-xs text-[#2B2622] transition-colors hover:bg-[#EAE1D3]"
-            >
-              <Badge variant="terracotta" className="mr-1">
-                Admin
-              </Badge>{' '}
-              Trị
-            </button>
-          </div>
-          <p className="mt-2 text-center text-[11px] text-[#8C827A]">
-            Tự động chuyển hướng tương ứng: Khách → /tai-khoan | KTV → /ky-thuat-vien | Admin →
-            /quan-tri
-          </p>
-        </div>
 
         <div className="mt-6 text-center text-sm text-[#635B54]">
           Chưa có tài khoản?{' '}

@@ -23,8 +23,8 @@ vi.mock('@/application/auth/actions', () => ({
   registerAction: vi.fn().mockResolvedValue({ success: true }),
 }));
 
-describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc MK SPA & Phân Quyền)', () => {
-  it('hiển thị Cổng chào MK SPA khi chưa đăng nhập (isAuthenticated = false) và đủ 3 nút phân quyền', () => {
+describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc MK SPA Dành Riêng Cho Khách Hàng)', () => {
+  it('hiển thị Cổng chào MK SPA khi chưa đăng nhập (isAuthenticated = false) và ẩn các tài khoản có sẵn', () => {
     render(
       <AuthPortalGate isAuthenticated={false}>
         <div data-testid="protected-content">Nội dung bên trong Spa</div>
@@ -34,13 +34,16 @@ describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc MK SPA & Phân Quyền
     // Không hiển thị nội dung bên trong
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
 
-    // Hiển thị tiêu đề và nút cổng MK SPA
+    // Hiển thị tiêu đề và nút đăng nhập/đăng ký khách hàng
     expect(screen.getByText('MK SPA Botanical')).toBeInTheDocument();
-    expect(screen.getByText('Khách Hàng VIP')).toBeInTheDocument();
-    expect(screen.getAllByText('Kỹ Thuật Viên').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('Quản Trị Viên').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Đăng Nhập')).toBeInTheDocument();
     expect(screen.getByText('Đăng Ký Thành Viên')).toBeInTheDocument();
+    expect(screen.getByText('Đăng Nhập Khách Hàng →')).toBeInTheDocument();
+
+    // Các tài khoản có sẵn (KTV, Quản Trị Viên, Khách VIP) đều đã được ẩn theo yêu cầu
+    expect(screen.queryByText('Kỹ Thuật Viên')).not.toBeInTheDocument();
+    expect(screen.queryByText('Quản Trị Viên')).not.toBeInTheDocument();
+    expect(screen.queryByText('Khách Hàng VIP')).not.toBeInTheDocument();
   });
 
   it('chuyển đổi tab sang Đăng ký thành viên và hiển thị lựa chọn nốt hương', async () => {
@@ -68,6 +71,6 @@ describe('AuthPortalGate (Cổng Xác Thực Bắt Buộc MK SPA & Phân Quyền
     );
 
     expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-    expect(screen.queryByText('Khách Hàng VIP')).not.toBeInTheDocument();
+    expect(screen.queryByText('Đăng Nhập Khách Hàng →')).not.toBeInTheDocument();
   });
 });

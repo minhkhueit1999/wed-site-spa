@@ -47,10 +47,9 @@ export function AuthPortalGate({
 
   const [isRevealing, setIsRevealing] = useState(false);
 
-  // Form states & phân quyền vai trò
-  const [selectedRole, setSelectedRole] = useState<AuthRole>('CUSTOMER');
-  const [loginEmail, setLoginEmail] = useState('khachhang@spawellness.vn');
-  const [loginPassword, setLoginPassword] = useState('SpaDemo2026!');
+  // Form states
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
@@ -86,62 +85,6 @@ export function AuthPortalGate({
       }
       router.refresh();
     }, 1200);
-  };
-
-  // Đăng nhập 1 chạm phân quyền vai trò (Khách hàng, KTV, Admin)
-  const handleRoleQuickLogin = async (role: AuthRole) => {
-    setIsLoading(true);
-    setErrorMsg(null);
-
-    let email = 'khachhang@spawellness.vn';
-    let name = 'Khách Hàng VIP';
-    let targetPath: string | undefined = undefined;
-
-    if (role === 'THERAPIST') {
-      email = 'kythuatvien@spawellness.vn';
-      name = 'KTV Mai Phương';
-      targetPath = '/ky-thuat-vien';
-    } else if (role === 'ADMIN') {
-      email = 'quantri@spawellness.vn';
-      name = 'Quản Trị Viên';
-      targetPath = '/quan-tri';
-    }
-
-    try {
-      const res = await signIn('credentials', {
-        email,
-        password: 'SpaDemo2026!',
-        redirect: false,
-      });
-
-      if (res?.ok) {
-        setFavoriteScentStore('sa-chanh');
-        onSetSession?.({ email, name, role });
-        triggerGrandReveal(targetPath);
-      } else {
-        setErrorMsg(`Không thể đăng nhập tài khoản ${role}. Vui lòng thử lại.`);
-      }
-    } catch {
-      setErrorMsg('Đã có lỗi xảy ra khi xác thực vai trò.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Thay đổi lựa chọn vai trò trên tab Đăng nhập
-  const handleSelectRole = (role: AuthRole) => {
-    setSelectedRole(role);
-    setErrorMsg(null);
-    if (role === 'CUSTOMER') {
-      setLoginEmail('khachhang@spawellness.vn');
-      setLoginPassword('SpaDemo2026!');
-    } else if (role === 'THERAPIST') {
-      setLoginEmail('kythuatvien@spawellness.vn');
-      setLoginPassword('SpaDemo2026!');
-    } else if (role === 'ADMIN') {
-      setLoginEmail('quantri@spawellness.vn');
-      setLoginPassword('SpaDemo2026!');
-    }
   };
 
   // Xử lý gửi Form Đăng nhập
@@ -417,46 +360,13 @@ export function AuthPortalGate({
                 onSubmit={handleLoginSubmit}
                 className="space-y-3.5"
               >
-                {/* 1. Bộ chọn phân quyền vai trò (Role Selector) */}
-                <div>
-                  <span className="mb-1.5 block text-[11px] font-medium text-[#D4AF37]">
-                    🔐 Chọn phân quyền đăng nhập:
-                  </span>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[
-                      { role: 'CUSTOMER' as AuthRole, label: 'Khách Hàng', icon: '👤' },
-                      { role: 'THERAPIST' as AuthRole, label: 'Kỹ Thuật Viên', icon: '🩺' },
-                      { role: 'ADMIN' as AuthRole, label: 'Quản Trị Viên', icon: '⚙️' },
-                    ].map((item) => (
-                      <button
-                        key={item.role}
-                        type="button"
-                        onClick={() => handleSelectRole(item.role)}
-                        className={`flex flex-col items-center justify-center rounded-xl border p-2 text-center transition-all ${
-                          selectedRole === item.role
-                            ? 'border-[#D4AF37] bg-[#D4AF37]/20 font-semibold text-[#FAF7F2] ring-1 ring-[#D4AF37]/40'
-                            : 'border-[#D4AF37]/20 bg-[#141C17]/50 text-[#FAF7F2]/70 hover:border-[#D4AF37]/50'
-                        }`}
-                      >
-                        <span className="text-base">{item.icon}</span>
-                        <span className="mt-0.5 truncate text-[11px]">{item.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
+                {/* Trường nhập liệu Email khách hàng */}
                 <div>
                   <label
                     htmlFor="gate-email"
                     className="block text-xs font-medium text-[#FAF7F2]/80"
                   >
-                    Địa chỉ Email (
-                    {selectedRole === 'CUSTOMER'
-                      ? 'Khách'
-                      : selectedRole === 'THERAPIST'
-                        ? 'KTV'
-                        : 'Admin'}
-                    )
+                    Địa chỉ Email khách hàng
                   </label>
                   <input
                     id="gate-email"
@@ -492,7 +402,7 @@ export function AuthPortalGate({
                   disabled={isLoading}
                   className="w-full rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#C68B59] py-3 text-xs font-semibold text-[#141C17] shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
                 >
-                  {isLoading ? 'Đang xác thực quyền...' : 'Bước Vào Trải Nghiệm MK SPA →'}
+                  {isLoading ? 'Đang xác thực...' : 'Đăng Nhập Khách Hàng →'}
                 </button>
               </motion.form>
             ) : (
@@ -596,45 +506,6 @@ export function AuthPortalGate({
               </motion.form>
             )}
           </AnimatePresence>
-        </div>
-
-        {/* 3 Nút Đăng nhập Nhanh 1 Chạm theo Phân Quyền (Khách / KTV / Admin) */}
-        <div className="mt-5 border-t border-[#D4AF37]/20 pt-3 text-center">
-          <p className="text-[11px] font-medium text-[#FAF7F2]/70">
-            👑 Đăng nhập nhanh 1 chạm theo phân quyền (Dành cho Giảng viên / Đánh giá):
-          </p>
-          <div className="mt-2 grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleRoleQuickLogin('CUSTOMER')}
-              disabled={isLoading}
-              className="flex flex-col items-center justify-center rounded-xl border border-[#D4AF37]/40 bg-[#141C17] p-2 text-xs font-medium text-[#D4AF37] transition-all hover:border-[#D4AF37] hover:bg-[#D4AF37]/15"
-              title="Vào nhanh trải nghiệm Khách Hàng VIP"
-            >
-              <span className="text-sm">👑</span>
-              <span className="mt-0.5 text-[10px] font-semibold">Khách Hàng VIP</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleRoleQuickLogin('THERAPIST')}
-              disabled={isLoading}
-              className="flex flex-col items-center justify-center rounded-xl border border-[#8DAA72]/40 bg-[#141C17] p-2 text-xs font-medium text-[#8DAA72] transition-all hover:border-[#8DAA72] hover:bg-[#8DAA72]/15"
-              title="Vào nhanh Bàn làm việc Kỹ thuật viên (/ky-thuat-vien)"
-            >
-              <span className="text-sm">🩺</span>
-              <span className="mt-0.5 text-[10px] font-semibold">Kỹ Thuật Viên</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleRoleQuickLogin('ADMIN')}
-              disabled={isLoading}
-              className="flex flex-col items-center justify-center rounded-xl border border-[#C68B59]/40 bg-[#141C17] p-2 text-xs font-medium text-[#E59B3C] transition-all hover:border-[#C68B59] hover:bg-[#C68B59]/15"
-              title="Vào nhanh Bảng điều khiển Quản Trị Viên (/quan-tri)"
-            >
-              <span className="text-sm">⚙️</span>
-              <span className="mt-0.5 text-[10px] font-semibold">Quản Trị Viên</span>
-            </button>
-          </div>
         </div>
       </motion.div>
 

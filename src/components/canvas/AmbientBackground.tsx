@@ -46,14 +46,25 @@ function StaticSpaBackdrop({ variant = 'fluid-aurora' }: { variant?: AmbientVari
   );
 }
 
+const emptySubscribe = () => () => {};
+function useIsMounted() {
+  return React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 export function AmbientBackground({
   variant = 'fluid-aurora',
   className = '',
   showScrim = true,
 }: AmbientBackgroundProps) {
   const { tier, mode, isWebGLSupported, isContextLost } = useQualityTier();
+  const isMounted = useIsMounted();
 
-  const isStaticMode = tier === 1 || mode === 'reduced' || !isWebGLSupported || isContextLost;
+  const isStaticMode =
+    !isMounted || tier === 1 || mode === 'reduced' || !isWebGLSupported || isContextLost;
 
   return (
     <div
