@@ -158,3 +158,17 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 - `docs/QA-REPORT.md`: Báo cáo đảm bảo chất lượng toàn diện với bảng số liệu test, coverage, Playwright matrix, RAG eval, Gitleaks và các hạn chế đã biết.
 - `docs/SLIDE-OUTLINE.md`: Đề cương 10 slide bảo vệ đồ án chuẩn học thuật.
 - Gắn thẻ phát hành Git: `v1.0.0` và đẩy lên remote GitHub repository.
+
+---
+
+## Immersive Motion & WebGL (Creative Web Experience)
+
+| Hạng mục                                   | Trạng thái    | Ghi chú & Chi tiết kiến trúc                                                                                                                   |
+| :----------------------------------------- | :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sửa lỗi xác thực & điều hướng**          | Đã hoàn thành | Tự động phân luồng role: Admin → `/quan-tri`, KTV → `/ky-thuat-vien`, Khách → `/tai-khoan`.                                                    |
+| **Kiến trúc Motion & 3-Tier Quality**      | Đã hoàn thành | Token `src/lib/motion.ts`, `QualityTierContext.tsx`, Runtime FPS guard (< 30 FPS tự hạ cấp).                                                   |
+| **Ambient Background & GLSL Shaders**      | Đã hoàn thành | Next.js dynamic chunk (`ssr: false`), shaders simplex noise, uMouse/uVelocity, phim hạt procedural. Hoàn trả GPU khi tab ẩn hoặc mất ngữ cảnh. |
+| **3D Hero Sculpture & Scrollytelling**     | Đã hoàn thành | Tác phẩm 3D đá cuội / giọt sương ngọc bích, GSAP ScrollTrigger + Lenis ticker sync, kinetic text. Chế độ fallback 2D silhouette khi ở Tier 1.  |
+| **Signature Spa Moments & BreathingOrb3D** | Đã hoàn thành | Khối cầu 3D nhịp thở 4-7-8 trên `/tai-khoan`, Z-depth quiz transitions, ritual reveal trên `/ket-qua`, Magnetic button và Tilt card.           |
+| **Display Mode Switcher & Fallback**       | Đã hoàn thành | Nút chuyển chế độ Sống động / Tiêu chuẩn / Tĩnh trên Header, phục hồi mất ngữ cảnh WebGL, lưu trạng thái localStorage `spa_motion_mode`.       |
+| **Bộ kiểm thử tự động & E2E Matrix**       | Đã hoàn thành | 180/180 Vitest unit/component tests xanh; 24/24 Playwright E2E tests xanh trên 3 thiết bị (Desktop Chromium, Mobile Pixel 5, Tablet 768px).    |

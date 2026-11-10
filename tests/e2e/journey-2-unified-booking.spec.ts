@@ -1,6 +1,23 @@
 import { test, expect } from '@playwright/test';
+import { PrismaClient } from '@prisma/client';
 
 test.describe('Hành trình 2: Túi liệu trình (Unified Booking)', () => {
+  test.beforeEach(async () => {
+    // Đảm bảo tính độc lập: dọn các lịch hẹn test từ năm 2027 để slot trống cho các lượt chạy
+    const prisma = new PrismaClient();
+    try {
+      await prisma.appointment.deleteMany({
+        where: {
+          startAt: { gte: new Date('2027-01-01T00:00:00.000Z') },
+        },
+      });
+    } catch {
+      // Bỏ qua nếu môi trường không kết nối trực tiếp được prisma
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
+
   test('Xác nhận lịch hẹn spa + nhận toa tại nhà trong 1 luồng giao dịch duy nhất', async ({
     page,
   }, testInfo) => {
@@ -17,9 +34,9 @@ test.describe('Hành trình 2: Túi liệu trình (Unified Booking)', () => {
 
     // 3. Điền thông tin đặt lịch hẹn buổi đầu tiên (phân bổ ngày và giờ theo project để không trùng lịch)
     const projectOffset =
-      testInfo.project.name === 'chromium' ? 30 : testInfo.project.name === 'mobile' ? 50 : 70;
+      testInfo.project.name === 'chromium' ? 100 : testInfo.project.name === 'mobile' ? 120 : 140;
     const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + projectOffset + Math.floor(Math.random() * 10));
+    futureDate.setDate(futureDate.getDate() + projectOffset);
     const year = futureDate.getFullYear();
     const month = String(futureDate.getMonth() + 1).padStart(2, '0');
     const day = String(futureDate.getDate()).padStart(2, '0');

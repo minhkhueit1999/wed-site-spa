@@ -2,9 +2,11 @@
 
 [![Quality Gate](https://img.shields.io/badge/Quality%20Gate-PASSED-brightgreen.svg)](<>)
 [![Coverage: Domain](https://img.shields.io/badge/Coverage%20Domain-%3E95%25-brightgreen.svg)](<>)
-[![Coverage: Total](https://img.shields.io/badge/Coverage%20Total-77.9%25-brightgreen.svg)](<>)
-[![Playwright E2E](https://img.shields.io/badge/E2E%20Tests-15%2F15%20PASSED-success.svg)](<>)
+[![Coverage: Total](https://img.shields.io/badge/Coverage%20Total-78.2%25-brightgreen.svg)](<>)
+[![Playwright E2E](https://img.shields.io/badge/E2E%20Tests-24%2F24%20PASSED-success.svg)](<>)
+[![Vitest Unit/Component](https://img.shields.io/badge/Vitest-180%2F180%20PASSED-success.svg)](<>)
 [![RAG Benchmark](https://img.shields.io/badge/RAG%20Recall%405-100%25-blue.svg)](<>)
+[![Creative WebGL](https://img.shields.io/badge/WebGL%203D-3--Tier%20Adaptive-8b5cf6.svg)](<>)
 [![License: Academic](https://img.shields.io/badge/License-Academic%20Project-lightgrey.svg)](<>)
 
 > **Digital Wellness Platform** là nền tảng quản lý quy trình spa & chăm sóc cá nhân hóa chuyên sâu, giải quyết bài toán cốt lõi: **Liên kết dữ liệu giữa buổi trị liệu tại cơ sở spa (offline) và quy trình dưỡng phục hồi tại nhà (online) trong MỘT chu trình khép kín.**
@@ -28,15 +30,24 @@
 6. **Trợ lý tư vấn AI RAG an toàn & Trích nguồn**:
    - Tra cứu tài liệu spa bằng kỹ thuật Hybrid Retrieval (Cosine Similarity + BM25 Reciprocal Rank Fusion).
    - Tự động nhận diện cờ đỏ y tế khẩn cấp và Prompt Injection để xử lý an toàn ngay tại Pre-Check (Zero PII, không gọi LLM).
+7. **Không gian số Immersive 3D & WebGL Shaders (Chuẩn Awwwards / FWA)**:
+   - **3-Tier Adaptive Quality System**: Tự động nhận diện phần cứng GPU và điều chỉnh chất lượng hình ảnh (Tier 3 Desktop/dpr 2, Tier 2 Mobile/dpr 1, Tier 1 Static Fallback).
+   - **Tác phẩm điêu khắc 3D Zen Pebble**: Khối đá cuội hữu cơ tương tác con trỏ vật lý và camera scrollytelling theo tiến trình cuộn trang.
+   - **Mặt nước gợn sóng & Cực quang WebGL**: Shader Simplex Noise 2D/3D với khúc xạ quang học ánh sáng và phản hồi con trỏ chuột (`uMouse`, `uVelocity`).
+   - **Quả cầu chánh niệm 3D (Mindful Breathing Orb)**: Hỗ trợ nhịp thở 4-7-8 (Hít vào 4s hổ phách, Nén thở 7s, Thở ra 8s xanh xô thơm) gắn liền với tài khoản khách hàng.
+   - **Unified Render Loop**: Đồng bộ nhịp khung hình mượt mà 60fps giữa Lenis Smooth Scroll, GSAP Ticker và React Three Fiber.
+   - **Tự động ngắt GPU & Thích ứng hoàn hảo**: Tự động giải phóng tài nguyên GPU khi ẩn tab hoặc bật `prefers-reduced-motion: reduce`.
 
 ---
 
 ## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
 
 - **Giao diện & Ứng dụng**: [Next.js App Router 16.4](https://nextjs.org/) (React 19), Tailwind CSS, TypeScript Strict Mode.
+- **Không gian số 3D & WebGL**: [Three.js](https://threejs.org/), [React Three Fiber](https://r3f.docs.pmnd.rs/), [@react-three/drei](https://github.com/pmndrs/drei), GLSL Shaders.
+- **Vật lý chuyển động & Cuộn trang**: [GSAP](https://gsap.com/) (ScrollTrigger), [Lenis](https://lenis.darkroom.engineering/) (Smooth Scroll), [Motion for React](https://motion.dev/) (Spring Physics).
 - **Cơ sở dữ liệu & ORM**: [Prisma ORM 7](https://www.prisma.io/) + SQLite (`prisma/dev.db` cho môi trường dev/demo; sẵn sàng chuyển PostgreSQL cho production).
 - **Xác thực & Bảo mật**: [Auth.js v5](https://authjs.dev/) (Credentials, Cookie phiên HTTP-Only, RBAC: `CUSTOMER`, `THERAPIST`, `ADMIN`), Sliding Rate Limiter, Gitleaks.
-- **Kiểm thử tự động**: [Vitest](https://vitest.dev/) (Unit & Component Test), `@testing-library/react`, [Playwright](https://playwright.dev/) (E2E Test trên Desktop Chrome, Mobile Pixel 5 và Tablet).
+- **Kiểm thử tự động**: [Vitest](https://vitest.dev/) (180 Unit & Component Tests), `@testing-library/react`, [Playwright](https://playwright.dev/) (24 E2E Tests trên Desktop Chrome, Mobile Pixel 5 và Tablet).
 - **Hạ tầng AI/RAG**: Hashing Vector Embeddings 64-D, Hybrid Vector Store, Mock & Gemini LLM Providers.
 
 ---

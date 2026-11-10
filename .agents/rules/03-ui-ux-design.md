@@ -21,6 +21,18 @@ Yên tĩnh, ấm, đáng tin, chuyên môn nhưng không lạnh lùng. Nhiều k
 - Mỗi màn hình có đủ 4 trạng thái: đang tải, trống, lỗi, thành công. Không để trang trắng.
 - Luồng nhiều bước (trắc nghiệm, túi liệu trình) có chỉ báo tiến độ, cho quay lại, lưu tạm đáp án.
 
+## Immersive Motion & 3D WebGL (Chuẩn Awwwards / FWA)
+
+Cho phép áp dụng công nghệ 3D, WebGL Shaders và Scrollytelling hữu cơ với các ràng buộc nghiêm ngặt:
+
+- **3-Tier Adaptive Quality**:
+  - _Tier 3 (High)_: Full 3D scenes, custom GLSL shaders, 3D depth particles, dpr [1, 2].
+  - _Tier 2 (Medium)_: Giảm 50% particles, khóa dpr = 1, shaders nhẹ hơn, tắt phản chiếu đa lượt.
+  - _Tier 1 (Low / Fallback)_: Tự động tắt WebGL Canvas khi người dùng bật `prefers-reduced-motion: reduce`, GPU yếu hoặc chọn chế độ 'Tĩnh'; hiển thị nền tĩnh CSS/SVG mượt mà.
+- **Tải lười (Lazy Hydration)**: Mọi canvas WebGL/Three.js phải được bọc trong `next/dynamic` với `ssr: false` để bảo toàn chỉ số FCP và LCP (< 2.5s).
+- **GPU Resource Management**: Bắt buộc dọn dẹp bộ nhớ GPU (`geometry.dispose()`, `material.dispose()`, `renderer.dispose()`) khi unmount; tự dừng render loop khi tab ẩn (`visibilitychange`) hoặc canvas ra khỏi viewport.
+- **Bộ chuyển chế độ hiển thị**: Cung cấp công tắc trực quan cho phép khách chọn giữa "Sống động (3D)", "Tiêu chuẩn", "Tĩnh".
+
 ## Nội dung (copywriting)
 
 - Giọng ấm, rõ, ngắn. Xưng "bạn", tránh thuật ngữ y khoa.

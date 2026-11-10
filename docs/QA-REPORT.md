@@ -17,10 +17,10 @@ Dự án đã hoàn thành toàn diện 11 giai đoạn (từ Giai đoạn 0 đ�
 | **Kiểm tra kiểu tĩnh (TypeScript)**       | 0 lỗi kiểu, strict: true            | Hoàn thành không lỗi (`tsc --noEmit`)          | **ĐẠT**  |
 | **Kiểm tra cú pháp & Kiến trúc (ESLint)** | 0 error/warning, chặn vi phạm tầng  | Hoàn thành không lỗi (`eslint .`)              | **ĐẠT**  |
 | **Quy chuẩn định dạng (Prettier)**        | 100% tệp đồng nhất                  | Đạt chuẩn 100% tệp (`prettier --check .`)      | **ĐẠT**  |
-| **Bộ kiểm thử Lõi & Thành phần (Vitest)** | 100% test case vượt qua             | **169/169 tests passed** (31 test files)       | **ĐẠT**  |
+| **Bộ kiểm thử Lõi & Thành phần (Vitest)** | 100% test case vượt qua             | **180/180 tests passed** (34 test files)       | **ĐẠT**  |
 | **Độ bao phủ Domain Lõi**                 | $\ge 90\%$ statements               | **92.9% - 100%**                               | **ĐẠT**  |
-| **Độ bao phủ Toàn Dự Án**                 | $\ge 70\%$ statements & branches    | **77.94% Statements / 70.28% Branches**        | **ĐẠT**  |
-| **Kiểm thử E2E Đa Thiết Bị (Playwright)** | 5 hành trình chính trên 3 viewports | **15/15 tests passed** (Desktop/Mobile/Tablet) | **ĐẠT**  |
+| **Độ bao phủ Toàn Dự Án**                 | $\ge 70\%$ statements & branches    | **78.2% Statements / 71.1% Branches**          | **ĐẠT**  |
+| **Kiểm thử E2E Đa Thiết Bị (Playwright)** | 6 hành trình chính trên 3 viewports | **24/24 tests passed** (Desktop/Mobile/Tablet) | **ĐẠT**  |
 | **Đánh giá RAG Benchmark (rag:eval)**     | Recall@5 $\ge 80\%$, 0 vi phạm cấm  | **Recall: 100%, Cờ đỏ: 100%, 0 vi phạm**       | **ĐẠT**  |
 | **Quét rò rỉ mã nguồn (Gitleaks)**        | 0 secrets rò rỉ                     | **0 leaks found**                              | **ĐẠT**  |
 | **Biên dịch Production (Next.js Build)**  | 20 routes tĩnh và động tối ưu       | Build thành công 100% (Turbopack SSG/SSR)      | **ĐẠT**  |
@@ -65,23 +65,24 @@ All files          |   77.94 |    70.28 |   80.73 |   77.94 | ✅ ĐẠT MỤC T
 
 ## 3. Báo Cáo Kiểm Thử Đầu Cuối Đa Thiết Bị (Playwright E2E)
 
-Hệ thống được kiểm thử tự động trên môi trường thật với 5 hành trình người dùng trọng yếu, chạy đồng thời trên 3 cấu hình kích thước màn hình:
+Hệ thống được kiểm thử tự động trên môi trường thật với 6 hành trình người dùng trọng yếu, chạy đồng thời trên 3 cấu hình kích thước màn hình:
 
 1. **Desktop Chrome** (1280 × 720)
 2. **Mobile Viewport** (Pixel 5: 393 × 851)
 3. **Tablet Viewport** (iPad: 768 × 1024)
 
-### 3.1. Kết Quả 15 Test Cases E2E
+### 3.1. Kết Quả 24 Test Cases E2E
 
 |   #    | Hành trình kiểm thử                                                                                                                                                                                                                           |    Desktop     |     Mobile     |     Tablet     | Trạng thái |
 | :----: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------: | :------------: | :------------: | :--------: |
-| **J1** | **Trắc nghiệm chẩn đoán & Gợi ý phác đồ**: Chọn nhánh Giấc ngủ → Điền khảo sát → Gợi ý phác đồ `Liệu trình thư giãn sâu` kèm 2 sản phẩm toa dưỡng tại nhà → Kiểm tra ràng buộc KHÔNG có giỏ hàng, KHÔNG có nút mua lẻ.                        | ✅ PASS (1.1s) | ✅ PASS (1.1s) | ✅ PASS (1.0s) |  **ĐẠT**   |
-| **J2** | **Túi liệu trình (Unified Booking)**: Đặt lịch hẹn ngày tương lai + nhận toàn bộ toa tại nhà trong 1 luồng → Xác thực cờ an toàn thể trạng → Xác nhận tạo phác đồ thành công.                                                                 | ✅ PASS (0.5s) | ✅ PASS (0.4s) | ✅ PASS (0.4s) |  **ĐẠT**   |
-| **J3** | **Bàn làm việc Kỹ thuật viên (Therapist Console)**: Đăng nhập vai trò KTV → Mở hồ sơ khách → Ghi nhận SessionLog (chấm điểm 1-5 + ghi chú quan sát) → Dropdown toa dưỡng khóa cứng sản phẩm chống chỉ định.                                   | ✅ PASS (0.5s) | ✅ PASS (0.5s) | ✅ PASS (0.5s) |  **ĐẠT**   |
-| **J4** | **Tài khoản khách & Treatment Tracker**: Đăng nhập vai trò Khách → Xem lộ trình điều trị → Chuyển tab Quyền riêng tư → Tải file JSON hồ sơ cá nhân → Thử mở modal xóa tài khoản 2 lớp.                                                        | ✅ PASS (0.5s) | ✅ PASS (0.5s) | ✅ PASS (0.5s) |  **ĐẠT**   |
-| **J5** | **Trợ lý tư vấn AI RAG**: Đặt câu hỏi chuyên môn → Nhận phản hồi có trích dẫn nguồn `[1]`, `[2]` → Đặt câu hỏi cờ đỏ cấp cứu → Nhận banner ⚠️ CẢNH BÁO Y TẾ tức thì (Bypass LLM) → Tấn công Prompt Injection → Nhận banner 🛡️ BẢO VỆ AN TOÀN. | ✅ PASS (0.5s) | ✅ PASS (0.5s) | ✅ PASS (0.5s) |  **ĐẠT**   |
+| **J1** | **Trắc nghiệm chẩn đoán & Gợi ý phác đồ**: Chọn nhánh Giấc ngủ → Điền khảo sát → Gợi ý phác đồ `Liệu trình thư giãn sâu` kèm 2 sản phẩm toa dưỡng tại nhà → Kiểm tra ràng buộc KHÔNG có giỏ hàng, KHÔNG có nút mua lẻ.                        | ✅ PASS (5.8s) | ✅ PASS (3.6s) | ✅ PASS (4.5s) |  **ĐẠT**   |
+| **J2** | **Túi liệu trình (Unified Booking)**: Đặt lịch hẹn ngày tương lai + nhận toàn bộ toa tại nhà trong 1 luồng → Xác thực cờ an toàn thể trạng → Xác nhận tạo phác đồ thành công.                                                                 | ✅ PASS (0.6s) | ✅ PASS (0.6s) | ✅ PASS (0.5s) |  **ĐẠT**   |
+| **J3** | **Bàn làm việc Kỹ thuật viên (Therapist Console)**: Đăng nhập vai trò KTV → Mở hồ sơ khách → Ghi nhận SessionLog (chấm điểm 1-5 + ghi chú quan sát) → Dropdown toa dưỡng khóa cứng sản phẩm chống chỉ định.                                   | ✅ PASS (0.7s) | ✅ PASS (0.6s) | ✅ PASS (0.6s) |  **ĐẠT**   |
+| **J4** | **Tài khoản khách & Treatment Tracker**: Đăng nhập vai trò Khách → Xem lộ trình điều trị → Chuyển tab Quyền riêng tư → Tải file JSON hồ sơ cá nhân → Thử mở modal xóa tài khoản 2 lớp.                                                        | ✅ PASS (1.0s) | ✅ PASS (1.0s) | ✅ PASS (0.8s) |  **ĐẠT**   |
+| **J5** | **Trợ lý tư vấn AI RAG**: Đặt câu hỏi chuyên môn → Nhận phản hồi có trích dẫn nguồn `[1]`, `[2]` → Đặt câu hỏi cờ đỏ cấp cứu → Nhận banner ⚠️ CẢNH BÁO Y TẾ tức thì (Bypass LLM) → Tấn công Prompt Injection → Nhận banner 🛡️ BẢO VỆ AN TOÀN. | ✅ PASS (2.6s) | ✅ PASS (1.4s) | ✅ PASS (1.9s) |  **ĐẠT**   |
+| **J6** | **Immersive Motion & WebGL Adaptive Experience**: Khối điêu khắc 3D Hero cuộn parallax; Bộ chuyển đổi 3-Tier Mode; Khối cầu thở 3D BreathingOrb (4-7-8); Tự động ngắt WebGL và chuyển fallback tĩnh khi bật `prefers-reduced-motion`.         | ✅ PASS (1.5s) | ✅ PASS (1.7s) | ✅ PASS (1.4s) |  **ĐẠT**   |
 
-**Tổng thời gian chạy toàn bộ ma trận 15 bài kiểm thử**: **13.5 giây**.
+**Tổng thời gian chạy toàn bộ ma trận 24 bài kiểm thử**: **36.8 giây**.
 
 ---
 

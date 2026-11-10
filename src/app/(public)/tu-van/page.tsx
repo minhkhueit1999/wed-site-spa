@@ -17,6 +17,8 @@ import {
 } from '@/components/ui';
 import { QUIZ_BRANCHES, QuizBranch } from '@/data/quizzes';
 import { submitAssessment } from '@/application/assessment/submitAssessment';
+import { motion, AnimatePresence } from 'motion/react';
+import { AmbientBackground } from '@/components/canvas/AmbientBackground';
 
 function TuVanWizard() {
   const router = useRouter();
@@ -145,7 +147,9 @@ function TuVanWizard() {
   }));
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
+    <div className="relative flex min-h-screen flex-col bg-[#FAF7F2]">
+      {/* Nền động WebGL thanh tĩnh */}
+      <AmbientBackground variant="calm" />
       <PublicHeader />
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
@@ -200,111 +204,122 @@ function TuVanWizard() {
           <Stepper steps={stepperSteps} currentStepIndex={currentStepIndex} />
         </div>
 
-        {/* Thẻ câu hỏi hiện tại */}
-        {currentQuestion && (
-          <Card className="border-[#E2D9CC] shadow-md">
-            <CardHeader>
-              <div className="mb-1 flex items-center justify-between">
-                <span className="text-xs font-bold tracking-wider text-[#405C4E] uppercase">
-                  Câu hỏi {currentStepIndex + 1} / {activeBranch.questions.length}
-                </span>
-                {currentQuestion.isSafetyCheck && (
-                  <Badge variant="warning">Kiểm tra an toàn & Chống chỉ định</Badge>
-                )}
-              </div>
-              <CardTitle className="text-xl leading-snug sm:text-2xl">
-                {currentQuestion.title}
-              </CardTitle>
-              {currentQuestion.description && (
-                <CardDescription>{currentQuestion.description}</CardDescription>
-              )}
-            </CardHeader>
-
-            <CardContent className="space-y-3 pt-2">
-              {currentQuestion.choices.map((choice) => {
-                const isSelected = answers[currentQuestion.id] === choice.id;
-                return (
-                  <button
-                    key={choice.id}
-                    type="button"
-                    onClick={() => handleSelectChoice(currentQuestion.id, choice.id)}
-                    className={`flex min-h-[52px] w-full items-center justify-between rounded-xl border p-4 text-left transition-all duration-150 ${
-                      isSelected
-                        ? 'border-[#405C4E] bg-[#E5F3EB] font-medium text-[#2D4137] shadow-xs'
-                        : 'border-[#E2D9CC] bg-[#FAF7F2] text-[#2B2622] hover:bg-[#F3EDE3]'
-                    }`}
-                  >
-                    <span className="text-sm leading-relaxed sm:text-base">{choice.label}</span>
-                    <span
-                      className={`ml-3 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
-                        isSelected
-                          ? 'border-[#405C4E] bg-[#405C4E] text-[#FAF7F2]'
-                          : 'border-[#E2D9CC] bg-white'
-                      }`}
-                    >
-                      {isSelected && <span className="h-2 w-2 rounded-full bg-white" />}
+        {/* Thẻ câu hỏi hiện tại với chuyển động Z-depth & Elevation */}
+        <AnimatePresence mode="wait">
+          {currentQuestion && (
+            <motion.div
+              key={`${selectedBranchId}-${currentStepIndex}`}
+              initial={{ opacity: 0, y: 14, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -14, scale: 0.98 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Card className="border-[#E2D9CC] shadow-md">
+                <CardHeader>
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-xs font-bold tracking-wider text-[#405C4E] uppercase">
+                      Câu hỏi {currentStepIndex + 1} / {activeBranch.questions.length}
                     </span>
-                  </button>
-                );
-              })}
-
-              {/* Điều khoản đồng ý dữ liệu ở câu cuối cùng */}
-              {isLastQuestion && (
-                <div className="mt-6 space-y-2 rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4 text-xs">
-                  <div className="flex items-start gap-2.5">
-                    <input
-                      type="checkbox"
-                      id="quiz-consent"
-                      checked={consentGiven}
-                      onChange={(e) => {
-                        setConsentGiven(e.target.checked);
-                        setErrorMsg(null);
-                      }}
-                      className="mt-0.5 h-4 w-4 rounded border-[#E2D9CC] text-[#405C4E] focus:ring-[#405C4E]"
-                    />
-                    <label
-                      htmlFor="quiz-consent"
-                      className="cursor-pointer leading-relaxed font-medium text-[#2B2622]"
-                    >
-                      Tôi đồng ý để hệ thống lưu tạm và phân tích các triệu chứng trên nhằm xuất kết
-                      quả gợi ý phác đồ cá nhân hóa (tuân thủ quyền riêng tư dữ liệu sức khỏe).
-                    </label>
+                    {currentQuestion.isSafetyCheck && (
+                      <Badge variant="warning">Kiểm tra an toàn & Chống chỉ định</Badge>
+                    )}
                   </div>
-                </div>
-              )}
+                  <CardTitle className="text-xl leading-snug sm:text-2xl">
+                    {currentQuestion.title}
+                  </CardTitle>
+                  {currentQuestion.description && (
+                    <CardDescription>{currentQuestion.description}</CardDescription>
+                  )}
+                </CardHeader>
 
-              {errorMsg && (
-                <div
-                  role="alert"
-                  className="mt-4 rounded-xl border border-[#9E3838]/20 bg-[#FDECEC] p-3 text-sm text-[#9E3838]"
-                >
-                  {errorMsg}
-                </div>
-              )}
-            </CardContent>
+                <CardContent className="space-y-3 pt-2">
+                  {currentQuestion.choices.map((choice) => {
+                    const isSelected = answers[currentQuestion.id] === choice.id;
+                    return (
+                      <button
+                        key={choice.id}
+                        type="button"
+                        onClick={() => handleSelectChoice(currentQuestion.id, choice.id)}
+                        className={`flex min-h-[52px] w-full items-center justify-between rounded-xl border p-4 text-left transition-all duration-150 ${
+                          isSelected
+                            ? 'border-[#405C4E] bg-[#E5F3EB] font-medium text-[#2D4137] shadow-xs'
+                            : 'border-[#E2D9CC] bg-[#FAF7F2] text-[#2B2622] hover:bg-[#F3EDE3]'
+                        }`}
+                      >
+                        <span className="text-sm leading-relaxed sm:text-base">{choice.label}</span>
+                        <span
+                          className={`ml-3 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                            isSelected
+                              ? 'border-[#405C4E] bg-[#405C4E] text-[#FAF7F2]'
+                              : 'border-[#E2D9CC] bg-white'
+                          }`}
+                        >
+                          {isSelected && <span className="h-2 w-2 rounded-full bg-white" />}
+                        </span>
+                      </button>
+                    );
+                  })}
 
-            <CardFooter className="flex items-center justify-between border-t border-[#E2D9CC] pt-6">
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-                disabled={currentStepIndex === 0}
-                className="text-[#635B54]"
-              >
-                ← Quay lại
-              </Button>
+                  {/* Điều khoản đồng ý dữ liệu ở câu cuối cùng */}
+                  {isLastQuestion && (
+                    <div className="mt-6 space-y-2 rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4 text-xs">
+                      <div className="flex items-start gap-2.5">
+                        <input
+                          type="checkbox"
+                          id="quiz-consent"
+                          checked={consentGiven}
+                          onChange={(e) => {
+                            setConsentGiven(e.target.checked);
+                            setErrorMsg(null);
+                          }}
+                          className="mt-0.5 h-4 w-4 rounded border-[#E2D9CC] text-[#405C4E] focus:ring-[#405C4E]"
+                        />
+                        <label
+                          htmlFor="quiz-consent"
+                          className="cursor-pointer leading-relaxed font-medium text-[#2B2622]"
+                        >
+                          Tôi đồng ý để hệ thống lưu tạm và phân tích các triệu chứng trên nhằm xuất
+                          kết quả gợi ý phác đồ cá nhân hóa (tuân thủ quyền riêng tư dữ liệu sức
+                          khỏe).
+                        </label>
+                      </div>
+                    </div>
+                  )}
 
-              {isLastQuestion ? (
-                <Button variant="primary" onClick={handleSubmit} isLoading={isSubmitting}>
-                  Xem kết quả gợi ý
-                </Button>
-              ) : (
-                <Button variant="primary" onClick={handleNext}>
-                  Tiếp theo →
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        )}
+                  {errorMsg && (
+                    <div
+                      role="alert"
+                      className="mt-4 rounded-xl border border-[#9E3838]/20 bg-[#FDECEC] p-3 text-sm text-[#9E3838]"
+                    >
+                      {errorMsg}
+                    </div>
+                  )}
+                </CardContent>
+
+                <CardFooter className="flex items-center justify-between border-t border-[#E2D9CC] pt-6">
+                  <Button
+                    variant="ghost"
+                    onClick={handleBack}
+                    disabled={currentStepIndex === 0}
+                    className="text-[#635B54]"
+                  >
+                    ← Quay lại
+                  </Button>
+
+                  {isLastQuestion ? (
+                    <Button variant="primary" onClick={handleSubmit} isLoading={isSubmitting}>
+                      Xem kết quả gợi ý
+                    </Button>
+                  ) : (
+                    <Button variant="primary" onClick={handleNext}>
+                      Tiếp theo →
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <PublicFooter />

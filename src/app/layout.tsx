@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Be_Vietnam_Pro, Playfair_Display } from 'next/font/google';
 import './globals.css';
+import { AppProviders } from '@/components/layout/AppProviders';
 
 const vietnamSans = Be_Vietnam_Pro({
   weight: ['400', '500', '600', '700'],
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="vi"
       className={`${vietnamSans.variable} ${playfairSerif.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-[#FAF7F2] text-[#2B2622]">{children}</body>
+      <body className="flex min-h-full flex-col bg-[#FAF7F2] text-[#2B2622]">
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

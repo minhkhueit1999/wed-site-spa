@@ -16,6 +16,8 @@ import {
   Input,
 } from '@/components/ui';
 import { removeVietnameseTones, formatCurrencyVND } from '@/lib/utils';
+import { AmbientBackground } from '@/components/canvas/AmbientBackground';
+import { TiltCard } from '@/components/ui/TiltCard';
 
 interface SolutionPackage {
   concernSlug: string;
@@ -195,7 +197,9 @@ export default function TrieuChungPage() {
   }, [searchTerm, selectedCategory]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
+    <div className="relative flex min-h-screen flex-col bg-[#FAF7F2]">
+      {/* Nền động WebGL gợn sóng mặt nước */}
+      <AmbientBackground variant="zen-water" />
       <PublicHeader />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -264,69 +268,71 @@ export default function TrieuChungPage() {
         ) : (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {filteredPackages.map((pkg) => (
-              <Card key={pkg.concernSlug} hoverable className="flex flex-col justify-between">
-                <div>
-                  <CardHeader>
-                    <div className="mb-1 flex items-center justify-between gap-2">
-                      <Badge variant="secondary">{pkg.categoryLabel}</Badge>
-                      <span className="text-xs text-[#635B54]">
-                        {pkg.service.sessions} buổi đề xuất
-                      </span>
-                    </div>
-                    <CardTitle className="text-xl sm:text-2xl">{pkg.concernName}</CardTitle>
-                    <CardDescription>{pkg.description}</CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    {/* Phần phác đồ tại spa */}
-                    <div className="rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4">
-                      <div className="mb-1 flex items-center justify-between">
-                        <span className="text-xs font-bold tracking-wider text-[#405C4E] uppercase">
-                          Phác đồ tại Spa (Offline)
-                        </span>
+              <TiltCard key={pkg.concernSlug}>
+                <Card hoverable className="flex h-full flex-col justify-between">
+                  <div>
+                    <CardHeader>
+                      <div className="mb-1 flex items-center justify-between gap-2">
+                        <Badge variant="secondary">{pkg.categoryLabel}</Badge>
                         <span className="text-xs text-[#635B54]">
-                          {pkg.service.durationMin} phút/buổi
+                          {pkg.service.sessions} buổi đề xuất
                         </span>
                       </div>
-                      <p className="text-base font-semibold text-[#2B2622]">{pkg.service.name}</p>
-                      <p className="mt-1 text-xs text-[#635B54]">
-                        Chi phí mô phỏng: {formatCurrencyVND(pkg.service.priceVnd)}/buổi
-                      </p>
-                    </div>
+                      <CardTitle className="text-xl sm:text-2xl">{pkg.concernName}</CardTitle>
+                      <CardDescription>{pkg.description}</CardDescription>
+                    </CardHeader>
 
-                    {/* Phần toa tại nhà đi kèm */}
-                    <div className="rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4">
-                      <span className="mb-2 block text-xs font-bold tracking-wider text-[#B8714F] uppercase">
-                        Toa chăm sóc tại nhà đi kèm (Online)
-                      </span>
-                      <ul className="space-y-2">
-                        {pkg.homeCareProducts.map((p, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-xs">
-                            <span className="mt-0.5 font-bold text-[#405C4E]">•</span>
-                            <div>
-                              <strong className="text-[#2B2622]">{p.name}</strong>
-                              <p className="text-[11px] text-[#635B54]">{p.description}</p>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </div>
+                    <CardContent className="space-y-4">
+                      {/* Phần phác đồ tại spa */}
+                      <div className="rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4">
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-xs font-bold tracking-wider text-[#405C4E] uppercase">
+                            Phác đồ tại Spa (Offline)
+                          </span>
+                          <span className="text-xs text-[#635B54]">
+                            {pkg.service.durationMin} phút/buổi
+                          </span>
+                        </div>
+                        <p className="text-base font-semibold text-[#2B2622]">{pkg.service.name}</p>
+                        <p className="mt-1 text-xs text-[#635B54]">
+                          Chi phí mô phỏng: {formatCurrencyVND(pkg.service.priceVnd)}/buổi
+                        </p>
+                      </div>
 
-                <CardFooter className="flex flex-col gap-3 border-t border-[#E2D9CC] pt-4 sm:flex-row">
-                  <Link href={`/dich-vu/${pkg.service.slug}`} className="w-full sm:w-1/2">
-                    <Button variant="outline" size="sm" className="w-full">
-                      Chi tiết phác đồ
-                    </Button>
-                  </Link>
-                  <Link href={`/tu-van?branch=${pkg.category}`} className="w-full sm:w-1/2">
-                    <Button variant="primary" size="sm" className="w-full">
-                      Làm trắc nghiệm
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
+                      {/* Phần toa tại nhà đi kèm */}
+                      <div className="rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4">
+                        <span className="mb-2 block text-xs font-bold tracking-wider text-[#B8714F] uppercase">
+                          Toa chăm sóc tại nhà đi kèm (Online)
+                        </span>
+                        <ul className="space-y-2">
+                          {pkg.homeCareProducts.map((p, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-xs">
+                              <span className="mt-0.5 font-bold text-[#405C4E]">•</span>
+                              <div>
+                                <strong className="text-[#2B2622]">{p.name}</strong>
+                                <p className="text-[11px] text-[#635B54]">{p.description}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </CardContent>
+                  </div>
+
+                  <CardFooter className="flex flex-col gap-3 border-t border-[#E2D9CC] pt-4 sm:flex-row">
+                    <Link href={`/dich-vu/${pkg.service.slug}`} className="w-full sm:w-1/2">
+                      <Button variant="outline" size="sm" className="w-full">
+                        Chi tiết phác đồ
+                      </Button>
+                    </Link>
+                    <Link href={`/tu-van?branch=${pkg.category}`} className="w-full sm:w-1/2">
+                      <Button variant="primary" size="sm" className="w-full">
+                        Làm trắc nghiệm
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              </TiltCard>
             ))}
           </div>
         )}

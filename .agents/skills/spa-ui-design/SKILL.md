@@ -18,6 +18,7 @@ description: Hướng dẫn thiết kế giao diện cho nền tảng spa wellne
 - Chữ: tiêu đề serif thanh lịch có subset tiếng Việt (ví dụ Cormorant Garamond hoặc Playfair Display), nội dung sans dễ đọc có subset tiếng Việt (ví dụ Be Vietnam Pro). Nạp bằng `next/font` với `subsets: ['latin', 'vietnamese']`. Kiểm tra hiển thị dấu (ặ, ữ, ợ, ề...) không bị cắt.
 - Bố cục: khoảng trắng rộng, lưới 12 cột, bo góc lớn mềm (16–24px), bóng đổ rất nhẹ. Hero bất đối xứng, không dùng mẫu "ba thẻ tính năng" nhàm chán. Hình minh họa/gradient mềm thay cho ảnh stock; nếu dùng ảnh phải có `alt` và kích thước cố định để tránh nhảy bố cục.
 - Chuyển động: chậm, nhẹ (200–400ms ease-out), tắt khi `prefers-reduced-motion`.
+- Immersive 3D & WebGL: Cho phép không gian số có chiều sâu hữu cơ, mặt nước gợn sóng, ánh sáng khúc xạ và Scrollytelling điện ảnh, bắt buộc có 3-Tier Adaptive Quality (Tier 3: Desktop cao cấp; Tier 2: Mobile / iGPU; Tier 1: Fallback CSS tĩnh khi giảm chuyển động hoặc GPU yếu).
 - Không dùng: banner giảm giá, đồng hồ đếm ngược, nhãn HOT/SALE, popup chặn nội dung.
 
 ## Mẫu màn hình chính

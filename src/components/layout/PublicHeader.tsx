@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui';
+import { DisplayModeSwitcher } from '@/components/features/DisplayModeSwitcher';
 
 export function PublicHeader() {
   return (
@@ -8,7 +9,7 @@ export function PublicHeader() {
         <Link href="/" className="font-serif text-2xl font-bold tracking-tight text-[#405C4E]">
           Digital Wellness
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-6">
+        <nav className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/trieu-chung"
             className="text-sm font-medium text-[#635B54] transition-colors hover:text-[#405C4E]"
@@ -21,6 +22,7 @@ export function PublicHeader() {
           >
             Đăng nhập
           </Link>
+          <DisplayModeSwitcher />
           <Link href="/tu-van">
             <Button size="sm" variant="primary">
               Trắc nghiệm

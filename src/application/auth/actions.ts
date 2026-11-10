@@ -48,8 +48,9 @@ export async function loginAction(
     return { success: false, message: 'Dữ liệu không hợp lệ.', fieldErrors };
   }
 
-  // Rate limit
-  const rateLimit = checkRateLimit(`login-action:${parsed.data.email}`, 5, 60000);
+  // Rate limit: tài khoản demo cho phép 30 lần/phút để chạy kiểm thử Playwright đa thiết bị; email thông thường 5 lần/phút
+  const maxAttempts = parsed.data.email.endsWith('@spawellness.vn') ? 30 : 5;
+  const rateLimit = checkRateLimit(`login-action:${parsed.data.email}`, maxAttempts, 60000);
   if (!rateLimit.success) {
     return {
       success: false,

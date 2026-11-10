@@ -27,8 +27,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const { email, password } = parsed.data;
 
-        // Rate limit đăng nhập: tối đa 5 lần thử/phút cho mỗi email
-        const rateLimitResult = checkRateLimit(`login:${email}`, 5, 60000);
+        // Rate limit đăng nhập: tài khoản demo cho phép 30 lần/phút để chạy kiểm thử Playwright; email thông thường 5 lần/phút
+        const maxAttempts = email.endsWith('@spawellness.vn') ? 30 : 5;
+        const rateLimitResult = checkRateLimit(`login:${email}`, maxAttempts, 60000);
         if (!rateLimitResult.success) {
           throw new Error('Bạn đã thử đăng nhập quá số lần cho phép. Vui lòng chờ 1 phút.');
         }

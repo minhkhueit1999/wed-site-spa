@@ -91,3 +91,44 @@ Mọi màn hình và thành phần dữ liệu đều phải có đủ 4 trạng
 4. **Badge**: Phù hiệu hiển thị tình trạng (Hoàn thành, Đang diễn ra, Chờ duyệt, Chống chỉ định).
 5. **Stepper**: Thanh tiến trình bước (1, 2, 3...) cho luồng Trắc nghiệm và Túi liệu trình.
 6. **Dialog / Modal**: Cửa sổ tương tác xác nhận có bẫy focus (focus trap), hỗ trợ phím `Escape`, tiêu đề ngữ nghĩa và nút đóng rõ ràng.
+
+---
+
+## 7. Chuyển động Tương tác & 3D WebGL (Immersive Motion & 3D)
+
+Hệ thống trải nghiệm xúc giác số (tactile digital space) lấy cảm hứng từ thiên nhiên spa: mặt nước gợn sóng, sương mai khúc xạ ánh sáng, đá cuội nhẵn bóng thiền định.
+
+### 7.1. Cảm giác chủ đạo
+
+- **Hữu cơ & Đầm chắc (Organic & Grounded)**: Tương tác phản hồi quán tính tự nhiên, không giật gấp; lực hút từ tính nhẹ (magnetic pull) ở các nút bấm quan trọng.
+- **Chiều sâu không gian (Spatial Depth)**: Parallax đa tầng với ánh sáng ấm, bóng phản chiếu mềm mại và hạt bụi thảo mộc bay lơ lửng.
+
+### 7.2. Motion Tokens (`src/lib/motion.ts`)
+
+- **Spring Curves**:
+  - `gentle`: `{ stiffness: 120, damping: 14, mass: 1 }` (dành cho hover, thẻ nổi, dialog).
+  - `bouncy`: `{ stiffness: 260, damping: 20, mass: 1 }` (dành cho hạt tương tác, huy hiệu).
+  - `zen`: `{ stiffness: 60, damping: 18, mass: 1.2 }` (dành cho nhịp thở, luồng chuyển trang).
+- **Bezier Easings**:
+  - `cinematic`: `cubic-bezier(0.16, 1, 0.3, 1)`
+  - `smooth`: `cubic-bezier(0.25, 1, 0.5, 1)`
+- **Thời lượng**:
+  - `instant`: 150ms
+  - `standard`: 300ms
+  - `deliberate`: 600ms
+  - `ceremony`: 1200ms (dành cho nghi thức mở kết quả lộ trình, nhịp thở)
+
+### 7.3. Phân tầng chất lượng thích ứng (3-Tier Adaptive Quality)
+
+1. **Tier 3 (High - Desktop rời / Apple Silicon)**:
+   - Full 3D canvas, custom GLSL liquid noise shader, 120 hạt bụi thảo mộc 3D, dpr = [1, 2], tương tác con trỏ vật lý đầy đủ.
+2. **Tier 2 (Medium - Mobile cao cấp / iGPU)**:
+   - Khóa dpr = 1, giảm 50% số lượng hạt (60 hạt), tắt khúc xạ đa lượt (multi-pass FBO), dùng `MeshPhysicalMaterial` tối ưu, bỏ tương tác con trỏ theo quán tính.
+3. **Tier 1 (Low / Tĩnh / `prefers-reduced-motion`)**:
+   - Tắt WebGL Canvas hoàn toàn, giải phóng ngữ cảnh GPU (`loseContext()`), render lớp gradient CSS/SVG cao cấp siêu nhẹ.
+
+### 7.4. Ba khoảnh khắc đặc trưng (Signature Spa Moments)
+
+1. **3D Diagnostic Quiz Transition**: Hiệu ứng chuyển thẻ trắc nghiệm có chiều sâu Z-axis kết hợp elevation spring.
+2. **Ritual Reveal (`/ket-qua`)**: Hiệu ứng mở phác đồ trị liệu kết hợp ánh sáng ấm lan tỏa (holographic/warm wash).
+3. **BreathingOrb3D**: Khối cầu năng lượng 3D dẫn nhịp thở 4-7-8 (Hít vào 4s -> Giữ hơi 7s -> Thở ra 8s) hỗ trợ tĩnh tâm cho khách hàng trên `/tai-khoan` và `/trieu-chung`. Có kèm ARIA live region và nút chuyển sang 2D canvas.

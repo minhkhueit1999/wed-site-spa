@@ -21,6 +21,7 @@ import {
 } from '@/application/customer/actions';
 import { CustomerDashboardData } from '@/application/customer/getCustomerDashboard';
 import { AssistantChatWidget } from '@/components/features/AssistantChatWidget';
+import { BreathingOrb3D } from '@/components/features/BreathingOrb3D';
 
 export default function TaiKhoanPage() {
   const router = useRouter();
@@ -484,6 +485,11 @@ export default function TaiKhoanPage() {
                 </div>
               </>
             )}
+
+            {/* Widget Khối cầu điều hòa nhịp thở 3D (Signature Spa Moment) */}
+            <div className="mt-8">
+              <BreathingOrb3D />
+            </div>
           </div>
         )}
 

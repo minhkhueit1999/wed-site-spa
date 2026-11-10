@@ -22,6 +22,8 @@ import {
 } from '@/application/recommendation/generateRecommendation';
 import { formatCurrencyVND } from '@/lib/utils';
 import { ConcernScore } from '@/domain/recommendation/types';
+import { AmbientBackground } from '@/components/canvas/AmbientBackground';
+import { MagneticButton } from '@/components/ui/MagneticButton';
 
 export default function KetQuaPage() {
   const router = useRouter();
@@ -76,7 +78,9 @@ export default function KetQuaPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
+    <div className="relative flex min-h-screen flex-col bg-[#FAF7F2]">
+      {/* Nền động WebGL Fluid Aurora Shaders */}
+      <AmbientBackground variant="fluid-aurora" />
       <PublicHeader />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
@@ -292,14 +296,16 @@ export default function KetQuaPage() {
                           Xem chi tiết dịch vụ
                         </Button>
                       </Link>
-                      <Button
-                        variant="primary"
-                        size="md"
-                        onClick={() => handleBookPlan(rec.service.slug)}
-                        className="w-full sm:w-auto"
-                      >
-                        Đặt túi liệu trình này →
-                      </Button>
+                      <MagneticButton>
+                        <Button
+                          variant="primary"
+                          size="md"
+                          onClick={() => handleBookPlan(rec.service.slug)}
+                          className="w-full shadow-sm sm:w-auto"
+                        >
+                          Đặt túi liệu trình này →
+                        </Button>
+                      </MagneticButton>
                     </div>
                   </CardFooter>
                 </Card>
