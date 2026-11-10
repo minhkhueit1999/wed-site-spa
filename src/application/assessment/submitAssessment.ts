@@ -1,3 +1,5 @@
+'use server';
+
 import { QUIZ_BRANCHES } from '@/data/quizzes';
 import { scoreQuiz } from '@/domain/quiz/score';
 import { transition } from '@/domain/lifecycle/transition';

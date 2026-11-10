@@ -1,6 +1,6 @@
 # Nhật Ký Đánh Giá Chất Lượng RAG (RAG Evaluation Log)
 
-Thời gian thực hiện: **2026-11-10T12:00:36.422Z**  
+Thời gian thực hiện: **2026-11-10T12:22:25.015Z**  
 Môi trường: `LLM_PROVIDER=mock`, `EMBEDDING_PROVIDER=hash`
 
 ## 1. Bảng Chỉ Số Nghiệm Thu Cốt Lõi

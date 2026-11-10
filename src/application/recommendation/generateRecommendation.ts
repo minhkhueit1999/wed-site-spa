@@ -1,3 +1,5 @@
+'use server';
+
 import type { Service, Product } from '@prisma/client';
 import { prisma } from '@/infrastructure/db/prisma';
 import { recommend } from '@/domain/recommendation/recommend';

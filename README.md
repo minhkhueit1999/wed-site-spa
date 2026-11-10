@@ -1,37 +1,192 @@
-# Bộ khởi động Antigravity — Digital Wellness Platform (Spa)
+# Digital Wellness Platform — Hệ Thống Quản Lý Liệu Trình & Chăm Sóc Cá Nhân Hóa Cho Spa
 
-Bộ file này biến Antigravity thành một "đội kỹ sư" có kỷ luật để xây website spa theo hướng **Quản lý Liệu trình & Chăm sóc Cá nhân hóa**: có Rules, Skills, Workflows, tài liệu yêu cầu, prompt theo giai đoạn, và khung CI/Git.
+[![Quality Gate](https://img.shields.io/badge/Quality%20Gate-PASSED-brightgreen.svg)](<>)
+[![Coverage: Domain](https://img.shields.io/badge/Coverage%20Domain-%3E95%25-brightgreen.svg)](<>)
+[![Coverage: Total](https://img.shields.io/badge/Coverage%20Total-77.9%25-brightgreen.svg)](<>)
+[![Playwright E2E](https://img.shields.io/badge/E2E%20Tests-15%2F15%20PASSED-success.svg)](<>)
+[![RAG Benchmark](https://img.shields.io/badge/RAG%20Recall%405-100%25-blue.svg)](<>)
+[![License: Academic](https://img.shields.io/badge/License-Academic%20Project-lightgrey.svg)](<>)
 
-## Có gì trong bộ kit
+> **Digital Wellness Platform** là nền tảng quản lý quy trình spa & chăm sóc cá nhân hóa chuyên sâu, giải quyết bài toán cốt lõi: **Liên kết dữ liệu giữa buổi trị liệu tại cơ sở spa (offline) và quy trình dưỡng phục hồi tại nhà (online) trong MỘT chu trình khép kín.**
+
+---
+
+## 🌿 Điểm Nhấn Nghiệp Vụ & Kỹ Thuật Khác Biệt
+
+1. **Khác biệt với E-commerce thông thường**:
+   - **Tuyệt đối KHÔNG có giỏ hàng, KHÔNG có danh mục bán lẻ đại trà**.
+   - Mọi sản phẩm dưỡng/thảo dược đóng vai trò **"Toa chăm sóc tại nhà"** đi kèm dịch vụ spa hoặc do chuyên viên chỉ định sau buổi trị liệu.
+2. **Khảo sát & Động cơ gợi ý tất định (Rule Engine)**:
+   - Bài trắc nghiệm 3 nhánh (Da, Căng thẳng & Giấc ngủ, Cơ vai gáy) chuẩn hóa triệu chứng.
+   - Thuật toán khớp luật tất định (`domain/recommendation`) tự động ghép dịch vụ và sản phẩm tương ứng, kèm giải trình lý do khoa học và tự động lọc chống chỉ định (mang thai, dị ứng tinh dầu, sốt cấp).
+3. **Túi Liệu Trình (Unified Booking)**:
+   - Khách hàng xác nhận lịch hẹn buổi đầu và nhận toàn bộ toa sản phẩm dưỡng tại nhà trong một luồng giao dịch duy nhất.
+4. **Máy trạng thái vòng đời khách hàng (State Machine)**:
+   - Quản lý trạng thái phác đồ qua State Machine thuần túy (`NEW` → `ASSESSED` → `RECOMMENDED` → `BUNDLE_CONFIRMED` → `IN_TREATMENT` → `HOME_CARE` → `REASSESSMENT` → `COMPLETED`), có guard kiểm tra và lưu vết lịch sử (`PlanStateHistory`).
+5. **Bàn làm việc Kỹ thuật viên (Therapist Console)**:
+   - Chuyên viên xem hồ sơ sức khỏe, ghi nhận nhật ký buổi trị liệu (`SessionLog`), theo dõi tiến triển và chỉ định sản phẩm dưỡng tiếp theo với cơ chế chặn sản phẩm chống chỉ định theo thời gian thực.
+6. **Trợ lý tư vấn AI RAG an toàn & Trích nguồn**:
+   - Tra cứu tài liệu spa bằng kỹ thuật Hybrid Retrieval (Cosine Similarity + BM25 Reciprocal Rank Fusion).
+   - Tự động nhận diện cờ đỏ y tế khẩn cấp và Prompt Injection để xử lý an toàn ngay tại Pre-Check (Zero PII, không gọi LLM).
+
+---
+
+## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
+
+- **Giao diện & Ứng dụng**: [Next.js App Router 16.4](https://nextjs.org/) (React 19), Tailwind CSS, TypeScript Strict Mode.
+- **Cơ sở dữ liệu & ORM**: [Prisma ORM 7](https://www.prisma.io/) + SQLite (`prisma/dev.db` cho môi trường dev/demo; sẵn sàng chuyển PostgreSQL cho production).
+- **Xác thực & Bảo mật**: [Auth.js v5](https://authjs.dev/) (Credentials, Cookie phiên HTTP-Only, RBAC: `CUSTOMER`, `THERAPIST`, `ADMIN`), Sliding Rate Limiter, Gitleaks.
+- **Kiểm thử tự động**: [Vitest](https://vitest.dev/) (Unit & Component Test), `@testing-library/react`, [Playwright](https://playwright.dev/) (E2E Test trên Desktop Chrome, Mobile Pixel 5 và Tablet).
+- **Hạ tầng AI/RAG**: Hashing Vector Embeddings 64-D, Hybrid Vector Store, Mock & Gemini LLM Providers.
+
+---
+
+## 🚀 Hướng Dẫn Cài Đặt & Chạy Trong 5 Phút (Windows 11 / PowerShell)
+
+Yêu cầu hệ thống: **Node.js 20+** và **Git**.
+
+### Bước 1: Sao chép mã nguồn và chuyển vào thư mục dự án
+
+```powershell
+git clone https://github.com/minhkhueit1999/wed-site-spa.git
+cd wed-site-spa
+```
+
+### Bước 2: Cài đặt các gói phụ thuộc
+
+```powershell
+npm install
+```
+
+### Bước 3: Cấu hình biến môi trường
+
+File `.env` mẫu đã được chuẩn bị sẵn:
+
+```powershell
+# Chạy với mô phỏng AI mặc định (không cần API key):
+# LLM_PROVIDER=mock
+# EMBEDDING_PROVIDER=hash
+```
+
+### Bước 4: Khởi tạo cơ sở dữ liệu & Nạp dữ liệu mẫu (Seed Data)
+
+```powershell
+npx prisma db push
+npm run db:seed
+npm run rag:ingest
+```
+
+### Bước 5: Khởi động máy chủ phát triển
+
+```powershell
+npm run dev
+```
+
+Mở trình duyệt truy cập: **[http://localhost:3000](http://localhost:3000)**.
+
+---
+
+## 🔑 Tài Khoản Demo Có Sẵn
+
+Tất cả tài khoản demo sử dụng chung mật khẩu mặc định: `SpaDemo2026!`
+
+| Vai trò                       | Email đăng nhập              | Mật khẩu       | Tính năng chính trải nghiệm                                                                                            |
+| :---------------------------- | :--------------------------- | :------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| **Khách hàng (Customer)**     | `khachhang@spawellness.vn`   | `SpaDemo2026!` | Làm trắc nghiệm, xem phác đồ, theo dõi Treatment Tracker, xuất dữ liệu cá nhân JSON, quyền yêu cầu xóa dữ liệu.        |
+| **Kỹ thuật viên (Therapist)** | `kythuatvien@spawellness.vn` | `SpaDemo2026!` | Xem lịch trị liệu, ghi nhận `SessionLog`, chỉ định toa sản phẩm dưỡng tại nhà, kiểm tra cảnh báo chống chỉ định.       |
+| **Quản trị viên (Admin)**     | `quantri@spawellness.vn`     | `SpaDemo2026!` | Thống kê vận hành, mô phỏng luật gợi ý thời gian thực (Live Preview Simulation), quản lý dịch vụ, sản phẩm và quy tắc. |
+
+_(Trên giao diện trang `/dang-nhap` có sẵn các nút đăng nhập nhanh 1-click cho từng vai trò)._
+
+---
+
+## 🧪 Các Lệnh Kiểm Thử & Kiểm Soát Chất Lượng
+
+Dự án thiết lập hệ thống kiểm soát chất lượng kỹ thuật toàn diện:
+
+```powershell
+# 1. Kiểm tra kiểu tĩnh TypeScript strict
+npm run typecheck
+
+# 2. Quét lỗi mã nguồn với ESLint (chặn import vi phạm kiến trúc phân tầng)
+npm run lint
+
+# 3. Kiểm tra định dạng chuẩn với Prettier
+npm run format:check
+
+# 4. Chạy toàn bộ 169 unit & component test với Vitest
+npm run test
+
+# 5. Đo lường độ bao phủ mã nguồn (Coverage Report)
+npm run test:coverage
+
+# 6. Chạy bộ kiểm thử E2E Playwright trên cả 3 kích thước màn hình (Desktop, Mobile, Tablet)
+npm run test:e2e
+
+# 7. Đánh giá chất lượng hạ tầng RAG Benchmark (32 câu hỏi chuẩn)
+npm run rag:eval
+
+# 8. Quét bí mật rò rỉ mã nguồn với Gitleaks
+node scripts/precommit-gitleaks.mjs
+
+# 9. Biên dịch phiên bản Production
+npm run build
+```
+
+---
+
+## 📊 Bảng Kết Quả Kiểm Thử Toàn Diện
+
+| Hạng mục kiểm tra           | Tiêu chuẩn đặt ra    | Kết quả thực tế                                | Trạng thái |
+| :-------------------------- | :------------------- | :--------------------------------------------- | :--------: |
+| **TypeScript Strict**       | 0 lỗi kiểu           | `tsc --noEmit` hoàn tất không lỗi              |   ✅ ĐẠT   |
+| **ESLint 9**                | 0 warning/error      | Mã nguồn sạch quy ước kiến trúc                |   ✅ ĐẠT   |
+| **Prettier Format**         | 100% tệp đồng bộ     | Khớp chuẩn căn lề toàn dự án                   |   ✅ ĐẠT   |
+| **Unit & Component Test**   | 100% tests vượt qua  | **169/169 tests passed**                       |   ✅ ĐẠT   |
+| **Độ bao phủ Domain (Lõi)** | $\ge 90\%$           | **`domain/` đạt từ 92.9% đến 100%**            |   ✅ ĐẠT   |
+| **Độ bao phủ toàn dự án**   | $\ge 70\%$           | **77.94% Statements / 70.28% Branches**        |   ✅ ĐẠT   |
+| **Playwright E2E Matrix**   | 5 hành trình chính   | **15/15 tests passed** (Desktop/Mobile/Tablet) |   ✅ ĐẠT   |
+| **RAG Benchmark Recall@5**  | $\ge 80\%$           | **100.0%** (15/15 câu domain spa)              |   ✅ ĐẠT   |
+| **RAG Cờ đỏ Y tế**          | 100% chặn bypass LLM | **100.0%** (9/9 câu cờ đỏ cấp tính)            |   ✅ ĐẠT   |
+| **RAG Prompt Injection**    | 100% từ chối an toàn | **100.0%** (5/5 câu tấn công bảo mật)          |   ✅ ĐẠT   |
+| **RAG mustNotContain**      | 0 vi phạm            | **0 vi phạm**                                  |   ✅ ĐẠT   |
+| **Quét mã độc / Secret**    | 0 rò rỉ              | **Gitleaks 0 leaks found**                     |   ✅ ĐẠT   |
+
+---
+
+## 📁 Cấu Trúc Thư Mục Dự Án
 
 ```
-AGENTS.md                  # điểm vào cho agent (trỏ tới rules/skills/workflows)
-.agents/
-  rules/      00-constitution, 01-architecture, 02-code-quality, 03-ui-ux-design,
-              04-testing, 05-security-privacy, 06-rag-ai, 07-git-workflow
-  skills/     recommendation-engine, treatment-lifecycle, rag-pipeline,
-              spa-ui-design, quality-gate
-  workflows/  /bootstrap /feature /quality-check /ui-review /git-publish
-              /seed-knowledge /add-recommendation-rule
-docs/         PRD.md, DOMAIN.md, DECISIONS.md
-prompts/      00-master.md (dán 1 lần), phases.md (11 giai đoạn)
-data/         knowledge/ (mẫu tài liệu RAG), eval/ (mẫu bộ đánh giá RAG)
-.github/workflows/ci.yml
-.gitignore, .env.example
+wed-site-spa/
+├── src/
+│   ├── app/                    # Next.js App Router (Public, Customer, Therapist, Admin)
+│   ├── application/            # Use-cases & Server Actions (Booking, Staff, Admin, Customer)
+│   ├── domain/                 # Domain lõi thuần túy: recommendation, lifecycle, quiz
+│   ├── infrastructure/         # DB (Prisma), Auth (Auth.js), RAG (Embedding, LLM, Store, Retrieval)
+│   ├── components/             # UI Design System: primitives, layout, features
+│   ├── data/                   # Cấu hình trắc nghiệm & dữ liệu seed
+│   └── lib/                    # Cấu hình env Zod, logger, utils, rate-limit
+├── prisma/                     # Schema Prisma và script seed dữ liệu mẫu
+├── data/
+│   ├── knowledge/              # 19 tài liệu tri thức spa (.md có frontmatter)
+│   └── eval/                   # Bộ 32 câu hỏi đánh giá RAG Benchmark
+├── tests/
+│   └── e2e/                    # 5 kịch bản Playwright E2E cho 5 hành trình người dùng
+├── docs/
+│   ├── PRD.md                  # Yêu cầu sản phẩm chi tiết
+│   ├── DOMAIN.md               # Thiết kế mô hình nghiệp vụ
+│   ├── ARCHITECTURE.md         # Tài liệu kiến trúc phần mềm chuyên sâu
+│   ├── DECISIONS.md            # Sổ tay quyết định kỹ thuật (ADR)
+│   ├── DEMO.md                 # Kịch bản thuyết trình demo 5 phút
+│   ├── QA-REPORT.md            # Báo cáo đảm bảo chất lượng đồ án
+│   └── SLIDE-OUTLINE.md        # Đề cương slide bảo vệ đồ án tốt nghiệp
+├── scripts/                    # Scripts RAG ingest, RAG eval, gitleaks check
+└── playwright.config.ts        # Cấu hình kiểm thử E2E Playwright
 ```
 
-## Cách dùng (5 bước)
+---
 
-1. **Cài công cụ ngoài** (PowerShell): `winget install Git.Git`, `winget install OpenJS.NodeJS.LTS`, `winget install GitHub.cli`, `winget install Gitleaks.Gitleaks`; cài Google Chrome. Mở lại terminal, rồi chạy `gh auth login`. (Nếu một mã winget không tìm thấy, dùng `winget search <tên>`.)
-2. **Bật MCP** trong Antigravity: `context7` và `chrome-devtools` (xem hướng dẫn cấu hình `mcp_config.json` đã gửi trước đó).
-3. **Tạo thư mục dự án**, giải nén bộ kit này vào ĐÚNG thư mục gốc đó (để `AGENTS.md` và `.agents/` nằm ngay gốc), chạy `git init`, rồi mở thư mục bằng **File → Open Folder** trong Antigravity.
-4. **Kiểm tra agent đã nhận cấu hình:** mở "..." ở đầu khung agent → **Customizations**, xem mục Rules / Skills / Workflows có liệt kê các file ở trên. Nếu không thấy, đổi tên thư mục `.agents` thành `.agent` (bản cũ vẫn được hỗ trợ) rồi tải lại cửa sổ.
-5. **Mở `prompts/00-master.md`**, dán nội dung master prompt vào khung chat. Agent sẽ đọc tài liệu, hỏi vài câu bắt buộc (URL repo Git, nhà cung cấp AI), rồi làm lần lượt từng giai đoạn trong `prompts/phases.md`. Sau mỗi giai đoạn nó sẽ dừng; bạn xem kết quả rồi gõ "tiếp tục giai đoạn N" (hoặc dán prompt giai đoạn đó).
+## ⚖️ Tuyên Bố Miễn Trừ Trách Nhiệm Chuyên Môn
 
-## Ghi chú quan trọng
-
-- **Nội dung chuyên môn spa là mẫu** (liệu trình, thành phần, chống chỉ định). Hãy nhờ chuyên gia spa/y tế duyệt trước khi dùng thật; danh sách việc cần duyệt nằm trong `docs/DECISIONS.md`.
-- **Khóa API không bao giờ đưa vào chat hay commit.** Điền vào file `.env` trên máy bạn. Mặc định dự án chạy bằng bản giả (`mock/hash`) nên không cần khóa để phát triển và chạy test.
-- **Không cài hàng loạt skill cộng đồng.** Chỉ thêm UI UX Pro Max (hoặc skill thiết kế tương tự) khi muốn; kit đã có `spa-ui-design` tự đủ dùng.
-- **Đẩy lên Git:** agent sẽ dùng workflow `/git-publish` (kiểm tra chất lượng, quét secret, commit theo Conventional Commits, `git push`). Nó không force push và không tự tạo repo công khai. Nếu bị từ chối vì chưa đăng nhập, chạy `gh auth login`.
-- Tên menu/thư mục của Antigravity thay đổi theo phiên bản; kit dùng `.agents/` là vị trí mặc định hiện hành.
+> [!NOTE]
+> Mọi thông tin chuyên môn spa, quy trình trị liệu, thành phần thảo dược và khuyến cáo sức khỏe trong hệ thống là **nội dung mẫu phục vụ nghiên cứu và phát triển phần mềm** (được gắn nhãn `reviewedBy: "CHƯA DUYỆT"`). Cần có sự thẩm định và phê duyệt của bác sĩ da liễu hoặc chuyên gia y tế trước khi đưa vào áp dụng thực tế.

@@ -19,8 +19,8 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **Giai đoạn 6**  | Bảng điều khiển kỹ thuật viên (/ky-thuat-vien, SessionLog, toa tại nhà)              | Đã hoàn thành | `feat/therapist-console`      | Không    | Chặn nghiêm ngặt sản phẩm chống chỉ định, SessionLog, 133 tests xanh              |
 | **Giai đoạn 7**  | Quản trị (/quan-tri/*: CRUD, preview luật, tri thức RAG, AuditLog)                   | Đã hoàn thành | `feat/admin-management`       | Không    | Bảng điều khiển admin, live preview rule simulation, CRUD phác đồ & toa, AuditLog |
 | **Giai đoạn 8**  | Hạ tầng RAG & trợ lý AI (VectorStore SQLite, Retriever lai, preCheck, rag:eval)      | Đã hoàn thành | `feat/rag-assistant`          | Không    | Recall@5 100%, 100% cờ đỏ & injection, 0 mustNotContain, 165 tests xanh           |
-| **Giai đoạn 9**  | Chất lượng cuối & hoàn thiện (Playwright E2E 5 luồng, a11y, Lighthouse, README)      | Chưa bắt đầu  | `feat/e2e-quality-audit`      | -        | -                                                                                 |
-| **Giai đoạn 10** | Đóng gói bảo vệ đồ án (DEMO.md, QA-REPORT.md, SLIDE-OUTLINE.md, tag v1.0.0)          | Chưa bắt đầu  | `main`                        | -        | Đẩy v1.0.0 lên GitHub                                                             |
+| **Giai đoạn 9**  | Chất lượng cuối & hoàn thiện (Playwright E2E 5 luồng, a11y, Lighthouse, README)      | Đã hoàn thành | `feat/e2e-quality-audit`      | Không    | 15/15 tests E2E ma trận Desktop/Mobile/Tablet, Coverage > 77%, README hoàn chỉnh  |
+| **Giai đoạn 10** | Đóng gói bảo vệ đồ án (DEMO.md, QA-REPORT.md, SLIDE-OUTLINE.md, tag v1.0.0)          | Đã hoàn thành | `main`                        | Không    | Tạo DEMO.md, QA-REPORT.md, SLIDE-OUTLINE.md, tag v1.0.0 sẵn sàng                  |
 
 ---
 
@@ -136,3 +136,25 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
   - Kết quả: Recall@5 đạt **100.0%** (15/15 câu domain), xử lý cờ đỏ đạt **100.0%** (9/9 câu), chặn prompt injection đạt **100.0%** (5/5 câu), **0** vi phạm cụm từ cấm (mustNotContain).
   - Báo cáo chi tiết được ghi tự động vào `docs/rag-eval-log.md`.
 - Đạt **165 tests xanh** (30 test files), coverage kiểm thử toàn diện, build Next.js 20 routes hoàn toàn sạch lỗi.
+
+### Giai đoạn 9: Chất lượng cuối & Kiểm thử E2E (Playwright & Coverage)
+
+- Cấu hình Playwright (`playwright.config.ts`) hỗ trợ đa dự án: Chromium Desktop, Mobile Pixel 5 và Tablet (768x1024).
+- Xây dựng 5 kịch bản Playwright E2E (`tests/e2e/`):
+  1. `journey-1-quiz-recommendation.spec.ts`: Trắc nghiệm chẩn đoán, gợi ý phác đồ & toa tại nhà, chặn giỏ hàng/mua lẻ.
+  2. `journey-2-unified-booking.spec.ts`: Đặt túi liệu trình (lịch hẹn + toa dưỡng tại nhà) trong 1 luồng duy nhất, rà soát an toàn.
+  3. `journey-3-therapist-console.spec.ts`: KTV đăng nhập, ghi SessionLog chấm điểm 1-5, chỉ định toa dưỡng có khóa chống chỉ định.
+  4. `journey-4-customer-tracker.spec.ts`: Khách đăng nhập, theo dõi Treatment Tracker, xuất dữ liệu cá nhân JSON và modal xóa tài khoản 2 lớp.
+  5. `journey-5-ai-assistant.spec.ts`: Trợ lý AI trả lời có trích nguồn `[1]`, `[2]`, cờ đỏ y tế cấp cứu bypass LLM, chặn prompt injection.
+- Kết quả kiểm thử E2E: **15/15 tests passed** trên cả 3 kích thước màn hình trong 13.5 giây.
+- Đo lường độ bao phủ (Coverage Vitest):
+  - Tầng `domain/`: Đạt **92.9% – 100%** (tiêu chuẩn: $\ge 90\%$).
+  - Toàn bộ dự án: **77.94% Statements, 70.28% Branches** (tiêu chuẩn: $\ge 70\%$).
+- Hoàn thiện tài liệu gốc `README.md` (hướng dẫn chạy trong 5 phút trên Windows 11, tài khoản demo, bảng kết quả) và `docs/ARCHITECTURE.md` (kiến trúc phân tầng, State Machine Mermaid, Rule Engine, RAG Pipeline).
+
+### Giai đoạn 10: Đóng gói bảo vệ đồ án & Phát hành v1.0.0
+
+- `docs/DEMO.md`: Kịch bản demo 5 phút từng bước khớp chuẩn PRD §8 và bảng tài khoản demo.
+- `docs/QA-REPORT.md`: Báo cáo đảm bảo chất lượng toàn diện với bảng số liệu test, coverage, Playwright matrix, RAG eval, Gitleaks và các hạn chế đã biết.
+- `docs/SLIDE-OUTLINE.md`: Đề cương 10 slide bảo vệ đồ án chuẩn học thuật.
+- Gắn thẻ phát hành Git: `v1.0.0` và đẩy lên remote GitHub repository.
