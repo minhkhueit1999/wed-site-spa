@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { useAuth } from '@/components/layout/AuthContext';
 import {
   Button,
   Card,
@@ -27,6 +28,18 @@ import { ConfirmCareBundleResult } from '@/application/booking/confirmCareBundle
 function BookingWizard() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { userRole, isAuthenticated } = useAuth();
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      if (userRole === 'ADMIN') {
+        router.replace('/quan-tri');
+      } else if (userRole === 'THERAPIST') {
+        router.replace('/ky-thuat-vien');
+      }
+    }
+  }, [isAuthenticated, userRole, router]);
+
   const serviceSlugParam = searchParams.get('serviceSlug') || 'thu-gian-sau';
 
   const [bookingData, setBookingData] = React.useState<BookingDetails | null>(null);
@@ -129,6 +142,21 @@ function BookingWizard() {
       setSubmitError(res.error);
     }
   };
+
+  if (isAuthenticated && (userRole === 'ADMIN' || userRole === 'THERAPIST')) {
+    return (
+      <main className="mx-auto flex min-h-[400px] w-full max-w-2xl items-center justify-center px-6 py-16 text-center">
+        <div className="rounded-2xl border border-[#4E6B56]/30 bg-[#E8EFE9] p-6 shadow-sm">
+          <p className="font-serif text-lg font-bold text-[#1F2B24]">
+            🌿 Khu vực dành riêng cho khách hàng
+          </p>
+          <p className="mt-2 text-xs text-[#635B54]">
+            Đang chuyển hướng tài khoản nhân sự về không gian làm việc nội bộ...
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   // 1. Trạng thái Đang tải (Loading State)
   if (isLoading) {

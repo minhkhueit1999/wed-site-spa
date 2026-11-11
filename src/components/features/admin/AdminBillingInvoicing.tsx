@@ -5,6 +5,7 @@ import { Button, Card, CardTitle, Badge } from '@/components/ui';
 import {
   getInvoicesListAction,
   createAndSettleInvoiceAction,
+  refundOrVoidInvoiceAction,
   calculateBillPreviewAction,
   getCustomerListAction,
   getStaffListAction,
@@ -47,6 +48,35 @@ export function AdminBillingInvoicing({ adminData }: Props) {
   const [billPreview, setBillPreview] = React.useState<BillCalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Modal Hoàn Tiền / Hủy Hóa Đơn (Audit Trail)
+  const [refundModalInvoice, setRefundModalInvoice] = React.useState<InvoiceListItem | null>(null);
+  const [refundReason, setRefundReason] = React.useState('');
+  const [isRefunding, setIsRefunding] = React.useState(false);
+
+  const handleRefundOrVoid = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!refundModalInvoice) return;
+    if (!refundReason.trim()) {
+      setFeedback({ type: 'error', msg: 'Vui lòng nhập lý do hoàn tiền / hủy hóa đơn.' });
+      return;
+    }
+
+    setIsRefunding(true);
+    const res = await refundOrVoidInvoiceAction(refundModalInvoice.id, refundReason);
+    if (res.ok) {
+      setFeedback({
+        type: 'success',
+        msg: `Đã hoàn tiền & hủy hóa đơn ${res.value.code} thành công! Đã hoàn kho mỹ phẩm và lưu vết kiểm toán AuditLog.`,
+      });
+      setRefundModalInvoice(null);
+      setRefundReason('');
+      await loadData();
+    } else {
+      setFeedback({ type: 'error', msg: res.error });
+    }
+    setIsRefunding(false);
+  };
 
   const loadData = React.useCallback(async () => {
     setIsLoading(true);
@@ -282,9 +312,32 @@ export function AdminBillingInvoicing({ adminData }: Props) {
                       )}
                     </td>
                     <td className="p-3.5 text-right">
-                      <Badge variant={inv.status === 'PAID' ? 'success' : 'terracotta'}>
-                        {inv.status}
-                      </Badge>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Badge
+                          variant={
+                            inv.status === 'PAID'
+                              ? 'success'
+                              : inv.status === 'REFUNDED'
+                                ? 'warning'
+                                : 'terracotta'
+                          }
+                        >
+                          {inv.status}
+                        </Badge>
+                        {inv.status === 'PAID' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setRefundModalInvoice(inv);
+                              setRefundReason('');
+                            }}
+                            className="text-[11px] text-[#B85D38] hover:bg-[#FDECEC]"
+                          >
+                            ↩️ Hủy/Hoàn
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -502,6 +555,84 @@ export function AdminBillingInvoicing({ adminData }: Props) {
                 </Button>
                 <Button type="submit" variant="primary" disabled={isSubmitting || isCalculating}>
                   {isSubmitting ? 'Đang quyết toán...' : 'Chốt & Xuất Hóa Đơn'}
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
+
+      {/* 4. Modal Hoàn Tiền / Hủy Hóa Đơn (Audit Trail) */}
+      {refundModalInvoice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+          <Card className="w-full max-w-lg border-red-300 bg-[#FAF7F2] p-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#E2D9CC] pb-3">
+              <CardTitle className="font-serif text-lg font-bold text-red-700">
+                ↩️ Hoàn Tiền / Hủy Hóa Đơn ({refundModalInvoice.code})
+              </CardTitle>
+              <button
+                onClick={() => setRefundModalInvoice(null)}
+                className="text-lg text-[#8C827A] hover:text-[#1F2B24]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleRefundOrVoid} className="mt-4 space-y-4">
+              <div className="space-y-1 rounded-xl border border-red-200 bg-red-50/80 p-3.5 text-xs text-red-800">
+                <p className="font-bold">⚠️ QUY TẮC TOÀN VẸN DỮ LIỆU & KIỂM TOÁN:</p>
+                <p>
+                  • Hóa đơn đã thu tiền tuyệt đối không thể xóa cứng (hard delete) khỏi cơ sở dữ
+                  liệu.
+                </p>
+                <p>
+                  • Hệ thống sẽ tự động hoàn trả số lượng mỹ phẩm vào tồn kho (nếu có), hoàn lại 1
+                  buổi cho gói trả trước, và cập nhật trạng thái hóa đơn sang{' '}
+                  <strong>REFUNDED</strong>.
+                </p>
+                <p>
+                  • Toàn bộ thao tác hoàn tiền sẽ được ghi nhận vào <strong>AuditLog</strong> kèm
+                  danh tính người thực hiện.
+                </p>
+              </div>
+
+              <div className="space-y-1 rounded-xl border border-[#E2D9CC] bg-white p-3 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-[#635B54]">Khách hàng:</span>
+                  <span className="font-bold">{refundModalInvoice.customerName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#635B54]">Số tiền thực tế hoàn lại:</span>
+                  <span className="font-mono font-bold text-red-700">
+                    {formatCurrencyVND(refundModalInvoice.paidVnd)}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1F2B24]">
+                  Lý do hoàn tiền / hủy bỏ (Bắt buộc):
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={refundReason}
+                  onChange={(e) => setRefundReason(e.target.value)}
+                  placeholder="Ví dụ: Khách bị dị ứng tinh dầu bất ngờ / Khách chuyển công tác đột xuất cần hủy liệu trình..."
+                  className="mt-1 w-full rounded-xl border border-[#D4B996] bg-white p-2.5 text-xs text-[#2B2622] outline-hidden focus:border-red-600"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" variant="outline" onClick={() => setRefundModalInvoice(null)}>
+                  Đóng
+                </Button>
+                <Button
+                  type="submit"
+                  variant="terracotta"
+                  disabled={isRefunding || !refundReason.trim()}
+                >
+                  {isRefunding ? 'Đang xử lý...' : 'Xác Nhận Hoàn Tiền & Hủy HĐ'}
                 </Button>
               </div>
             </form>

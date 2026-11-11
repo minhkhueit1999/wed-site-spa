@@ -1,5 +1,6 @@
 import { prisma } from '@/infrastructure/db/prisma';
 import { Result, ok, err } from '@/domain/shared/result';
+import { maskEmail } from '@/lib/utils';
 
 export interface TherapistAppointmentItem {
   id: string;
@@ -51,7 +52,10 @@ export async function getTherapistSchedule(
         endAt: apt.endAt.toISOString(),
         status: apt.status,
         customerName: apt.plan.customer.user.name,
-        customerEmail: apt.plan.customer.user.email,
+        customerEmail:
+          therapist.role === 'THERAPIST'
+            ? maskEmail(apt.plan.customer.user.email)
+            : apt.plan.customer.user.email,
         serviceName: apt.plan.service.name,
         planId: apt.plan.id,
         planState: apt.plan.state,
@@ -219,7 +223,10 @@ export async function getAppointmentDetail(
     customer: {
       id: customerProfile.id,
       name: customerProfile.user.name,
-      email: customerProfile.user.email,
+      email:
+        therapist.role === 'THERAPIST'
+          ? maskEmail(customerProfile.user.email)
+          : customerProfile.user.email,
       notes: customerProfile.notes,
       safetyFlags,
       contraindicationWarnings,

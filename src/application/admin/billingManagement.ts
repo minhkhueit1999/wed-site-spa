@@ -374,3 +374,121 @@ export async function getInvoicesList(): Promise<Result<InvoiceListItem[], strin
     return err(msg);
   }
 }
+
+/**
+ * Hoàn tiền hoặc Hủy hóa đơn (Void / Refund) có lưu vết kiểm toán bắt buộc (Audit Trail).
+ * Tuyệt đối cấm xóa trực tiếp bản ghi hóa đơn đã phát sinh dòng tiền.
+ */
+export async function refundOrVoidInvoice(input: {
+  invoiceId: string;
+  reason: string;
+  actorId: string;
+}): Promise<Result<{ code: string; refundedVnd: number }, string>> {
+  if (!input.reason.trim()) {
+    return err('Vui lòng ghi rõ lý do hoàn tiền hoặc hủy hóa đơn.');
+  }
+
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const invoice = await tx.invoice.findUnique({
+        where: { id: input.invoiceId },
+        include: {
+          items: true,
+          customer: true,
+        },
+      });
+
+      if (!invoice) return err('Không tìm thấy hóa đơn cần hoàn trả.');
+      if (invoice.status === 'REFUNDED' || invoice.status === 'CANCELLED') {
+        return err('Hóa đơn này đã được hoàn trả hoặc hủy trước đó.');
+      }
+
+      // 1. Nếu thanh toán bằng gói trả trước -> hoàn lại 1 buổi cho khách
+      if (invoice.paymentMethod === 'PREPAID_PACKAGE') {
+        await tx.customerProfile.update({
+          where: { id: invoice.customerId },
+          data: {
+            prepaidSessions: { increment: 1 },
+          },
+        });
+      }
+
+      // 2. Nếu hóa đơn có bán mỹ phẩm -> tự động hoàn trả số lượng vào kho
+      for (const item of invoice.items) {
+        if (item.itemType === 'PRODUCT' && item.itemId) {
+          const product = await tx.product.findUnique({
+            where: { slug: item.itemId },
+          });
+          if (product) {
+            const newQty = product.stockQuantity + item.quantity;
+            await tx.product.update({
+              where: { slug: item.itemId },
+              data: { stockQuantity: newQty },
+            });
+
+            await tx.inventoryTransaction.create({
+              data: {
+                productSlug: item.itemId,
+                type: 'IN',
+                quantity: item.quantity,
+                balanceAfter: newQty,
+                reason: `Hoàn kho do hủy/hoàn tiền hóa đơn ${invoice.code}: ${input.reason}`,
+                actorId: input.actorId,
+              },
+            });
+          }
+        }
+      }
+
+      // 3. Nếu hóa đơn có ghi nhận công nợ -> khấu trừ bớt công nợ
+      if (invoice.debtVnd > 0) {
+        const remainingDebt = Math.max(0, invoice.customer.debtBalanceVnd - invoice.debtVnd);
+        await tx.customerProfile.update({
+          where: { id: invoice.customerId },
+          data: { debtBalanceVnd: remainingDebt },
+        });
+      }
+
+      // 4. Khấu trừ tổng chi tiêu của khách hàng
+      if (invoice.paidVnd > 0) {
+        const remainingSpent = Math.max(0, invoice.customer.totalSpentVnd - invoice.paidVnd);
+        await tx.customerProfile.update({
+          where: { id: invoice.customerId },
+          data: { totalSpentVnd: remainingSpent },
+        });
+      }
+
+      // 5. Cập nhật trạng thái hóa đơn sang REFUNDED
+      await tx.invoice.update({
+        where: { id: invoice.id },
+        data: {
+          status: 'REFUNDED',
+          notes: invoice.notes
+            ? `${invoice.notes} | [HOÀN TIỀN/HỦY]: ${input.reason}`
+            : `[HOÀN TIỀN/HỦY]: ${input.reason}`,
+        },
+      });
+
+      // 6. Ghi AuditLog bắt buộc để đảm bảo tính minh bạch kế toán
+      await tx.auditLog.create({
+        data: {
+          actorId: input.actorId,
+          action: 'REFUND_INVOICE',
+          targetType: 'INVOICE',
+          targetId: invoice.id,
+          metadata: JSON.stringify({
+            invoiceCode: invoice.code,
+            refundedVnd: invoice.paidVnd,
+            reason: input.reason,
+            refundedAt: new Date().toISOString(),
+          }),
+        },
+      });
+
+      return ok({ code: invoice.code, refundedVnd: invoice.paidVnd });
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Lỗi hoàn tiền hóa đơn';
+    return err(msg);
+  }
+}

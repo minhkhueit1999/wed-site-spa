@@ -39,6 +39,7 @@ describe('Technician Mobile Workflow Use-Cases', () => {
         role: 'CUSTOMER',
         profile: {
           create: {
+            phone: '0987654321',
             loyaltyTier: 'SILVER',
             safetyFlags: JSON.stringify(['allergy-essential-oil']),
             medicalNotes: 'Tiền sử hạ huyết áp tư thế',
@@ -170,7 +171,7 @@ describe('Technician Mobile Workflow Use-Cases', () => {
     }
   });
 
-  it('lấy lịch làm việc di động chứa thông tin cảnh báo an toàn y khoa của khách', async () => {
+  it('lấy lịch làm việc di động chứa thông tin cảnh báo an toàn y khoa và đã che mờ (masking) SĐT khách', async () => {
     const schedRes = await getTechnicianMobileSchedule(therapistUser.id);
     expect(schedRes.ok).toBe(true);
     if (schedRes.ok) {
@@ -178,6 +179,7 @@ describe('Technician Mobile Workflow Use-Cases', () => {
       expect(matchApt).toBeDefined();
       expect(matchApt?.safetyFlags).toContain('allergy-essential-oil');
       expect(matchApt?.medicalNotes).toBe('Tiền sử hạ huyết áp tư thế');
+      expect(matchApt?.customerPhone).toBe('098***321');
     }
   });
 });

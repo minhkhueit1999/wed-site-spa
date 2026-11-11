@@ -421,3 +421,46 @@ export async function recalculateStaffPayroll(
     return err(msg);
   }
 }
+
+/**
+ * Đặt lại mật khẩu tạm thời cho nhân sự (Ẩn hoàn toàn mật khẩu gốc, cấp mật khẩu tạm ngẫu nhiên)
+ */
+export async function resetStaffPassword(
+  staffId: string,
+  actorId: string,
+): Promise<Result<{ tempPassword: string; staffName: string }, string>> {
+  try {
+    const staff = await prisma.user.findUnique({ where: { id: staffId } });
+    if (!staff) return err('Không tìm thấy tài khoản nhân sự cần đặt lại mật khẩu.');
+
+    // Sinh mật khẩu ngẫu nhiên tạm thời: MKSpa#XXXX
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const tempPassword = `MKSpa#Temp${randomSuffix}`;
+
+    const passwordHash = await bcrypt.hash(tempPassword, 10);
+
+    await prisma.user.update({
+      where: { id: staffId },
+      data: { passwordHash },
+    });
+
+    // Ghi nhận AuditLog bảo mật
+    await prisma.auditLog.create({
+      data: {
+        actorId,
+        action: 'RESET_PASSWORD',
+        targetType: 'USER',
+        targetId: staffId,
+        metadata: JSON.stringify({
+          staffEmail: staff.email,
+          resetAt: new Date().toISOString(),
+        }),
+      },
+    });
+
+    return ok({ tempPassword, staffName: staff.name });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Lỗi đặt lại mật khẩu nhân viên';
+    return err(msg);
+  }
+}

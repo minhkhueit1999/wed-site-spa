@@ -42,6 +42,7 @@ import {
   reviewLeaveRequest,
   getStaffPayrolls,
   recalculateStaffPayroll,
+  resetStaffPassword,
   type StaffListItem,
   type ShiftRosterItem,
   type LeaveRequestItem,
@@ -70,6 +71,7 @@ import {
   calculateBillPreview,
   createAndSettleInvoice,
   getInvoicesList,
+  refundOrVoidInvoice,
   type BillCalculationResult,
   type CreateInvoiceInput,
   type InvoiceListItem,
@@ -481,6 +483,25 @@ export async function getInvoicesListAction(): Promise<Result<InvoiceListItem[],
   if (!authRes.ok) return err(authRes.error);
 
   return getInvoicesList();
+}
+
+export async function refundOrVoidInvoiceAction(
+  invoiceId: string,
+  reason: string,
+): Promise<Result<{ code: string; refundedVnd: number }, string>> {
+  const authRes = await checkAdmin();
+  if (!authRes.ok) return err(authRes.error);
+
+  return refundOrVoidInvoice({ invoiceId, reason, actorId: authRes.value });
+}
+
+export async function resetStaffPasswordAction(
+  staffId: string,
+): Promise<Result<{ tempPassword: string; staffName: string }, string>> {
+  const authRes = await checkAdmin();
+  if (!authRes.ok) return err(authRes.error);
+
+  return resetStaffPassword(staffId, authRes.value);
 }
 
 // --- ANALYTICS DASHBOARD ACTION ---

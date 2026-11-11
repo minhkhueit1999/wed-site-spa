@@ -15,13 +15,16 @@ export function PublicHeader() {
   const { isAuthenticated, userName, userRole, logout, openGate } = useAuth();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const isStaff = isAuthenticated && (userRole === 'ADMIN' || userRole === 'THERAPIST');
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#E2D9CC] bg-[#FAF7F2]/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo Thương Hiệu MK SPA */}
         <Link
-          href="/"
+          href={
+            userRole === 'ADMIN' ? '/quan-tri' : userRole === 'THERAPIST' ? '/ky-thuat-vien' : '/'
+          }
           className="flex items-center gap-2 font-serif text-xl font-bold tracking-tight text-[#1F2B24] sm:text-2xl"
         >
           <span className="text-xl">🌿</span>
@@ -30,52 +33,110 @@ export function PublicHeader() {
 
         {/* Thanh Điều Hướng & Đăng Nhập / Đăng Xuất */}
         <nav className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-          <Link
-            href="/shop"
-            className="text-xs font-semibold text-[#1F2B24] transition-colors hover:text-[#D4AF37] sm:text-sm"
-          >
-            Cửa Hàng
-          </Link>
-          <Link
-            href="/orders"
-            className="hidden text-xs font-medium text-[#635B54] transition-colors hover:text-[#405C4E] sm:inline-block sm:text-sm"
-          >
-            Đơn Hàng
-          </Link>
-          <Link
-            href="/trieu-chung"
-            className="hidden text-xs font-medium text-[#635B54] transition-colors hover:text-[#405C4E] sm:text-sm md:inline-block"
-          >
-            Triệu Chứng
-          </Link>
+          {isStaff ? (
+            /* KHÔNG GIAN LÀM VIỆC NỘI BỘ (TÁCH BIỆT HOÀN TOÀN KHỎI LUỒNG E-COMMERCE / GIỎ HÀNG) */
+            <div className="flex items-center gap-2 text-xs font-semibold sm:gap-3 sm:text-sm">
+              {userRole === 'ADMIN' ? (
+                <>
+                  <Link
+                    href="/quan-tri?tab=calendar"
+                    className="hidden text-[#1F2B24] transition-colors hover:text-[#B85D38] md:inline-block"
+                  >
+                    📅 Lịch Hẹn
+                  </Link>
+                  <Link
+                    href="/quan-tri?tab=hr"
+                    className="hidden text-[#635B54] transition-colors hover:text-[#B85D38] lg:inline-block"
+                  >
+                    👥 Nhân Sự
+                  </Link>
+                  <Link
+                    href="/quan-tri?tab=crm"
+                    className="hidden text-[#635B54] transition-colors hover:text-[#B85D38] lg:inline-block"
+                  >
+                    📋 Khách Hàng
+                  </Link>
+                  <Link
+                    href="/quan-tri?tab=inventory"
+                    className="hidden text-[#635B54] transition-colors hover:text-[#B85D38] sm:inline-block"
+                  >
+                    📦 Kho Mỹ Phẩm
+                  </Link>
+                  <Link
+                    href="/quan-tri?tab=billing"
+                    className="text-[#1F2B24] transition-colors hover:text-[#B85D38]"
+                  >
+                    💵 Thu Ngân
+                  </Link>
+                  <Link
+                    href="/quan-tri?tab=analytics"
+                    className="hidden text-[#635B54] transition-colors hover:text-[#B85D38] md:inline-block"
+                  >
+                    📊 Báo Cáo
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/ky-thuat-vien"
+                    className="text-[#405C4E] transition-colors hover:text-[#1F2B24]"
+                  >
+                    🩺 Ca Trực Hôm Nay
+                  </Link>
+                </>
+              )}
+            </div>
+          ) : (
+            /* LUỒNG DÀNH CHO KHÁCH HÀNG & KHÁCH VÃNG LAI */
+            <>
+              <Link
+                href="/shop"
+                className="text-xs font-semibold text-[#1F2B24] transition-colors hover:text-[#D4AF37] sm:text-sm"
+              >
+                Cửa Hàng
+              </Link>
+              <Link
+                href="/orders"
+                className="hidden text-xs font-medium text-[#635B54] transition-colors hover:text-[#405C4E] sm:inline-block sm:text-sm"
+              >
+                Đơn Hàng
+              </Link>
+              <Link
+                href="/trieu-chung"
+                className="hidden text-xs font-medium text-[#635B54] transition-colors hover:text-[#405C4E] sm:text-sm md:inline-block"
+              >
+                Triệu Chứng
+              </Link>
 
-          {/* Nút Giỏ Hàng */}
-          <motion.button
-            key={flyAnimationCount}
-            initial={{ scale: 1 }}
-            animate={flyAnimationCount > 0 ? { scale: [1, 1.25, 0.95, 1.05, 1] } : {}}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            type="button"
-            onClick={() => setCartOpen(true)}
-            aria-label={`Mở giỏ hàng (${totalItems} sản phẩm)`}
-            className="relative flex items-center gap-1.5 rounded-full border border-[#D4AF37]/50 bg-[#FAF7F2] px-3 py-1.5 text-xs font-semibold text-[#1F2B24] shadow-xs hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
-          >
-            <span>🧺</span>
-            <span className="hidden sm:inline">Giỏ Hàng</span>
-            {totalItems > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C68B59] px-1 text-[10px] font-bold text-[#141C17]">
-                {totalItems}
-              </span>
-            )}
-          </motion.button>
+              {/* Nút Giỏ Hàng (Tuyệt đối ẩn với Admin & KTV) */}
+              <motion.button
+                key={flyAnimationCount}
+                initial={{ scale: 1 }}
+                animate={flyAnimationCount > 0 ? { scale: [1, 1.25, 0.95, 1.05, 1] } : {}}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                type="button"
+                onClick={() => setCartOpen(true)}
+                aria-label={`Mở giỏ hàng (${totalItems} sản phẩm)`}
+                className="relative flex items-center gap-1.5 rounded-full border border-[#D4AF37]/50 bg-[#FAF7F2] px-3 py-1.5 text-xs font-semibold text-[#1F2B24] shadow-xs hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
+              >
+                <span>🧺</span>
+                <span className="hidden sm:inline">Giỏ Hàng</span>
+                {totalItems > 0 && (
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C68B59] px-1 text-[10px] font-bold text-[#141C17]">
+                    {totalItems}
+                  </span>
+                )}
+              </motion.button>
+
+              <Link href="/tu-van" className="hidden lg:inline-block">
+                <Button size="sm" variant="secondary" className="text-xs">
+                  Trắc Nghiệm
+                </Button>
+              </Link>
+            </>
+          )}
 
           <DisplayModeSwitcher />
-
-          <Link href="/tu-van" className="hidden lg:inline-block">
-            <Button size="sm" variant="secondary" className="text-xs">
-              Trắc Nghiệm
-            </Button>
-          </Link>
 
           {/* KHỐI XÁC THỰC: ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG XUẤT */}
           {isAuthenticated ? (

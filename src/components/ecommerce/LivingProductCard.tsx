@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react';
 import { SaSpaProduct } from '@/data/saSpaProducts';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
+import { useAuth } from '@/components/layout/AuthContext';
 import { formatCurrencyVND } from '@/lib/utils';
 import { useQualityTier } from '@/infrastructure/motion/QualityTierContext';
 
@@ -25,6 +26,10 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
   const [showScentOrbit, setShowScentOrbit] = useState(false);
   const [selectedVolume, setSelectedVolume] = useState(product.volumes[0]?.size || '30ml');
   const [isAddedFeedback, setIsAddedFeedback] = useState(false);
+
+  // Auth role check (Strict RBAC UI hiding)
+  const { userRole } = useAuth();
+  const isStaff = userRole === 'ADMIN' || userRole === 'THERAPIST';
 
   // Zustand
   const addItem = useCartStore((state) => state.addItem);
@@ -102,28 +107,30 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
         )}
 
         {/* Nút Wishlist Thả tim bung cánh hoa */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleWishlist(product.id);
-          }}
-          aria-label={isInWishlist ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'}
-          className={`relative flex h-8 w-8 items-center justify-center rounded-full border transition-all ${
-            isInWishlist
-              ? 'scale-110 border-[#B85D38] bg-[#FDECEC] text-[#B85D38] shadow-sm'
-              : 'border-[#E2D9CC] bg-[#FAF7F2]/80 text-[#8C827A] hover:border-[#B85D38]/50 hover:text-[#B85D38]'
-          }`}
-        >
-          <span className="text-sm">{isInWishlist ? '♥' : '♡'}</span>
-          {isInWishlist && (
-            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#B85D38] opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#B85D38]" />
-            </span>
-          )}
-        </button>
+        {!isStaff && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleWishlist(product.id);
+            }}
+            aria-label={isInWishlist ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'}
+            className={`relative flex h-8 w-8 items-center justify-center rounded-full border transition-all ${
+              isInWishlist
+                ? 'scale-110 border-[#B85D38] bg-[#FDECEC] text-[#B85D38] shadow-sm'
+                : 'border-[#E2D9CC] bg-[#FAF7F2]/80 text-[#8C827A] hover:border-[#B85D38]/50 hover:text-[#B85D38]'
+            }`}
+          >
+            <span className="text-sm">{isInWishlist ? '♥' : '♡'}</span>
+            {isInWishlist && (
+              <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#B85D38] opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#B85D38]" />
+              </span>
+            )}
+          </button>
+        )}
       </div>
 
       {/* 2. KHU VỰC MULTI-LAYER LIVING VISUAL (Không gian 3D của sản phẩm) */}
@@ -380,19 +387,25 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
             <span className="block text-[10px] text-[#8C827A]">Đã gồm thuế & toa dưỡng</span>
           </div>
 
-          {/* Nút Thêm vào giỏ hàng */}
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className={`relative flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-medium transition-all ${
-              isAddedFeedback
-                ? 'scale-105 bg-[#405C4E] text-[#FAF7F2]'
-                : 'bg-gradient-to-r from-[#D4AF37] to-[#C68B59] text-[#141C17] shadow-sm hover:scale-[1.03] active:scale-[0.97]'
-            }`}
-          >
-            <span>{isAddedFeedback ? '✓ Đã Thêm' : 'Thêm Vào Giỏ'}</span>
-            {!isAddedFeedback && <span className="text-sm">→</span>}
-          </button>
+          {/* Nút Thêm vào giỏ hàng hoặc Nhãn Nội bộ */}
+          {isStaff ? (
+            <span className="rounded-full border border-[#4E6B56]/30 bg-[#E8EFE9] px-3 py-1.5 text-[11px] font-semibold text-[#1F2B24]">
+              🌿 Quản trị nội bộ
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className={`relative flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-medium transition-all ${
+                isAddedFeedback
+                  ? 'scale-105 bg-[#405C4E] text-[#FAF7F2]'
+                  : 'bg-gradient-to-r from-[#D4AF37] to-[#C68B59] text-[#141C17] shadow-sm hover:scale-[1.03] active:scale-[0.97]'
+              }`}
+            >
+              <span>{isAddedFeedback ? '✓ Đã Thêm' : 'Thêm Vào Giỏ'}</span>
+              {!isAddedFeedback && <span className="text-sm">→</span>}
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

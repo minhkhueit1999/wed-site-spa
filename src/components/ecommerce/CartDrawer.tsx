@@ -5,9 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
+import { useAuth } from '@/components/layout/AuthContext';
 import { formatCurrencyVND } from '@/lib/utils';
 
 export function CartDrawer() {
+  const { userRole } = useAuth();
   const isOpen = useCartStore((state) => state.isCartOpen);
   const setCartOpen = useCartStore((state) => state.setCartOpen);
   const items = useCartStore((state) => state.items);
@@ -37,7 +39,7 @@ export function CartDrawer() {
   // Tính phần trăm thanh tiến trình Free Shipping & Quà tặng
   const progressPercent = Math.min(100, Math.round((totals.total / totals.giftThreshold) * 100));
 
-  if (!isOpen) return null;
+  if (!isOpen || userRole === 'ADMIN' || userRole === 'THERAPIST') return null;
 
   return (
     <AnimatePresence>

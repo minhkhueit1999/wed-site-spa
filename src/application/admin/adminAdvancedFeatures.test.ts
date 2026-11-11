@@ -1,16 +1,31 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { prisma } from '@/infrastructure/db/prisma';
 import { createAdminAppointment } from './appointmentOperations';
-import { calculateBillPreview } from './billingManagement';
+import {
+  calculateBillPreview,
+  refundOrVoidInvoice,
+  createAndSettleInvoice,
+} from './billingManagement';
 import { stockInProduct, stockOutProduct } from './inventoryManagement';
+import { resetStaffPassword } from './hrManagement';
 
 describe('Admin Advanced Management Use-Cases (Calendar, Billing, Inventory, CRM)', () => {
+  let adminUser: { id: string; email: string };
   let therapistUser: { id: string; email: string };
   let customerUser: { id: string; email: string };
   let customerProfileId: string;
   const testServiceSlug = 'thu-gian-sau';
 
   beforeAll(async () => {
+    adminUser = await prisma.user.create({
+      data: {
+        email: `admin-adv-${Date.now()}@spawellness.vn`,
+        name: 'Quản Trị Viên Test',
+        passwordHash: 'hash',
+        role: 'ADMIN',
+      },
+    });
+
     therapistUser = await prisma.user.create({
       data: {
         email: `therapist-adv-${Date.now()}@spawellness.vn`,
@@ -45,10 +60,14 @@ describe('Admin Advanced Management Use-Cases (Calendar, Billing, Inventory, CRM
   });
 
   afterAll(async () => {
+    if (adminUser) {
+      await prisma.auditLog.deleteMany({ where: { actorId: adminUser.id } });
+    }
     if (customerUser) {
       await prisma.appointment.deleteMany({
         where: { therapistId: therapistUser.id },
       });
+      await prisma.invoiceItem.deleteMany({});
       await prisma.invoice.deleteMany({
         where: { customerId: customerProfileId },
       });
@@ -59,6 +78,9 @@ describe('Admin Advanced Management Use-Cases (Calendar, Billing, Inventory, CRM
     }
     if (therapistUser) {
       await prisma.user.delete({ where: { id: therapistUser.id } }).catch(() => {});
+    }
+    if (adminUser) {
+      await prisma.user.delete({ where: { id: adminUser.id } }).catch(() => {});
     }
   });
 
@@ -156,5 +178,88 @@ describe('Admin Advanced Management Use-Cases (Calendar, Billing, Inventory, CRM
     if (!overflowRes.ok) {
       expect(overflowRes.error).toContain('Tồn kho không đủ để xuất');
     }
+  });
+
+  it('đặt lại mật khẩu tạm thời cho nhân sự và ghi nhận AuditLog bảo mật', async () => {
+    const resetRes = await resetStaffPassword(therapistUser.id, adminUser.id);
+    expect(resetRes.ok).toBe(true);
+    if (resetRes.ok) {
+      expect(resetRes.value.tempPassword).toMatch(/^MKSpa#Temp\d{4}$/);
+      expect(resetRes.value.staffName).toBe('KTV Test Nâng Cao');
+
+      // Kiểm tra AuditLog đã được ghi
+      const log = await prisma.auditLog.findFirst({
+        where: {
+          targetId: therapistUser.id,
+          action: 'RESET_PASSWORD',
+        },
+      });
+      expect(log).toBeDefined();
+      expect(log?.actorId).toBe(adminUser.id);
+    }
+  });
+
+  it('hủy/hoàn tiền hóa đơn: hoàn trả tồn kho, phục hồi buổi liệu trình và đổi trạng thái sang REFUNDED', async () => {
+    // 1. Tạo hóa đơn thanh toán bằng PREPAID_PACKAGE có mua kèm sản phẩm
+    const invoiceRes = await createAndSettleInvoice({
+      customerId: customerProfileId,
+      serviceSlug: testServiceSlug,
+      paymentMethod: 'PREPAID_PACKAGE',
+      productItems: [{ slug: 'tinh-dau-thu-gian', quantity: 2 }],
+      paidVnd: 640000,
+      notes: 'Hóa đơn test hoàn tiền',
+    });
+    expect(invoiceRes.ok).toBe(true);
+    if (!invoiceRes.ok) return;
+
+    const invoiceId = invoiceRes.value.invoiceId;
+
+    // Lấy tồn kho trước khi hoàn
+    const prodBefore = await prisma.product.findUniqueOrThrow({
+      where: { slug: 'tinh-dau-thu-gian' },
+    });
+    const profileBefore = await prisma.customerProfile.findUniqueOrThrow({
+      where: { id: customerProfileId },
+    });
+
+    // 2. Thực hiện hủy/hoàn hóa đơn
+    const refundRes = await refundOrVoidInvoice({
+      invoiceId,
+      reason: 'Khách yêu cầu dời lịch và đổi dịch vụ',
+      actorId: adminUser.id,
+    });
+    expect(refundRes.ok).toBe(true);
+    if (refundRes.ok) {
+      expect(refundRes.value.refundedVnd).toBe(640000);
+    }
+
+    // 3. Kiểm tra trạng thái hóa đơn
+    const refundedInvoice = await prisma.invoice.findUniqueOrThrow({
+      where: { id: invoiceId },
+    });
+    expect(refundedInvoice.status).toBe('REFUNDED');
+    expect(refundedInvoice.notes).toContain('[HOÀN TIỀN/HỦY]');
+
+    // 4. Kiểm tra tồn kho đã được hoàn trả (+2)
+    const prodAfter = await prisma.product.findUniqueOrThrow({
+      where: { slug: 'tinh-dau-thu-gian' },
+    });
+    expect(prodAfter.stockQuantity).toBe(prodBefore.stockQuantity + 2);
+
+    // 5. Kiểm tra buổi liệu trình trả trước đã được hoàn (+1)
+    const profileAfter = await prisma.customerProfile.findUniqueOrThrow({
+      where: { id: customerProfileId },
+    });
+    expect(profileAfter.prepaidSessions).toBe(profileBefore.prepaidSessions + 1);
+
+    // 6. Kiểm tra AuditLog
+    const audit = await prisma.auditLog.findFirst({
+      where: {
+        targetId: invoiceId,
+        action: 'REFUND_INVOICE',
+      },
+    });
+    expect(audit).toBeDefined();
+    expect(audit?.actorId).toBe(adminUser.id);
   });
 });

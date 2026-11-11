@@ -1,18 +1,46 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { useAuth } from '@/components/layout/AuthContext';
 import { useOrderStore, OrderStatus } from '@/infrastructure/store/useOrderStore';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
 import { formatCurrencyVND } from '@/lib/utils';
 
 export default function OrdersPage() {
+  const router = useRouter();
+  const { userRole, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (userRole === 'ADMIN') {
+        router.replace('/quan-tri');
+      } else if (userRole === 'THERAPIST') {
+        router.replace('/ky-thuat-vien');
+      }
+    }
+  }, [isAuthenticated, userRole, router]);
+
   const orders = useOrderStore((state) => state.orders);
   const addItem = useCartStore((state) => state.addItem);
   const setCartOpen = useCartStore((state) => state.setCartOpen);
+
+  if (isAuthenticated && (userRole === 'ADMIN' || userRole === 'THERAPIST')) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FAF7F2] p-8 text-center text-[#1F2B24]">
+        <div className="rounded-2xl border border-[#4E6B56]/30 bg-[#E8EFE9] p-6 shadow-sm">
+          <p className="font-serif text-lg font-bold">🌿 Khu vực dành riêng cho khách hàng</p>
+          <p className="mt-2 text-xs text-[#635B54]">
+            Đang chuyển hướng tài khoản nhân sự về không gian làm việc nội bộ...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusStep = (status: OrderStatus) => {
     switch (status) {

@@ -1,5 +1,6 @@
 import { prisma } from '@/infrastructure/db/prisma';
 import { Result, ok, err } from '@/domain/shared/result';
+import { maskPhoneNumber } from '@/lib/utils';
 
 export interface TodayShiftInfo {
   shiftType: string;
@@ -127,7 +128,7 @@ export async function getTechnicianMobileSchedule(
         planId: apt.planId,
         customerId: apt.plan.customerId,
         customerName: apt.plan.customer.user.name,
-        customerPhone: apt.plan.customer.phone,
+        customerPhone: maskPhoneNumber(apt.plan.customer.phone),
         customerLoyaltyTier: apt.plan.customer.loyaltyTier,
         serviceName: apt.plan.service.name,
         serviceSlug: apt.plan.service.slug,

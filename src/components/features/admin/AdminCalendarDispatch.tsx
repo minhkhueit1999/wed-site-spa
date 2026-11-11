@@ -140,6 +140,49 @@ export function AdminCalendarDispatch({ adminData }: Props) {
     }
   };
 
+  // Kéo-thả phân công KTV & khung giờ (HTML5 Drag & Drop)
+  const handleDragDropReassign = async (
+    aptId: string,
+    targetTherapistId: string,
+    targetSlotTime: string,
+  ) => {
+    const apt = appointments.find((a) => a.id === aptId);
+    if (!apt) return;
+
+    const [slotH, slotM] = targetSlotTime.split(':').map(Number);
+    const newStart = new Date(`${selectedDate}T00:00:00`);
+    newStart.setHours(slotH || 9, slotM || 0, 0, 0);
+
+    const oldStart = new Date(apt.startAt);
+    const oldEnd = new Date(apt.endAt);
+    const durationMs = oldEnd.getTime() - oldStart.getTime() || 60 * 60 * 1000;
+    const newEnd = new Date(newStart.getTime() + durationMs);
+
+    const targetStaff = staffList.find((s) => s.id === targetTherapistId);
+    const targetStaffName = targetStaff?.name || 'KTV';
+
+    const res = await updateAdminAppointmentAction({
+      id: apt.id,
+      therapistId: targetTherapistId,
+      startAt: newStart,
+      endAt: newEnd,
+      room: apt.room,
+    });
+
+    if (res.ok) {
+      setFeedback({
+        type: 'success',
+        msg: `🎯 Kéo-thả thành công! Đã điều phối lịch khách ${apt.customerName} sang ${targetStaffName} lúc ${targetSlotTime}.`,
+      });
+      await loadData();
+    } else {
+      setFeedback({
+        type: 'error',
+        msg: `⚠️ Xung đột lịch: Không thể điều phối sang ${targetStaffName} (${res.error}).`,
+      });
+    }
+  };
+
   const timeSlots = [
     '08:30',
     '09:30',
@@ -256,17 +299,56 @@ export function AdminCalendarDispatch({ adminData }: Props) {
                       return (
                         <div
                           key={staff.id}
-                          className="col-span-3 min-h-[72px] border-r border-[#E2D9CC] p-1.5 last:border-r-0"
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
+                          }}
+                          onDragEnter={(e) => {
+                            e.currentTarget.classList.add(
+                              'bg-[#E8EFE9]',
+                              'ring-2',
+                              'ring-[#4E6B56]/50',
+                            );
+                          }}
+                          onDragLeave={(e) => {
+                            e.currentTarget.classList.remove(
+                              'bg-[#E8EFE9]',
+                              'ring-2',
+                              'ring-[#4E6B56]/50',
+                            );
+                          }}
+                          onDrop={async (e) => {
+                            e.preventDefault();
+                            e.currentTarget.classList.remove(
+                              'bg-[#E8EFE9]',
+                              'ring-2',
+                              'ring-[#4E6B56]/50',
+                            );
+                            const aptId = e.dataTransfer.getData('text/plain');
+                            if (aptId) {
+                              await handleDragDropReassign(aptId, staff.id, slotTime);
+                            }
+                          }}
+                          className="col-span-3 min-h-[72px] border-r border-[#E2D9CC] p-1.5 transition-colors last:border-r-0"
                         >
                           {matchingApt ? (
                             <div
+                              draggable={
+                                matchingApt.status !== 'COMPLETED' &&
+                                matchingApt.status !== 'CANCELLED'
+                              }
+                              onDragStart={(e) => {
+                                e.dataTransfer.setData('text/plain', matchingApt.id);
+                                e.dataTransfer.effectAllowed = 'move';
+                              }}
                               onClick={() => {
                                 setEditingApt(matchingApt);
                                 setReassignTherapistId(matchingApt.therapistId);
                                 setReassignStatus(matchingApt.status);
                                 setReassignRoom(matchingApt.room);
                               }}
-                              className={`group relative cursor-pointer rounded-xl border p-2.5 shadow-2xs transition-all hover:scale-[1.02] hover:shadow-md ${
+                              title="Nhấn để sửa / Kéo thả sang KTV hoặc giờ khác để phân công"
+                              className={`group relative cursor-grab rounded-xl border p-2.5 shadow-2xs transition-all hover:scale-[1.02] hover:shadow-md active:cursor-grabbing ${
                                 matchingApt.status === 'COMPLETED'
                                   ? 'border-[#4E6B56]/40 bg-[#E8EFE9]/70 text-[#1F2B24]'
                                   : matchingApt.status === 'IN_PROGRESS'
@@ -277,8 +359,9 @@ export function AdminCalendarDispatch({ adminData }: Props) {
                               }`}
                             >
                               <div className="flex items-center justify-between text-xs">
-                                <span className="truncate font-bold">
-                                  {matchingApt.customerName}
+                                <span className="flex items-center gap-1 truncate font-bold">
+                                  <span className="text-[10px] text-[#8C827A] select-none">⋮⋮</span>
+                                  <span className="truncate">{matchingApt.customerName}</span>
                                 </span>
                                 <span className="font-mono text-[10px] opacity-80">
                                   {new Date(matchingApt.startAt).toLocaleTimeString('vi-VN', {
@@ -528,11 +611,22 @@ export function AdminCalendarDispatch({ adminData }: Props) {
                     className="mt-1 w-full rounded-xl border border-[#D4B996] bg-white p-2.5 text-sm text-[#2B2622] outline-hidden focus:border-[#4E6B56]"
                   >
                     <option value="SCHEDULED">SCHEDULED (Đã đặt)</option>
-                    <option value="CHECKED_IN">CHECKED_IN (Đã nhận khách)</option>
-                    <option value="IN_PROGRESS">IN_PROGRESS (Đang làm)</option>
-                    <option value="COMPLETED">COMPLETED (Hoàn thành)</option>
-                    <option value="CANCELLED">CANCELLED (Hủy)</option>
+                    <option value="CONFIRMED">CONFIRMED (Đã xác nhận)</option>
+                    {editingApt.status === 'IN_PROGRESS' && (
+                      <option value="IN_PROGRESS" disabled>
+                        ⚡ IN_PROGRESS (KTV đang thực hiện)
+                      </option>
+                    )}
+                    {editingApt.status === 'COMPLETED' && (
+                      <option value="COMPLETED" disabled>
+                        ✓ COMPLETED (KTV đã hoàn thành)
+                      </option>
+                    )}
+                    <option value="CANCELLED">CANCELLED (Hủy ca)</option>
                   </select>
+                  <p className="mt-1 text-[10px] text-[#8C827A] italic">
+                    * Thao tác Bắt đầu làm & Hoàn tất ca do KTV trực tiếp thao tác tại buồng.
+                  </p>
                 </div>
 
                 <div>

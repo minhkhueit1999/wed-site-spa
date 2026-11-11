@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { SaSpaProduct } from '@/data/saSpaProducts';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
+import { useAuth } from '@/components/layout/AuthContext';
 import { formatCurrencyVND } from '@/lib/utils';
 import { LivingProductCard } from '@/components/ecommerce/LivingProductCard';
 
@@ -15,6 +16,9 @@ interface ProductDetailClientProps {
 }
 
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
+  const { userRole } = useAuth();
+  const isStaff = userRole === 'ADMIN' || userRole === 'THERAPIST';
+
   const [selectedVolume, setSelectedVolume] = useState<string>(product.volumes[0]?.size || '30ml');
   const [quantity, setQuantity] = useState(1);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -141,18 +145,20 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 {product.categoryName} • {product.badge || 'MK SPA Selection'}
               </span>
 
-              {/* Nút Yêu Thích */}
-              <button
-                type="button"
-                onClick={() => toggleWishlist(product.id)}
-                className={`rounded-full border p-2 transition-all ${
-                  isInWishlist
-                    ? 'border-[#B85D38] bg-[#FDECEC] text-[#B85D38]'
-                    : 'border-current/20 hover:border-[#D4AF37]'
-                }`}
-              >
-                {isInWishlist ? '♥ Yêu Thích' : '♡ Thêm Vào Wishlist'}
-              </button>
+              {/* Nút Yêu Thích (Ẩn với Admin & KTV) */}
+              {!isStaff && (
+                <button
+                  type="button"
+                  onClick={() => toggleWishlist(product.id)}
+                  className={`rounded-full border p-2 transition-all ${
+                    isInWishlist
+                      ? 'border-[#B85D38] bg-[#FDECEC] text-[#B85D38]'
+                      : 'border-current/20 hover:border-[#D4AF37]'
+                  }`}
+                >
+                  {isInWishlist ? '♥ Yêu Thích' : '♡ Thêm Vào Wishlist'}
+                </button>
+              )}
             </div>
 
             <h1 className="mt-2 font-serif text-3xl font-light text-current sm:text-4xl">
@@ -292,66 +298,99 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
             </div>
           </div>
 
-          {/* Phần Mua Hàng & Giá */}
+          {/* Phần Mua Hàng & Giá (Hoặc Nhãn Phân Quyền Nội Bộ) */}
           <div className="mt-8 border-t border-current/20 pt-6">
-            <div className="mb-4 flex items-center justify-between">
-              {/* Chọn số lượng */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-current/80">Số lượng:</span>
-                <div className="flex items-center rounded-xl border border-current/30">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-1 text-xs hover:bg-black/10"
-                  >
-                    -
-                  </button>
-                  <span className="px-3 py-1 text-xs font-bold">{quantity}</span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="px-3 py-1 text-xs hover:bg-black/10"
-                  >
-                    +
-                  </button>
+            {isStaff ? (
+              <div className="space-y-2.5 rounded-2xl border border-[#4E6B56]/50 bg-[#E8EFE9]/90 p-5 text-xs text-[#1F2B24]">
+                <div className="flex items-center gap-2 text-sm font-bold text-[#4E6B56]">
+                  <span>🌿</span>
+                  <span>KHÔNG GIAN LÀM VIỆC NỘI BỘ (ADMIN & KỸ THUẬT VIÊN)</span>
+                </div>
+                <p className="leading-relaxed text-[#635B54]">
+                  Tài khoản nhân sự được phân quyền quản trị nội bộ nên luồng mua sắm trực tuyến,
+                  giỏ hàng bán lẻ và thanh toán vãng lai được tự động ẩn nhằm tránh tạo đơn ảo hoặc
+                  xung đột số liệu.
+                </p>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {userRole === 'ADMIN' ? (
+                    <Link
+                      href="/quan-tri?tab=inventory"
+                      className="rounded-xl bg-[#1F2B24] px-4 py-2 font-semibold text-white shadow-xs transition-colors hover:bg-[#4E6B56]"
+                    >
+                      → Đến Quản Lý Kho & Xuất Mỹ Phẩm
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/ky-thuat-vien"
+                      className="rounded-xl bg-[#4E6B56] px-4 py-2 font-semibold text-white shadow-xs transition-colors hover:bg-[#1F2B24]"
+                    >
+                      → Trở Về Bàn Làm Việc KTV
+                    </Link>
+                  )}
                 </div>
               </div>
+            ) : (
+              <>
+                <div className="mb-4 flex items-center justify-between">
+                  {/* Chọn số lượng */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-current/80">Số lượng:</span>
+                    <div className="flex items-center rounded-xl border border-current/30">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="px-3 py-1 text-xs hover:bg-black/10"
+                      >
+                        -
+                      </button>
+                      <span className="px-3 py-1 text-xs font-bold">{quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="px-3 py-1 text-xs hover:bg-black/10"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Tổng tiền */}
-              <div className="text-right">
-                <span className="font-serif text-2xl font-bold text-[#D4AF37]">
-                  {formatCurrencyVND(currentPrice * quantity)}
-                </span>
-                <span className="block text-[10px] text-current/60">
-                  Miễn phí giao hàng từ 500k
-                </span>
-              </div>
-            </div>
+                  {/* Tổng tiền */}
+                  <div className="text-right">
+                    <span className="font-serif text-2xl font-bold text-[#D4AF37]">
+                      {formatCurrencyVND(currentPrice * quantity)}
+                    </span>
+                    <span className="block text-[10px] text-current/60">
+                      Miễn phí giao hàng từ 500k
+                    </span>
+                  </div>
+                </div>
 
-            {/* Nút Thêm Vào Giỏ */}
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className={`flex-1 rounded-2xl py-3.5 text-xs font-semibold transition-all ${
-                  isAdded
-                    ? 'bg-[#405C4E] text-[#FAF7F2]'
-                    : 'bg-gradient-to-r from-[#D4AF37] to-[#C68B59] text-[#141C17] shadow-lg hover:scale-[1.01] active:scale-[0.99]'
-                }`}
-              >
-                {isAdded ? '✓ Đã Thêm Vào Giỏ MK SPA' : 'Thêm Vào Giỏ Hàng & Tiếp Tục →'}
-              </button>
+                {/* Nút Thêm Vào Giỏ */}
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    className={`flex-1 rounded-2xl py-3.5 text-xs font-semibold transition-all ${
+                      isAdded
+                        ? 'bg-[#405C4E] text-[#FAF7F2]'
+                        : 'bg-gradient-to-r from-[#D4AF37] to-[#C68B59] text-[#141C17] shadow-lg hover:scale-[1.01] active:scale-[0.99]'
+                    }`}
+                  >
+                    {isAdded ? '✓ Đã Thêm Vào Giỏ MK SPA' : 'Thêm Vào Giỏ Hàng & Tiếp Tục →'}
+                  </button>
 
-              {relatedProducts.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleAddBundle}
-                  className="rounded-2xl border border-[#D4AF37] bg-transparent px-5 py-3.5 text-xs font-semibold text-[#D4AF37] transition-all hover:bg-[#D4AF37]/15"
-                >
-                  {isBundleAdded ? '✓ Đã Thêm Cả Combo' : 'Mua Combo (+ 1 Sản phẩm kèm)'}
-                </button>
-              )}
-            </div>
+                  {relatedProducts.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleAddBundle}
+                      className="rounded-2xl border border-[#D4AF37] bg-transparent px-5 py-3.5 text-xs font-semibold text-[#D4AF37] transition-all hover:bg-[#D4AF37]/15"
+                    >
+                      {isBundleAdded ? '✓ Đã Thêm Cả Combo' : 'Mua Combo (+ 1 Sản phẩm kèm)'}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

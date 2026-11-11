@@ -56,3 +56,26 @@ export function removeVietnameseTones(str: string): string {
     .toLowerCase()
     .trim();
 }
+
+/**
+ * Che số điện thoại bảo mật thông tin khách hàng: 0987654123 -> 098***123
+ */
+export function maskPhoneNumber(phone?: string | null): string {
+  if (!phone) return '—';
+  const clean = phone.trim();
+  if (clean.length < 6) return '***';
+  const start = clean.slice(0, 3);
+  const end = clean.slice(-3);
+  return `${start}***${end}`;
+}
+
+/**
+ * Che email bảo mật thông tin khách hàng: khach.vip@gmail.com -> kh***@gmail.com
+ */
+export function maskEmail(email?: string | null): string {
+  if (!email) return '—';
+  const [user, domain] = email.split('@');
+  if (!user || !domain) return '***';
+  const visible = user.slice(0, Math.min(2, user.length));
+  return `${visible}***@${domain}`;
+}

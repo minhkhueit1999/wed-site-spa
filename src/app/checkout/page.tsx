@@ -1,15 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { useAuth } from '@/components/layout/AuthContext';
 import { useCartStore } from '@/infrastructure/store/useCartStore';
 import { useOrderStore, SaSpaOrder } from '@/infrastructure/store/useOrderStore';
 import { formatCurrencyVND } from '@/lib/utils';
 
 export default function CheckoutPage() {
+  const router = useRouter();
+  const { userRole, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (userRole === 'ADMIN') {
+        router.replace('/quan-tri');
+      } else if (userRole === 'THERAPIST') {
+        router.replace('/ky-thuat-vien');
+      }
+    }
+  }, [isAuthenticated, userRole, router]);
+
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
   const getCartTotal = useCartStore((state) => state.getCartTotal);
@@ -39,6 +54,19 @@ export default function CheckoutPage() {
   // Tính lại tổng tiền theo phương thức vận chuyển
   const expressFee = shippingMethod === 'express' ? 30000 : 0;
   const finalTotal = totals.total + expressFee;
+
+  if (isAuthenticated && (userRole === 'ADMIN' || userRole === 'THERAPIST')) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FAF7F2] p-8 text-center text-[#1F2B24]">
+        <div className="rounded-2xl border border-[#4E6B56]/30 bg-[#E8EFE9] p-6 shadow-sm">
+          <p className="font-serif text-lg font-bold">🌿 Khu vực dành riêng cho khách hàng</p>
+          <p className="mt-2 text-xs text-[#635B54]">
+            Đang chuyển hướng tài khoản nhân sự về không gian làm việc nội bộ...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Xử lý hoàn tất đơn hàng
   const handlePlaceOrder = () => {

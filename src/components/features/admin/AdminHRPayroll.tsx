@@ -12,6 +12,7 @@ import {
   reviewLeaveRequestAction,
   getStaffPayrollsAction,
   recalculateStaffPayrollAction,
+  resetStaffPasswordAction,
   type StaffListItem,
   type ShiftRosterItem,
   type LeaveRequestItem,
@@ -46,6 +47,29 @@ export function AdminHRPayroll() {
   const [assignEndTime, setAssignEndTime] = React.useState('14:30');
   const [assignNotes, setAssignNotes] = React.useState('Phòng VIP Thảo Mộc');
   const [isAssigning, setIsAssigning] = React.useState(false);
+
+  // Modal cấp lại mật khẩu ngẫu nhiên
+  const [resetModalData, setResetModalData] = React.useState<{
+    staffName: string;
+    tempPassword: string;
+  } | null>(null);
+
+  const handleResetPassword = async (staffId: string, staffName: string) => {
+    if (!confirm(`Bạn có chắc chắn muốn cấp lại mật khẩu tạm thời cho ${staffName}?`)) return;
+    const res = await resetStaffPasswordAction(staffId);
+    if (res.ok) {
+      setResetModalData({
+        staffName: res.value.staffName,
+        tempPassword: res.value.tempPassword,
+      });
+      setFeedback({
+        type: 'success',
+        msg: `Đã cấp mật khẩu ngẫu nhiên mới cho ${res.value.staffName}.`,
+      });
+    } else {
+      setFeedback({ type: 'error', msg: res.error });
+    }
+  };
 
   const loadData = React.useCallback(async () => {
     setIsLoading(true);
@@ -278,18 +302,27 @@ export function AdminHRPayroll() {
                         </td>
                         <td className="p-3.5 font-semibold">{s.completedAppointmentsCount} buổi</td>
                         <td className="p-3.5 text-right">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              const newRole = s.role === 'THERAPIST' ? 'ADMIN' : 'THERAPIST';
-                              if (confirm(`Đổi vai trò của ${s.name} sang ${newRole}?`)) {
-                                updateStaffRoleAction(s.id, newRole).then(loadData);
-                              }
-                            }}
-                          >
-                            Đổi Vai Trò
-                          </Button>
+                          <div className="flex justify-end gap-1.5">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleResetPassword(s.id, s.name)}
+                            >
+                              🔑 Reset MK
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                const newRole = s.role === 'THERAPIST' ? 'ADMIN' : 'THERAPIST';
+                                if (confirm(`Đổi vai trò của ${s.name} sang ${newRole}?`)) {
+                                  updateStaffRoleAction(s.id, newRole).then(loadData);
+                                }
+                              }}
+                            >
+                              Đổi Vai Trò
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -674,6 +707,56 @@ export function AdminHRPayroll() {
               </table>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Modal Hiển thị Mật Khẩu Tạm Thời Sau Khi Reset */}
+      {resetModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+          <Card className="w-full max-w-md border-[#D4B996] bg-[#FAF7F2] p-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#E2D9CC] pb-3">
+              <CardTitle className="font-serif text-lg text-[#1F2B24]">
+                🔑 Cấp Mật Khẩu Tạm Thành Công
+              </CardTitle>
+              <button
+                onClick={() => setResetModalData(null)}
+                className="text-lg text-[#8C827A] hover:text-[#1F2B24]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-3 text-sm text-[#2B2622]">
+              <p>
+                Đã đặt lại mật khẩu ngẫu nhiên cho nhân sự:{' '}
+                <strong>{resetModalData.staffName}</strong>.
+              </p>
+              <p className="text-xs text-[#635B54]">
+                Vì lý do an ninh, mật khẩu gốc đã được băm an toàn và không hiển thị. Bạn hãy sao
+                chép mật khẩu tạm dưới đây để gửi cho nhân viên đăng nhập lần đầu:
+              </p>
+
+              <div className="flex items-center justify-between rounded-xl border border-[#4E6B56]/40 bg-[#E8EFE9] p-3 font-mono text-base font-bold text-[#1F2B24]">
+                <span>{resetModalData.tempPassword}</span>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => {
+                    navigator.clipboard.writeText(resetModalData.tempPassword);
+                    alert('Đã sao chép mật khẩu tạm vào clipboard!');
+                  }}
+                >
+                  Sao Chép
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button variant="outline" onClick={() => setResetModalData(null)}>
+                Đóng
+              </Button>
+            </div>
+          </Card>
         </div>
       )}
     </div>
