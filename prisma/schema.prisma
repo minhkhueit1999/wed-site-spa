@@ -19,21 +19,33 @@ model User {
   auditLogs    AuditLog[]
   appointments Appointment[]    @relation("TherapistAppointments")
   sessionLogs  SessionLog[]     @relation("TherapistSessionLogs")
+
+  staffShifts   StaffShift[]     @relation("StaffShifts")
+  leaveRequests LeaveRequest[]   @relation("StaffLeaveRequests")
+  payrolls      StaffPayroll[]   @relation("StaffPayrolls")
 }
 
 model CustomerProfile {
-  id          String    @id @default(cuid())
-  userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  safetyFlags String    @default("[]") // JSON mảng cờ an toàn: ["pregnant", "allergy-nut-oil"]
-  consentAt   DateTime? // Thời điểm người dùng đồng ý xử lý dữ liệu sức khỏe
-  notes       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone           String?
+  safetyFlags     String    @default("[]") // JSON mảng cờ an toàn: ["pregnant", "allergy-nut-oil"]
+  consentAt       DateTime? // Thời điểm người dùng đồng ý xử lý dữ liệu sức khỏe
+  loyaltyTier     String    @default("STANDARD") // STANDARD | SILVER | GOLD | DIAMOND
+  loyaltyPoints   Int       @default(0)
+  totalSpentVnd   Int       @default(0)
+  debtBalanceVnd  Int       @default(0)
+  prepaidSessions Int       @default(0)
+  medicalNotes    String?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   assessments    Assessment[]
   treatmentPlans TreatmentPlan[]
   careBundles    CareBundle[]
+  invoices       Invoice[]
 }
 
 model Concern {
@@ -63,16 +75,22 @@ model Service {
 }
 
 model Product {
-  slug           String                 @id // tinh-dau-thu-gian, tra-thao-moc-toi, etc.
-  name           String
-  description    String
-  usageGuide     String
-  priceVnd       Int                    @default(0)
-  active         Boolean                @default(true)
-  createdAt      DateTime               @default(now())
-  updatedAt      DateTime               @updatedAt
+  slug            String                 @id // tinh-dau-thu-gian, tra-thao-moc-toi, etc.
+  name            String
+  description     String
+  usageGuide      String
+  priceVnd        Int                    @default(0)
+  imageUrl        String                 @default("")
+  stockQuantity   Int                    @default(50)
+  minStockAlert   Int                    @default(10)
+  unit            String                 @default("chai")
+  costPriceVnd    Int                    @default(0)
+  active          Boolean                @default(true)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
   serviceProducts ServiceProduct[]
-  prescriptions  HomeCarePrescription[]
+  prescriptions   HomeCarePrescription[]
+  inventoryTransactions InventoryTransaction[]
 }
 
 model ServiceProduct {
@@ -97,9 +115,8 @@ model Rule {
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  concern Concern @relation(fields: [concernSlug], references: [slug], onDelete: Cascade)
-  service Service @relation(fields: [serviceSlug], references: [slug], onDelete: Cascade)
+  concern      Concern  @relation(fields: [concernSlug], references: [slug], onDelete: Cascade)
+  service      Service  @relation(fields: [serviceSlug], references: [slug], onDelete: Cascade)
 }
 
 model Contraindication {
@@ -160,11 +177,14 @@ model Appointment {
   therapist   User          @relation("TherapistAppointments", fields: [therapistId], references: [id])
   startAt     DateTime
   endAt       DateTime
-  status      String        @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED, NO_SHOW
+  room        String        @default("Phòng VIP Thảo Mộc")
+  status      String        @default("SCHEDULED") // SCHEDULED, CONFIRMED, CHECKED_IN, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+  notes       String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
   sessionLog SessionLog?
+  invoices   Invoice[]
 }
 
 model SessionLog {
@@ -220,13 +240,127 @@ model KnowledgeChunk {
 
 model AuditLog {
   id         String   @id @default(cuid())
-  actorId    String
-  actor      User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
   action     String   // LOGIN, LOGOUT, VIEW_PROFILE, UPDATE_SESSION_LOG, DELETE_DATA, CHANGE_ROLE
-  targetType String   // USER, TREATMENT_PLAN, SESSION_LOG, RULE
+  targetType String   // USER, TREATMENT_PLAN, SESSION_LOG, RULE, INVOICE, SHIFT
   targetId   String?
   ipAddress  String?
   userAgent  String?
   metadata   String?  // JSON thông tin bổ sung không chứa PII
   at         DateTime @default(now())
+}
+
+model StaffShift {
+  id        String   @id @default(cuid())
+  staffId   String
+  staff     User     @relation("StaffShifts", fields: [staffId], references: [id], onDelete: Cascade)
+  date      DateTime
+  shiftType String   @default("MORNING") // MORNING, AFTERNOON, FULL_DAY, NIGHT
+  startTime String   @default("08:30")
+  endTime   String   @default("14:30")
+  status    String   @default("SCHEDULED") // SCHEDULED, COMPLETED, ABSENT, SWAPPED
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeaveRequest {
+  id             String    @id @default(cuid())
+  staffId        String
+  staff          User      @relation("StaffLeaveRequests", fields: [staffId], references: [id], onDelete: Cascade)
+  type           String    @default("SICK") // SICK, VACATION, PERSONAL, SWAP_SHIFT
+  startDate      DateTime
+  endDate        DateTime
+  reason         String
+  swapWithStaffId String?
+  status         String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  reviewedById   String?
+  reviewNote     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model StaffPayroll {
+  id                  String   @id @default(cuid())
+  staffId             String
+  staff               User     @relation("StaffPayrolls", fields: [staffId], references: [id], onDelete: Cascade)
+  month               String   // "2026-11"
+  tierLevel           String   @default("SENIOR") // JUNIOR, SENIOR, MASTER
+  baseSalaryVnd       Int      @default(8000000)
+  completedSessions   Int      @default(0)
+  sessionAllowanceVnd Int      @default(0) // 50.000đ/buổi
+  tipAmountVnd        Int      @default(0)
+  upsellCommissionVnd Int      @default(0) // 10-15% giá sản phẩm bán
+  bonusVnd            Int      @default(0)
+  totalEarningsVnd    Int      @default(8000000)
+  status              String   @default("DRAFT") // DRAFT, CONFIRMED, PAID
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([staffId, month])
+}
+
+model InventoryTransaction {
+  id           String   @id @default(cuid())
+  productSlug  String
+  product      Product  @relation(fields: [productSlug], references: [slug], onDelete: Cascade)
+  type         String   // IMPORT, EXPORT, ADJUSTMENT, SALE_DEDUCTION
+  quantity     Int      // +10 hoặc -2
+  balanceAfter Int
+  costPriceVnd Int      @default(0)
+  reason       String
+  actorId      String
+  createdAt    DateTime @default(now())
+}
+
+model Invoice {
+  id                  String          @id @default(cuid())
+  code                String          @unique // HD-202611-001
+  customerId          String
+  customer            CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  appointmentId       String?
+  appointment         Appointment?    @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  subtotalVnd         Int             @default(0)
+  discountVnd         Int             @default(0)
+  voucherCode         String?
+  finalVnd            Int             @default(0)
+  paidVnd             Int             @default(0)
+  debtVnd             Int             @default(0)
+  paymentMethod       String          @default("CASH") // CASH, TRANSFER, CARD, PREPAID_PACKAGE
+  status              String          @default("PAID") // DRAFT, PAID, PARTIALLY_PAID, CANCELLED
+  upsellTherapistId   String?
+  upsellCommissionVnd Int             @default(0)
+  notes               String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  items InvoiceItem[]
+}
+
+model InvoiceItem {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  itemType      String   @default("SERVICE") // SERVICE, PRODUCT, PACKAGE
+  itemId        String   // serviceSlug or productSlug
+  itemName      String
+  quantity      Int      @default(1)
+  unitPriceVnd  Int      @default(0)
+  totalPriceVnd Int      @default(0)
+}
+
+model Voucher {
+  code           String   @id // MKSPA50, VIPGOLD, CHAOXUAN
+  name           String
+  discountType   String   @default("PERCENT") // PERCENT, FIXED_AMOUNT
+  discountValue  Int      // 10 (10%) hoặc 100000 (100.000đ)
+  minOrderVnd    Int      @default(0)
+  maxDiscountVnd Int      @default(500000)
+  usageLimit     Int      @default(100)
+  usedCount      Int      @default(0)
+  expiresAt      DateTime
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
 }

@@ -18,8 +18,25 @@ import {
 import { AdminStatsData } from '@/application/admin/getAdminStats';
 import { Recommendation, Severity } from '@/domain/recommendation/types';
 import { formatCurrencyVND } from '@/lib/utils';
+import { AdminCalendarDispatch } from '@/components/features/admin/AdminCalendarDispatch';
+import { AdminHRPayroll } from '@/components/features/admin/AdminHRPayroll';
+import { AdminCRM } from '@/components/features/admin/AdminCRM';
+import { AdminInventoryServices } from '@/components/features/admin/AdminInventoryServices';
+import { AdminBillingInvoicing } from '@/components/features/admin/AdminBillingInvoicing';
+import { AdminAnalyticsView } from '@/components/features/admin/AdminAnalyticsView';
 
-type TabId = 'overview' | 'rules' | 'services' | 'products' | 'contraindications';
+type TabId =
+  | 'overview'
+  | 'calendar'
+  | 'hr'
+  | 'crm'
+  | 'inventory'
+  | 'billing'
+  | 'analytics'
+  | 'rules'
+  | 'services'
+  | 'products'
+  | 'contraindications';
 
 export default function QuanTriPage() {
   const router = useRouter();
@@ -233,6 +250,12 @@ export default function QuanTriPage() {
 
   const tabs: { id: TabId; label: string }[] = [
     { id: 'overview', label: '📊 Tổng quan & AuditLog' },
+    { id: 'calendar', label: '📅 Lịch Hẹn & Điều Phối' },
+    { id: 'hr', label: '👥 Nhân Sự & Bảng Lương' },
+    { id: 'crm', label: '📋 Khách Hàng CRM & Công Nợ' },
+    { id: 'inventory', label: '📦 Kho Mỹ Phẩm & Dịch Vụ' },
+    { id: 'billing', label: '💳 Hóa Đơn & Thanh Toán' },
+    { id: 'analytics', label: '📈 Báo Cáo & KPI' },
     { id: 'rules', label: '⚙️ Quy tắc & Live Preview' },
     { id: 'services', label: '💆 Dịch vụ phác đồ' },
     { id: 'products', label: '🧴 Toa sản phẩm tại nhà' },
@@ -363,6 +386,26 @@ export default function QuanTriPage() {
             </div>
           </div>
         )}
+
+        {/* ================= TAB: LỊCH HẸN & ĐIỀU PHỐI (CALENDAR) ================= */}
+        {activeTab === 'calendar' && <AdminCalendarDispatch adminData={adminData} />}
+
+        {/* ================= TAB: NHÂN SỰ & BẢNG LƯƠNG (HR & PAYROLL) ================= */}
+        {activeTab === 'hr' && <AdminHRPayroll />}
+
+        {/* ================= TAB: KHÁCH HÀNG CRM & CÔNG NỢ ================= */}
+        {activeTab === 'crm' && <AdminCRM />}
+
+        {/* ================= TAB: KHO MỸ PHẨM & DỊCH VỤ ================= */}
+        {activeTab === 'inventory' && (
+          <AdminInventoryServices adminData={adminData} onRefreshData={refreshData} />
+        )}
+
+        {/* ================= TAB: HÓA ĐƠN & KẾ TOÁN ================= */}
+        {activeTab === 'billing' && <AdminBillingInvoicing adminData={adminData} />}
+
+        {/* ================= TAB: BÁO CÁO & KPI ANALYTICS ================= */}
+        {activeTab === 'analytics' && <AdminAnalyticsView />}
 
         {/* ================= TAB 2: QUY TẮC & LIVE PREVIEW ================= */}
         {activeTab === 'rules' && (

@@ -77,8 +77,8 @@ export async function getAdminStats(): Promise<Result<AdminStatsData, string>> {
       recentAuditLogs: recentAuditLogs.map((log) => ({
         id: log.id,
         action: log.action,
-        actorName: log.actor.name,
-        actorEmail: log.actor.email,
+        actorName: log.actor?.name ?? 'Tài khoản đã ẩn/xóa',
+        actorEmail: log.actor?.email ?? '—',
         targetType: log.targetType,
         targetId: log.targetId,
         at: log.at.toISOString(),

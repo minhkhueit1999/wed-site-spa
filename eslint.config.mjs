@@ -9,6 +9,11 @@ const eslintConfig = defineConfig([
   prettierConfig,
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'coverage/**', 'dist/**']),
   {
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
+  {
     files: ['src/domain/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [

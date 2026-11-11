@@ -21,6 +21,7 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
 
   // States
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const [showScentOrbit, setShowScentOrbit] = useState(false);
   const [selectedVolume, setSelectedVolume] = useState(product.volumes[0]?.size || '30ml');
   const [isAddedFeedback, setIsAddedFeedback] = useState(false);
@@ -211,13 +212,24 @@ export function LivingProductCard({ product, onQuickView }: LivingProductCardPro
           {/* Khung ảnh thực tế sản phẩm MK SPA sang trọng */}
           <div className="relative flex items-center justify-center p-2">
             <div className="group/img relative overflow-hidden rounded-2xl border border-[#D4AF37]/30 bg-white/70 p-2 shadow-lg backdrop-blur-xs transition-all duration-300">
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                width={144}
-                height={176}
-                className="h-44 w-36 rounded-xl object-cover shadow-sm transition-transform duration-500 group-hover/img:scale-105"
-              />
+              {!imgError && product.imageUrl ? (
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={144}
+                  height={176}
+                  onError={() => setImgError(true)}
+                  className="h-44 w-36 rounded-xl object-cover shadow-sm transition-transform duration-500 group-hover/img:scale-105"
+                />
+              ) : (
+                <div className="flex h-44 w-36 flex-col items-center justify-center rounded-xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#FAF7F2] to-[#E8E0D5] p-3 text-center">
+                  <span className="text-3xl">🌿</span>
+                  <span className="mt-2 line-clamp-2 text-[10px] font-bold text-[#1F2B24]">
+                    {product.name}
+                  </span>
+                  <span className="mt-1 text-[8px] text-[#8C827A] uppercase">MK SPA Botanical</span>
+                </div>
+              )}
               {/* Lớp phủ vệt sáng lướt qua (Specular Sheen) */}
               <motion.div
                 animate={

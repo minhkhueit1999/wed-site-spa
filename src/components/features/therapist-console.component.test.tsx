@@ -82,6 +82,26 @@ vi.mock('@/application/therapist/actions', () => ({
     ok: true,
     value: { nextState: 'HOME_CARE' },
   }),
+  getTechnicianMobileScheduleAction: vi.fn().mockResolvedValue({
+    ok: true,
+    value: {
+      therapistId: 'therapist-1',
+      therapistName: 'Lê Hoàng Yến',
+      todayShift: {
+        shiftType: 'MORNING',
+        startTime: '08:30',
+        endTime: '14:30',
+        status: 'SCHEDULED',
+      },
+      appointments: [],
+      stats: {
+        totalToday: 1,
+        completedToday: 0,
+        inProgressId: null,
+        nextAppointmentTime: null,
+      },
+    },
+  }),
 }));
 
 // Mock next/navigation
