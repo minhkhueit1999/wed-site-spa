@@ -8,6 +8,9 @@ import {
 } from './billingManagement';
 import { stockInProduct, stockOutProduct } from './inventoryManagement';
 import { resetStaffPassword } from './hrManagement';
+import { updateProduct } from './productCrud';
+import { createUserAccount, updateUserAccount, deleteUserAccount } from './userAccountManagement';
+import { useOrderStore } from '@/infrastructure/store/useOrderStore';
 
 describe('Admin Advanced Management Use-Cases (Calendar, Billing, Inventory, CRM)', () => {
   let adminUser: { id: string; email: string };
@@ -261,5 +264,140 @@ describe('Admin Advanced Management Use-Cases (Calendar, Billing, Inventory, CRM
     });
     expect(audit).toBeDefined();
     expect(audit?.actorId).toBe(adminUser.id);
+  });
+
+  it('quản lý tài khoản: thêm, sửa và xóa tài khoản người dùng an toàn', async () => {
+    // 1. Thêm tài khoản mới
+    const createRes = await createUserAccount(
+      {
+        name: 'Trần Văn Test',
+        email: `tranvantest-${Date.now()}@spawellness.vn`,
+        role: 'CUSTOMER',
+        phone: '0901234567',
+        password: 'Password123!',
+      },
+      adminUser.id,
+    );
+    expect(createRes.ok).toBe(true);
+    if (!createRes.ok) return;
+
+    const newUserId = createRes.value.id;
+
+    // 2. Sửa thông tin tài khoản
+    const updateRes = await updateUserAccount(
+      {
+        id: newUserId,
+        name: 'Trần Văn Test (Đã Sửa)',
+        email: `tranvantest-updated-${Date.now()}@spawellness.vn`,
+        role: 'THERAPIST',
+        phone: '0988888888',
+      },
+      adminUser.id,
+    );
+    expect(updateRes.ok).toBe(true);
+
+    const userInDb = await prisma.user.findUniqueOrThrow({
+      where: { id: newUserId },
+      include: { profile: true },
+    });
+    expect(userInDb.name).toBe('Trần Văn Test (Đã Sửa)');
+    expect(userInDb.role).toBe('THERAPIST');
+    expect(userInDb.profile?.phone).toBe('0988888888');
+
+    // 3. Xóa tài khoản
+    const deleteRes = await deleteUserAccount(newUserId, adminUser.id);
+    expect(deleteRes.ok).toBe(true);
+
+    const deletedUser = await prisma.user.findUnique({
+      where: { id: newUserId },
+    });
+    expect(deletedUser).toBeNull();
+
+    // 4. Kiểm tra ngăn chặn tự xóa tài khoản của chính mình
+    const selfDeleteRes = await deleteUserAccount(adminUser.id, adminUser.id);
+    expect(selfDeleteRes.ok).toBe(false);
+  });
+
+  it('sửa thông tin sản phẩm: cập nhật giá bán, giá vốn, tồn kho và trạng thái active', async () => {
+    const testProdSlug = `test-prod-update-${Date.now()}`;
+    await prisma.product.create({
+      data: {
+        slug: testProdSlug,
+        name: 'Sản phẩm thử nghiệm',
+        description: 'Mô tả ban đầu',
+        usageGuide: 'HDSD ban đầu',
+        priceVnd: 200000,
+        costPriceVnd: 100000,
+        stockQuantity: 50,
+      },
+    });
+
+    const updateRes = await updateProduct({
+      slug: testProdSlug,
+      name: 'Sản phẩm thử nghiệm (Đã Cập Nhật)',
+      priceVnd: 380000,
+      costPriceVnd: 180000,
+      stockQuantity: 88,
+      minStockAlert: 15,
+      active: true,
+    });
+
+    expect(updateRes.ok).toBe(true);
+    if (updateRes.ok) {
+      expect(updateRes.value.slug).toBe(testProdSlug);
+    }
+
+    const prodInDb = await prisma.product.findUniqueOrThrow({
+      where: { slug: testProdSlug },
+    });
+    expect(prodInDb.name).toBe('Sản phẩm thử nghiệm (Đã Cập Nhật)');
+    expect(prodInDb.priceVnd).toBe(380000);
+    expect(prodInDb.costPriceVnd).toBe(180000);
+    expect(prodInDb.stockQuantity).toBe(88);
+
+    // Dọn dẹp
+    await prisma.product.delete({ where: { slug: testProdSlug } });
+  });
+
+  it('duyệt đơn hàng của khách hàng: cập nhật trạng thái đơn hàng tuần tự', () => {
+    const store = useOrderStore.getState();
+    const orderId = 'MKSPA-TEST-APPROVAL';
+
+    // Thêm đơn hàng kiểm thử
+    store.addOrder({
+      orderId,
+      createdAt: new Date().toISOString(),
+      items: [],
+      subtotal: 500000,
+      discountAmount: 0,
+      shippingFee: 30000,
+      total: 530000,
+      customer: {
+        name: 'Khách Kiểm Thử Duyệt Đơn',
+        phone: '0933333333',
+        email: 'khachduyetdon@gmail.com',
+        address: '123 Đường Hoa Sen, TP.HCM',
+      },
+      giftOption: { isGift: false },
+      shippingMethod: 'standard',
+      paymentMethod: 'vietqr',
+      status: 'PREPARING_HERBS',
+    });
+
+    // 1. Duyệt sang đóng gói
+    store.updateOrderStatus(orderId, 'BAMBOO_PACKAGING');
+    expect(useOrderStore.getState().getOrderById(orderId)?.status).toBe('BAMBOO_PACKAGING');
+
+    // 2. Duyệt sang giao hàng
+    store.updateOrderStatus(orderId, 'DELIVERING');
+    expect(useOrderStore.getState().getOrderById(orderId)?.status).toBe('DELIVERING');
+
+    // 3. Duyệt hoàn thành
+    store.updateOrderStatus(orderId, 'COMPLETED');
+    expect(useOrderStore.getState().getOrderById(orderId)?.status).toBe('COMPLETED');
+
+    // 4. Hủy đơn hàng
+    store.deleteOrder(orderId);
+    expect(useOrderStore.getState().getOrderById(orderId)).toBeUndefined();
   });
 });

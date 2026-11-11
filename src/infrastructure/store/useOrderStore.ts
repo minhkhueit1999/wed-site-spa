@@ -37,6 +37,8 @@ export interface OrderStore {
   addOrder: (order: SaSpaOrder) => void;
   getOrderById: (orderId: string) => SaSpaOrder | undefined;
   reorder: (orderId: string) => CartItem[];
+  updateOrderStatus: (orderId: string, status: OrderStatus) => void;
+  deleteOrder: (orderId: string) => void;
 }
 
 const createSafeStorage = () => {
@@ -170,6 +172,18 @@ export const useOrderStore = create<OrderStore>()(
       reorder: (orderId) => {
         const order = get().getOrderById(orderId);
         return order ? order.items : [];
+      },
+
+      updateOrderStatus: (orderId, status) => {
+        set((state) => ({
+          orders: state.orders.map((o) => (o.orderId === orderId ? { ...o, status } : o)),
+        }));
+      },
+
+      deleteOrder: (orderId) => {
+        set((state) => ({
+          orders: state.orders.filter((o) => o.orderId !== orderId),
+        }));
       },
     }),
     {

@@ -10,8 +10,6 @@ import {
   getAllAdminDataAction,
   createServiceAction,
   deleteServiceAction,
-  createProductAction,
-  deleteProductAction,
   simulateRulesAction,
   type AdminAllData,
 } from '@/application/admin/actions';
@@ -24,9 +22,15 @@ import { AdminCRM } from '@/components/features/admin/AdminCRM';
 import { AdminInventoryServices } from '@/components/features/admin/AdminInventoryServices';
 import { AdminBillingInvoicing } from '@/components/features/admin/AdminBillingInvoicing';
 import { AdminAnalyticsView } from '@/components/features/admin/AdminAnalyticsView';
+import { AdminUserManagement } from '@/components/features/admin/AdminUserManagement';
+import { AdminProductManagement } from '@/components/features/admin/AdminProductManagement';
+import { AdminOrderApproval } from '@/components/features/admin/AdminOrderApproval';
 
 type TabId =
   | 'overview'
+  | 'users'
+  | 'products'
+  | 'orders'
   | 'calendar'
   | 'hr'
   | 'crm'
@@ -35,7 +39,6 @@ type TabId =
   | 'analytics'
   | 'rules'
   | 'services'
-  | 'products'
   | 'contraindications';
 
 export default function QuanTriPage() {
@@ -60,13 +63,6 @@ export default function QuanTriPage() {
   const [newServiceDesc, setNewServiceDesc] = React.useState('');
   const [newServicePrice, setNewServicePrice] = React.useState(700000);
   const [serviceFeedback, setServiceFeedback] = React.useState<string | null>(null);
-
-  const [newProductName, setNewProductName] = React.useState('');
-  const [newProductSlug, setNewProductSlug] = React.useState('');
-  const [newProductDesc, setNewProductDesc] = React.useState('');
-  const [newProductUsage, setNewProductUsage] = React.useState('');
-  const [newProductPrice, setNewProductPrice] = React.useState(250000);
-  const [productFeedback, setProductFeedback] = React.useState<string | null>(null);
 
   const refreshData = React.useCallback(async () => {
     const [statsRes, dataRes] = await Promise.all([getAdminStatsAction(), getAllAdminDataAction()]);
@@ -165,40 +161,6 @@ export default function QuanTriPage() {
     }
   };
 
-  const handleCreateProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProductFeedback(null);
-    const res = await createProductAction({
-      slug: newProductSlug.trim(),
-      name: newProductName.trim(),
-      description: newProductDesc.trim(),
-      usageGuide: newProductUsage.trim(),
-      priceVnd: Number(newProductPrice),
-    });
-
-    if (res.ok) {
-      setProductFeedback('Tạo sản phẩm thành công!');
-      setNewProductName('');
-      setNewProductSlug('');
-      setNewProductDesc('');
-      setNewProductUsage('');
-      await refreshData();
-    } else {
-      setProductFeedback(`Lỗi: ${res.error}`);
-    }
-  };
-
-  const handleDeleteProduct = async (slug: string) => {
-    if (!confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${slug}"?`)) return;
-    const res = await deleteProductAction(slug);
-    if (res.ok) {
-      alert(res.value.message);
-      await refreshData();
-    } else {
-      alert(res.error);
-    }
-  };
-
   const toggleSimFlag = (flag: string) => {
     setSimFlags((prev) => (prev.includes(flag) ? prev.filter((f) => f !== flag) : [...prev, flag]));
   };
@@ -250,15 +212,17 @@ export default function QuanTriPage() {
 
   const tabs: { id: TabId; label: string }[] = [
     { id: 'overview', label: '📊 Tổng quan & AuditLog' },
+    { id: 'users', label: '👥 Quản Lý Tài Khoản' },
+    { id: 'products', label: '🧴 Quản Lý Sản Phẩm' },
+    { id: 'orders', label: '🛍️ Duyệt Đơn Hàng' },
     { id: 'calendar', label: '📅 Lịch Hẹn & Điều Phối' },
-    { id: 'hr', label: '👥 Nhân Sự & Bảng Lương' },
+    { id: 'hr', label: '👥 Phân Ca & Bảng Lương' },
     { id: 'crm', label: '📋 Khách Hàng CRM & Công Nợ' },
     { id: 'inventory', label: '📦 Kho Mỹ Phẩm & Dịch Vụ' },
     { id: 'billing', label: '💳 Hóa Đơn & Thanh Toán' },
     { id: 'analytics', label: '📈 Báo Cáo & KPI' },
     { id: 'rules', label: '⚙️ Quy tắc & Live Preview' },
     { id: 'services', label: '💆 Dịch vụ phác đồ' },
-    { id: 'products', label: '🧴 Toa sản phẩm tại nhà' },
     { id: 'contraindications', label: '🚫 Chống chỉ định' },
   ];
 
@@ -386,6 +350,17 @@ export default function QuanTriPage() {
             </div>
           </div>
         )}
+
+        {/* ================= TAB: QUẢN LÝ TÀI KHOẢN (USERS CRUD) ================= */}
+        {activeTab === 'users' && <AdminUserManagement />}
+
+        {/* ================= TAB: QUẢN LÝ SẢN PHẨM (PRODUCTS CRUD) ================= */}
+        {activeTab === 'products' && (
+          <AdminProductManagement products={adminData.products} onRefresh={refreshData} />
+        )}
+
+        {/* ================= TAB: DUYỆT ĐƠN HÀNG (ORDERS APPROVAL) ================= */}
+        {activeTab === 'orders' && <AdminOrderApproval />}
 
         {/* ================= TAB: LỊCH HẸN & ĐIỀU PHỐI (CALENDAR) ================= */}
         {activeTab === 'calendar' && <AdminCalendarDispatch adminData={adminData} />}
@@ -696,113 +671,6 @@ export default function QuanTriPage() {
 
                   <Button type="submit" variant="primary" className="w-full py-2">
                     Tạo dịch vụ
-                  </Button>
-                </form>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {/* ================= TAB 4: SẢN PHẨM DƯỠNG TẠI NHÀ ================= */}
-        {activeTab === 'products' && (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div className="space-y-4 lg:col-span-2">
-              <Card className="border-[#E2D9CC] bg-white p-6 shadow-sm">
-                <CardTitle className="font-serif text-xl text-[#2B2622]">
-                  Danh Sách Toa Sản Phẩm Dưỡng Tại Nhà
-                </CardTitle>
-                <div className="mt-4 space-y-3">
-                  {adminData.products.map((p) => (
-                    <div
-                      key={p.slug}
-                      className="flex flex-col justify-between gap-3 rounded-xl border border-[#E2D9CC] bg-[#FAF7F2] p-4 text-xs sm:flex-row sm:items-center"
-                    >
-                      <div>
-                        <span className="font-serif text-base font-bold text-[#2B2622]">
-                          {p.name}
-                        </span>
-                        <span className="ml-2 font-mono text-[#82786F]">({p.slug})</span>
-                        <p className="mt-1 text-xs text-[#635B54]">{p.description}</p>
-                        <p className="mt-1 text-xs font-semibold text-[#405C4E]">
-                          Giá: {formatCurrencyVND(p.priceVnd)}
-                        </p>
-                        <p className="mt-1 text-[11px] text-[#405C4E]">HDSD: {p.usageGuide}</p>
-                      </div>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[#964F3D] hover:bg-[#FBF0EE]"
-                        onClick={() => handleDeleteProduct(p.slug)}
-                      >
-                        Xóa sản phẩm
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </div>
-
-            {/* Form tạo sản phẩm mới */}
-            <div>
-              <Card className="border-[#E2D9CC] bg-white p-6 shadow-sm">
-                <CardTitle className="font-serif text-xl text-[#2B2622]">
-                  Thêm Sản Phẩm Mới
-                </CardTitle>
-                <form onSubmit={handleCreateProduct} className="mt-4 space-y-3 text-xs">
-                  <Input
-                    label="Tên sản phẩm"
-                    placeholder="Xịt Khoáng Hoa Cúc"
-                    value={newProductName}
-                    onChange={(e) => setNewProductName(e.target.value)}
-                    required
-                  />
-                  <Input
-                    label="Mã slug"
-                    placeholder="xit-khoang-hoa-cuc"
-                    value={newProductSlug}
-                    onChange={(e) => setNewProductSlug(e.target.value)}
-                    required
-                  />
-                  <div>
-                    <label className="mb-1 block font-medium text-[#2B2622]">Mô tả</label>
-                    <textarea
-                      rows={2}
-                      value={newProductDesc}
-                      onChange={(e) => setNewProductDesc(e.target.value)}
-                      className="w-full rounded-xl border border-[#D4C8B8] bg-[#FAF7F2] p-2 focus:outline-none"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block font-medium text-[#2B2622]">
-                      Hướng dẫn sử dụng
-                    </label>
-                    <input
-                      type="text"
-                      value={newProductUsage}
-                      onChange={(e) => setNewProductUsage(e.target.value)}
-                      placeholder="Xịt đều lên mặt cách 20cm"
-                      className="w-full rounded-xl border border-[#D4C8B8] bg-[#FAF7F2] px-3 py-2 text-xs focus:outline-none"
-                      required
-                    />
-                  </div>
-                  <Input
-                    label="Giá bán kèm (VNĐ)"
-                    type="number"
-                    value={newProductPrice}
-                    onChange={(e) => setNewProductPrice(Number(e.target.value))}
-                    required
-                  />
-
-                  {productFeedback && (
-                    <div className="rounded bg-[#FAF7F2] p-2 text-xs text-[#964F3D]">
-                      {productFeedback}
-                    </div>
-                  )}
-
-                  <Button type="submit" variant="primary" className="w-full py-2">
-                    Tạo sản phẩm
                   </Button>
                 </form>
               </Card>

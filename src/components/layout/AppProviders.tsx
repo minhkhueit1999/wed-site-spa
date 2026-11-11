@@ -98,6 +98,7 @@ export function AppProviders({
           window.localStorage.setItem('mk_spa_unlocked', 'true');
           window.localStorage.setItem('sa_spa_unlocked', 'true');
           window.localStorage.setItem('mk_spa_user', JSON.stringify(session));
+          document.cookie = `mk_spa_user=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=2592000; SameSite=Lax`;
           document.cookie = 'mk_spa_unlocked=true; path=/; max-age=2592000; SameSite=Lax';
           document.cookie = 'sa_spa_unlocked=true; path=/; max-age=2592000; SameSite=Lax';
         } catch {
@@ -112,6 +113,7 @@ export function AppProviders({
           window.localStorage.removeItem('mk_spa_unlocked');
           window.localStorage.removeItem('sa_spa_unlocked');
           window.localStorage.removeItem('mk_spa_user');
+          document.cookie = 'mk_spa_user=; path=/; max-age=0; SameSite=Lax';
           document.cookie = 'mk_spa_unlocked=; path=/; max-age=0; SameSite=Lax';
           document.cookie = 'sa_spa_unlocked=; path=/; max-age=0; SameSite=Lax';
         } catch {
