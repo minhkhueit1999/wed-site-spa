@@ -227,3 +227,22 @@ Chế độ: Tự chủ chạy một mạch (Autonomous Execution) từ Giai đo
 | **KTV Mobile: Ví Thu Nhập & Quản Lý Ca Làm**           | Đã hoàn thành | Ví di động hiển thị chi tiết lương cơ bản, phụ cấp ca, tiền tip, hoa hồng bán chéo và lịch sử thu nhập; form gửi đơn xin nghỉ/đổi ca cho Admin phê duyệt.                   |
 | **Tối Ưu Hiệu Năng & Ảnh Sản Phẩm Hoàn Chỉnh**         | Đã hoàn thành | Tích hợp ảnh minh họa thảo mộc fallback SVG thanh lịch chống vỡ ảnh; tinh giản animation chống nghẽn CPU/GPU; 0 lỗi hydration.                                              |
 | **Kiểm Thử & Tiêu Chuẩn Hoàn Thành (DoD)**             | Đã hoàn thành | **199/199 Vitest tests pass 100%** (38 test suites); `typecheck` 0 lỗi; `eslint` 0 lỗi 0 cảnh báo; `prettier` chuẩn 100%; Next.js compile thành công 41 routes.             |
+
+---
+
+## Admin Subsystem & Mobile Technician Console Implementation
+
+| Hạng mục                                               | Trạng thái    | Ghi chú & Chi tiết kiến trúc                                                                                                                                                |
+| :----------------------------------------------------- | :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Admin: Điều Phối Lịch Hẹn (Interactive Calendar)**   | Đã hoàn thành | Lưới lịch trực quan theo khung giờ, bộ lọc KTV/phòng, transaction DB ngăn chặn xung đột trùng giờ (race condition), tạo/sửa/hủy lịch và tái phân công KTV tức thì.          |
+| **Admin: Nhân Sự, Ca Làm & Bảng Lương (HR & Payroll)** | Đã hoàn thành | Roster nhân sự, phân ca làm việc, duyệt đơn xin nghỉ phép/đổi ca, công thức tự động tính lương theo bậc KTV (Junior/Senior/Master) + phụ cấp buổi + hoa hồng bán chéo.      |
+| **Admin: Quản Trị Khách Hàng (CRM & Công Nợ)**         | Đã hoàn thành | Định danh khách hàng, phân hạng thẻ tự động (Member/Silver/Gold/Diamond), lưu vết dị ứng y khoa, quản lý sổ nợ và thu hồi công nợ minh bạch có lưu vết AuditLog.            |
+| **Admin: Dịch Vụ & Tồn Kho Mỹ Phẩm (Inventory)**       | Đã hoàn thành | CRUD gói dịch vụ & bảng giá, quản lý xuất/nhập/tồn kho mỹ phẩm với balance validation, banner cảnh báo tức thì khi tồn kho chạm ngưỡng tối thiểu (`<= minStockAlert`).      |
+| **Admin: Thanh Toán, Voucher & Trừ Buổi Liệu Trình**   | Đã hoàn thành | Thuật toán tính toán hóa đơn, chiết khấu hạng thẻ + voucher (`MKSPA50`, `VIPGOLD10`), trừ lùi số buổi gói trả trước, phân bổ 15% hoa hồng KTV bán chéo.                     |
+| **Admin: Báo Cáo & Phân Tích (Analytics KPI)**         | Đã hoàn thành | Dashboard kết xuất doanh thu hàng tháng, tỷ lệ lấp đầy buồng giường, bảng xếp hạng KPI kỹ thuật viên xuất sắc, Top 5 dịch vụ và sản phẩm bán chạy nhất.                     |
+| **KTV Mobile: Lịch Ca & Thông Báo Real-time**          | Đã hoàn thành | Giao diện 100% tối ưu thiết bị di động, cơ chế real-time polling 10s (`/api/technician/notifications`) phát tín hiệu rung xúc giác (Vibration API) khi có khách mới/đổi ca. |
+| **KTV Mobile: Quy Trình Trị Liệu 1-Chạm**              | Đã hoàn thành | Luồng điều trị chuẩn: "Nhận khách" → "Bắt đầu làm" với đồng hồ bấm giờ trực tiếp → "Ghi nhật ký lâm sàng" (chấm điểm 1-5 sao, điều chỉnh lực/tinh dầu) → "Hoàn thành".      |
+| **KTV Mobile: Tư Vấn Bán Chéo (In-Room Upsell)**       | Đã hoàn thành | Danh mục sản phẩm thảo mộc MK SPA với huy hiệu ghi nhận 15% hoa hồng KTV, 1 chạm đưa vào hóa đơn quyết toán của khách hàng tại phòng dịch vụ.                               |
+| **KTV Mobile: Ví Thu Nhập & Quản Lý Ca Làm**           | Đã hoàn thành | Ví di động hiển thị chi tiết lương cơ bản, phụ cấp ca, tiền tip, hoa hồng bán chéo và lịch sử thu nhập; form gửi đơn xin nghỉ/đổi ca cho Admin phê duyệt.                   |
+| **Tối Ưu Hiệu Năng & Ảnh Sản Phẩm Hoàn Chỉnh**         | Đã hoàn thành | Tích hợp ảnh minh họa thảo mộc fallback SVG thanh lịch chống vỡ ảnh; tinh giản animation chống nghẽn CPU/GPU; 0 lỗi hydration.                                              |
+| **Kiểm Thử & Tiêu Chuẩn Hoàn Thành (DoD)**             | Đã hoàn thành | **199/199 Vitest tests pass 100%** (38 test suites); `typecheck` 0 lỗi; `eslint` 0 lỗi 0 cảnh báo; `prettier` chuẩn 100%; Next.js compile thành công 41 routes.             |

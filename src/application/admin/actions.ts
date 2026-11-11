@@ -1,4 +1,4 @@
-'use server';
+﻿'use server';
 
 import { auth } from '@/infrastructure/auth/auth';
 import { prisma } from '@/infrastructure/db/prisma';
@@ -103,7 +103,7 @@ export type AdminAllData = {
 async function checkAdmin(): Promise<Result<string, string>> {
   const session = await auth();
   if (!session?.user?.id) {
-    return err('Vui lòng đăng nhập bằng tài khoản quản trị.');
+    return err('Vui lĂ²ng Ä‘Äƒng nháº­p báº±ng tĂ i khoáº£n quáº£n trá»‹.');
   }
 
   const user = await prisma.user.findUnique({
@@ -111,7 +111,7 @@ async function checkAdmin(): Promise<Result<string, string>> {
   });
 
   if (!user || user.role !== 'ADMIN') {
-    return err('Chỉ quản trị viên (ADMIN) mới có quyền truy cập khu vực này.');
+    return err('Chá»‰ quáº£n trá»‹ viĂªn (ADMIN) má»›i cĂ³ quyá»n truy cáº­p khu vá»±c nĂ y.');
   }
 
   return ok(user.id);
